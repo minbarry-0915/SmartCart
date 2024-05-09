@@ -7,10 +7,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 
-
 function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     const onSearchButton = () =>{
-
+        //만들어야됨
     };
     const onMyPageButton = () =>{
     
