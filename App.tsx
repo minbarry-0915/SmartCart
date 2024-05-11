@@ -11,6 +11,7 @@ import HomeScreen from './Screen/HomeScreen';
 import JoinScreen from './Screen/JoinScreen';
 import MainScreen from './Screen/MainScreen';
 import SearchScreen from './Screen/SearchScreen';
+import SearchResultScreen from './Screen/SearchResultScreen';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Stack.Screen name="Join" component={JoinScreen} />
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="SearchResult" component={SearchResultScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

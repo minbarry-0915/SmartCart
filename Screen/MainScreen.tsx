@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
-import React, {useCallback, useEffect, useState} from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState} from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -23,7 +23,6 @@ interface Product {
 // }
 
 function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
-    const [keyword, setKeyword] = useState<string>('');
     const [barcodeData, setBarcodeData] = useState<string>('');
     const [responses, setResponses] = useState<Product[]>([]);
     const [grandTotal, setGrandTotal] = useState<number>(0);
@@ -31,16 +30,11 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     const [grandCount, setGrandCount] = useState<number>(0);
     const [grandPrice, setGrandPrice] = useState<number>(0);
     
-    const onChangeKeyword = (text: string) => {
-      setKeyword(text.trim());
-    };
+    
   
     const onSearchButton = () => {
-      //navigation.navigate('Search')
-    };
-    const onSearchTextInput = () =>{
       navigation.navigate('Search');
-    }
+    };
 
     const onMyPageButton = () => {
       
@@ -51,6 +45,10 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
       //index의 위치에서 1개의 node를 제거
       newResponses.splice(index,1);
       setResponses(newResponses);
+    };
+
+    const deleteAllNodes = () =>{
+      setResponses([]);
     };
 
     const decreaseCount = (response: Product) =>{
@@ -180,26 +178,21 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
                 장바구니
             </Text>
             <View style={styles.SearchContainer}>
-                <TextInput
-                    //clearButtonMode='always'
-                    style = {styles.searchInputText}
-                    onPress={onSearchTextInput}
-                    placeholder='검색어를 입력하세요'
-                />
-                <TouchableOpacity onPress={onSearchButton} style={styles.SearchButton}>
-                    <Ionicons name ='search' size={50} color={'black'}/>
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
+              <TouchableOpacity onPress={onSearchButton} style={styles.SearchButton}>
+                <Ionicons name ='search' size={50} color={'black'}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress=  {onMyPageButton} style={styles.MyPageButton}>
                 <Ionicons name='person' size={50} color={'black'}/>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+            
         </View>
         <View style={styles.BodyContainer}>
           <View style={styles.BuyingListContainer}>
             <View style={styles.BLCHeaderContainer}>
               <View style= {styles.BLCHeader}>
                 <Text style= {styles.BLCHeaderText}>스캔 목록</Text>
-                <TouchableOpacity activeOpacity={0.9} style= {styles.BLCHeaderEraseButton}>
+                <TouchableOpacity activeOpacity={0.9} style= {styles.BLCHeaderEraseButton} onPress={deleteAllNodes}>
                   <Text style={styles.BLCHeaderEraseButtonText}>전체삭제</Text>
                 </TouchableOpacity>
               </View>
