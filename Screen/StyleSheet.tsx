@@ -71,17 +71,16 @@ const styles = StyleSheet.create({
       height: 72,
       backgroundColor: 'white',
       elevation: 10,
+      paddingHorizontal: 40,
     },
     HeaderTitleText:{
       fontSize: 40,
       fontWeight: 'bold',
       color: 'black',
-      marginLeft: 40,
     },
     SearchContainer:{
       alignItems: 'center',
       flexDirection: 'row',
-      marginRight: 50,
     },
     searchInputText:{
       width: 408,
@@ -95,15 +94,15 @@ const styles = StyleSheet.create({
     SearchButton: {
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 10,
+      marginHorizontal: 10,
     },
     MyPageButton: {
       alignItems: 'center',
-      marginRight: 40,
     },
     BodyContainer:{
-      flex: 1,
+      flex:1,
       flexDirection: 'row',
+      justifyContent: 'center',
       paddingVertical:30,
       paddingHorizontal: 40,
     },
@@ -213,7 +212,34 @@ const styles = StyleSheet.create({
       color: '#696969',
       fontSize: 20,
       fontWeight: 'regular',
-    }
+    },
+    RecentKeywordContainer:{
+      flex: 1,
+      //borderWidth: 2,
+    },
+    RecentKeywordNode:{
+      borderWidth: 2,
+      borderRadius: 12,
+      justifyContent:'space-between',
+      alignItems:'center',
+      flexDirection:'row',
+      marginBottom: 12, 
+      paddingHorizontal: 24,
+    },
+    RecentKeywordTextContainer:{
+      //borderWidth: 2,
+      flex: 1,
+      
+    },
+    RecentKeywordText:{
+      fontSize: 18,
+      marginVertical: 12,
+    },
+    RecentkeywordDeleteButton: {
+      //borderWidth: 2,
+      padding: 10,
+    },
+    
 
   });
 
