@@ -1,9 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Button,
-  Dimensions,
-  StyleSheet,
   TouchableOpacity,
   View,
   Text,

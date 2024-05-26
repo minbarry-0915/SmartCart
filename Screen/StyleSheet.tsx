@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import BarcodeScanner from "../Components/BarcodeScanner";
 
 const styles = StyleSheet.create({
     
@@ -18,8 +17,8 @@ const styles = StyleSheet.create({
       marginBottom: 30,
     },
     logoText: {
+      fontFamily: 'Pretendard-Bold',
       fontSize: 70,
-      fontWeight: 'bold',
       color: 'black',
       paddingVertical: 25,
     },
@@ -30,25 +29,26 @@ const styles = StyleSheet.create({
       padding: 10,
       borderRadius: 10,
       marginBottom: 24,
-      fontWeight: 'bold',
       justifyContent: 'center',
     },
     loginButtonText: {
       color: 'white',
       fontSize: 18,
-      fontWeight: 'bold',
+      fontFamily: 'Pretendard-SemiBold',
       textAlign: 'center',
     },
     inputText: {
       height: 50,
       width: 360,
       fontSize: 18,
+      fontFamily: 'Pretendard-Regular',
       borderWidth: 1,
       borderColor: 'black',
       marginBottom: 24,
       borderRadius: 10,
       backgroundColor: '#D9D9D9',
-      color: "#696969"
+      color: "#696969",
+      paddingHorizontal: 12
     },
     subButtonGroup:{
       justifyContent: 'center',
@@ -62,24 +62,26 @@ const styles = StyleSheet.create({
     },
     subButtonText: {
       justifyContent: 'center',
+      fontFamily: 'Pretendard-Regular',
       fontSize: 15,
     },
     HeaderContainer:{
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
-      height: 72,
+      height: 85,
       backgroundColor: 'white',
       elevation: 10,
-      paddingHorizontal: 40,
+      paddingHorizontal: 24,
     },
     HeaderTitleText:{
-      fontSize: 40,
-      fontWeight: 'bold',
+      fontSize: 34,
+      fontFamily: 'Pretendard-SemiBold',
       color: 'black',
+      alignSelf:'center',
     },
     SearchContainer:{
-      alignItems: 'center',
+      alignItems: 'flex-end',
       flexDirection: 'row',
     },
     searchInputText:{
@@ -87,17 +89,19 @@ const styles = StyleSheet.create({
       height: 46,
       borderWidth: 2,
       borderRadius: 10,
-      backgroundColor: '#D9D9D9',
+      backgroundColor: '#F6F6F6',
       paddingHorizontal: 15,
       fontSize: 18,
+      fontFamily: 'Pretendard-Regular',
     },
     SearchButton: {
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-end',
       marginHorizontal: 10,
     },
     MyPageButton: {
       alignItems: 'center',
+      alignSelf: 'flex-end'
     },
     BodyContainer:{
       flex:1,
@@ -125,8 +129,8 @@ const styles = StyleSheet.create({
       backgroundColor:'white',
     },
     BarcodeScanRequestButtonText:{
-      fontSize: 25,
-      fontWeight: 'bold',
+      fontFamily: 'Pretendard-Bold',
+      fontSize: 30,
       color: '#6E91EB',
       lineHeight: 35,
     },
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
     },
     BLCHeaderText: {
       fontSize: 30,
-      fontWeight: 'bold',
+      fontFamily: 'Pretendard-SemiBold',
     },
     BLCHeaderEraseButton:{
       width: 100,
@@ -166,6 +170,7 @@ const styles = StyleSheet.create({
     },
     BLCHeaderEraseButtonText:{
       fontSize: 18,
+      fontFamily: 'Pretendard-Regular',
     },
     Stick:{
       width: '100%',
@@ -182,6 +187,7 @@ const styles = StyleSheet.create({
       marginTop: 12,
     },
     BLCpNodeText:{
+      fontFamily: 'Pretendard-Regular',
       fontSize: 20,
       width: '28%',
       marginRight: 8,
@@ -205,19 +211,19 @@ const styles = StyleSheet.create({
     },
     GrandText:{
       color: 'black',
+      fontFamily: 'Pretendard-Bold',
       fontSize: 25,
-      fontWeight: 'bold',
     },
     GrandSubText:{
       color: '#696969',
+      fontFamily: 'Pretendard-Regular',
       fontSize: 20,
-      fontWeight: 'regular',
     },
     RecentKeywordContainer:{
       flex: 1,
-      //borderWidth: 2,
     },
     RecentKeywordNode:{
+      borderColor: 'Black',
       borderWidth: 2,
       borderRadius: 12,
       justifyContent:'space-between',
@@ -227,20 +233,180 @@ const styles = StyleSheet.create({
       paddingHorizontal: 24,
     },
     RecentKeywordTextContainer:{
-      //borderWidth: 2,
       flex: 1,
-      
     },
     RecentKeywordText:{
+      fontFamily: 'Pretendard-Regular',
       fontSize: 18,
       marginVertical: 12,
+      color: 'black'
     },
     RecentkeywordDeleteButton: {
-      //borderWidth: 2,
       padding: 10,
     },
-    
-
+    SearchResultProductContainer:{
+      flex: 0.5,
+      justifyContent: 'center',
+      flexDirection: 'column',
+    },
+    SearchResultProductNode: {
+      height: 200,
+      borderWidth: 1,
+      borderRadius: 20,
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      flexDirection: 'row',
+      marginBottom: 24,
+      backgroundColor: 'white',
+    },    
+    SearchResultProductImage: {
+      flex: 1,
+      borderRadius: 20,
+      backgroundColor: 'white',
+      marginRight: 24,
+    },
+    SRProductDetailContainer:{
+      flex:3,
+      justifyContent:'flex-start',
+      flexDirection:'column',
+      paddingVertical: 12,
+    },
+    SRProductDetailText:{
+      fontFamily: 'Pretendard-Regular',
+      fontSize: 25,
+      color: 'black',
+      alignSelf: 'flex-start',
+      marginBottom: 10,
+    },
+    ProductDetailScrollContainer:{
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: 50,
+    },
+    ProductMainInfoContainer:{
+      alignItems:'center',
+      width: '100%', 
+    },
+    ImageContainer:{
+      borderWidth: 2,
+      borderRadius: 20,
+      justifyContent:'center',
+      alignItems:'center',
+      width: '20%',
+      height: 300,
+      marginBottom: 24,
+    },
+    ProductMainImage:{
+      borderRadius: 20,
+      width: "100%",
+      height: "100%",
+      resizeMode: 'cover',
+    },
+    ProductSubInfoContainer:{
+      justifyContent:'center',
+      alignItems: 'center',
+      width: '100%',
+    },
+    ProductSubInfoMenuContainer:{
+      width: '50%',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection:'row',
+      marginBottom: 24,
+    },
+    ProductSubInfoMenuNodeContainer:{
+      borderWidth: 2,
+      borderRadius: 20,
+      alignItems:'center',
+      justifyContent:'center',
+      flex: 1,
+      marginHorizontal: 12,
+    },
+    ProductSubInfoMenuNodeContainer_pressed:{
+      borderWidth: 2,
+      borderRadius: 20,
+      alignItems:'center',
+      justifyContent:'center',
+      flex: 1,
+      marginHorizontal: 12,
+      backgroundColor: '#696969',
+    },
+    ProductSubInfoMenuText:{
+      paddingVertical: 6,
+      fontSize: 24,
+      fontFamily: 'Pretendard-Regular',
+      color: 'black'
+    },
+    ProductSubInfoMenuText_pressed:{
+      paddingVertical: 6,
+      fontSize: 24,
+      fontFamily: 'Pretendard-Regular',
+      color: 'white'
+    },
+    ProductDetailImage:{
+      //flex: 1,
+      width: '50%',
+      height: 700,
+      //resizeMode:'contain',
+    },
+    ProductText:{
+      fontSize: 18,
+      fontFamily: 'Pretendard-Regular',
+      color: 'black',
+      marginBottom: 12,
+    },
+    ProductBottomButtonsContainer:{
+      width:'50%',
+      justifyContent: 'space-between',
+      alignItems:'center',
+      alignSelf:'center', 
+      flexDirection: 'row', 
+      backgroundColor: 'white',
+      elevation: 20,
+      borderTopStartRadius:20,borderTopEndRadius:20,
+      borderWidth: 2,
+    },
+    ProductBottomButton:{
+      flex:1,
+      //borderWidth: 2,
+      justifyContent: 'center',
+      alignItems:'center',
+    },
+    ProductBottomButtonText:{
+      fontFamily: 'Pretendard-Regular',
+      fontSize: 24,
+      paddingVertical: 12,
+      color: 'black',
+    },
+    MyPageMenuContainer:{
+      width: '50%',
+      borderWidth: 1  ,
+      borderRadius: 20,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      paddingVertical: 28,
+      marginBottom: 16,
+      backgroundColor: 'white'
+,    },
+    MainText: {
+      fontFamily: 'Pretendard-Regular',
+      fontSize: 24,
+      color: 'black',
+    },
+    RecommendProductListContainer:{
+      flexDirection: 'row',
+    },
+    MyPageMenuIconContainer:{
+      width: 25, 
+      height: 25, 
+      marginRight: 12
+    },
+    MyPageMenuIcon:{
+      width: '100%', 
+      height: '100%'
+    }
   });
 
   export default styles;

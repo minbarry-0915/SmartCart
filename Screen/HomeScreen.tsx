@@ -7,7 +7,7 @@ function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     const [id, setId] = useState('');
     const [password, setPW] = useState('');
     const onLoginButton = () => {
-      navigation.navigate('Main')
+      navigation.navigate('Cart')
     };
   
     const onJoinButton = () => {

@@ -1,12 +1,13 @@
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, { useEffect, useState} from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BarcodeScanner from "../Components/BarcodeScanner";
+import Header from "../Components/Header";
 
 interface Product {
   pNum: string,
@@ -22,7 +23,7 @@ interface Product {
 //   grandCount: number,
 // }
 
-function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
+function CartScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     const [barcodeData, setBarcodeData] = useState<string>('');
     const [responses, setResponses] = useState<Product[]>([]);
     const [grandTotal, setGrandTotal] = useState<number>(0);
@@ -38,6 +39,10 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
 
     const onMyPageButton = () => {
       
+    };
+
+    const onBackButton = () => {
+      navigation.goBack();
     };
   
     const deleteNodeButton = (index: number) =>{
@@ -173,20 +178,9 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
         flex: 1,
         backgroundColor: 'white',
       }}>
-        <View style={styles.HeaderContainer}>
-            <Text style={styles.HeaderTitleText}>
-                장바구니
-            </Text>
-            <View style={styles.SearchContainer}>
-              <TouchableOpacity onPress={onSearchButton} style={styles.SearchButton}>
-                <Ionicons name ='search' size={50} color={'black'}/>
-              </TouchableOpacity>
-              <TouchableOpacity onPress=  {onMyPageButton} style={styles.MyPageButton}>
-                <Ionicons name='person' size={50} color={'black'}/>
-              </TouchableOpacity>
-            </View>
-            
-        </View>
+        {/* header */}
+        <Header showBackButton={true} title={'장바구니'} showSearchContainer={false} showCartButton={false} showMyPageButton={true} showSearchButton={true} navigation={navigation}/>
+        
         <View style={styles.BodyContainer}>
           <View style={styles.BuyingListContainer}>
             <View style={styles.BLCHeaderContainer}>
@@ -254,4 +248,4 @@ function MainScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     )
   }
 
-  export default MainScreen;
+  export default CartScreen;
