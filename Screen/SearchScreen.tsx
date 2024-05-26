@@ -1,6 +1,6 @@
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, useFocusEffect } from "@react-navigation/native";
 import React, {useCallback, useEffect, useState} from "react";
-import {ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -24,11 +24,11 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
                   "pName": "코카콜라"
                 },
                 {
-                  "pNum": '123423',
+                  "pNum": 'asdasasa',
                   "pName": "마이프로틴"
                 },
                 {
-                  "pNum": '123412',
+                  "pNum": 'qweqwqww',
                   "pName": "커피"
                 },
                 {
@@ -90,9 +90,16 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
     };
     
     //처음 한번만 실행됨
-    useEffect(() =>{
-        getRecentKeyWord();
-    },[]);
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        // 페이지가 돌아올 때마다 실행되는 코드
+        getRecentKeyWord(); // 최근 키워드 가져오기
+      });
+  
+      // cleanup 함수로 listener를 제거합니다.
+      return unsubscribe;
+    }, [navigation]);
+
     
     const deleteNodeButton = (index: number) => {
         const newKeywordArray = [...keywordArray];
@@ -101,10 +108,21 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
     };
 
     const onSearchResultButton = () =>{
-        navigation.navigate('SearchResult', {keyword:keyword});
+      navigation.navigate('SearchResult', {resultKeyword:keyword});
+      //recentkeyword put으로 업데이트 해야됨
     };
     const onMyPageButton = () =>{
-    
+    };
+    const onBackButton = () => {
+      navigation.goBack();
+    };
+    const onCartButton = () =>{
+      navigation.navigate('Cart');
+    }
+    const onRecentKeywordNode = (pNum:string) =>{
+      //recentkeyword put으로 업데이트 해야됨
+      navigation.navigate('ProductDetail',{pNum:pNum});
+
     };
 
     const onChangeKeyword = (text: string) => {
@@ -113,36 +131,54 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
     };
 
 
+
     return(
         <SafeAreaView style={{
             flex: 1,
             backgroundColor: 'white',
           }}>
+            {/* header */}
             <View style={styles.HeaderContainer}>
-                <Text style={styles.HeaderTitleText}>
-                    검색
-                </Text>
-                <View style={styles.SearchContainer}>
-                    <TextInput
-                        clearButtonMode='always'
-                        style = {styles.searchInputText}
-                        placeholder='검색어를 입력하세요'
-                        onChangeText={onChangeKeyword}
-                    />
-                    <TouchableOpacity onPress={onSearchResultButton} style={styles.SearchButton}>
-                        <Ionicons name ='search' size={50} color={'black'}/>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
-                    <Ionicons name='person' size={50} color={'black'}/>
+              <View style={{flexDirection:'row', justifyContent: 'center'}}>
+                <TouchableOpacity onPress={onBackButton} >
+                  <Image 
+                source={require('../assets/icon/back.png')}
+                style={{width: 50, height: 50}}/>
                 </TouchableOpacity>
+                <Text style={styles.HeaderTitleText}>
+                 검색
+                </Text>
+              </View>   
+              <View style={styles.SearchContainer}>
+                <TextInput
+                  style = {styles.searchInputText}
+                  placeholder='검색어를 입력하세요'
+                  onChangeText={onChangeKeyword}
+                />
+                <TouchableOpacity onPress={onSearchResultButton} style={styles.SearchButton}>
+                  <Ionicons name ='search' size={50} color={'black'}/>
+                </TouchableOpacity>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity onPress={onCartButton} style={{marginRight: 12}}>
+                  <Image 
+                    source={require('../assets/icon/shoppingCart.png')}
+                    style={{width: 50, height: 53}}  
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
+                  <Ionicons name='person' size={50} color={'black'}/>
+                </TouchableOpacity>
+              </View>
+              
             </View>
+
             <View style={styles.BodyContainer}>
                 <View style={{flex: 0.4}}>
                     <ScrollView style={styles.RecentKeywordContainer}> 
                         {keywordArray.map((keyword, index)=>(
-                        <View style={styles.RecentKeywordNode}>
-                        <TouchableOpacity key={keyword.pNum}  style={styles.RecentKeywordTextContainer}>
+                        <View key={index} style={styles.RecentKeywordNode}>
+                        <TouchableOpacity onPress={()=>onRecentKeywordNode(keyword.pNum)} style={styles.RecentKeywordTextContainer}>
                             <Text style={styles.RecentKeywordText}>{keyword.pName}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  style={styles.RecentkeywordDeleteButton} onPress={()=>deleteNodeButton(index)}>

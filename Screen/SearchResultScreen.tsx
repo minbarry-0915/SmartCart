@@ -1,10 +1,12 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React,{useEffect, useState} from "react";
 import styles from "./StyleSheet";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Button, Image, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 interface MyParams {
-    keyword: string;
+    resultKeyword: string;
     // 다른 매개변수가 있다면 여기에 추가
 }
 interface Product {
@@ -15,15 +17,39 @@ interface Product {
     pPrice: number,
 }
 
-function SearchResultScreen({route} : {route: RouteProp<ParamListBase> }){
-    const {keyword} = route.params as MyParams;
+function SearchResultScreen({route, navigation} : {route: RouteProp<ParamListBase> , navigation: NavigationProp<ParamListBase>}){
+    const {resultKeyword} = route.params as MyParams;
     const [products, setProducts] = useState<Product[]>([]);
+    const [keyword, setKeyword] = useState<string>('');
+    const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
+
     const getResultdata = () =>{
         //서버요청 작성 필요
         const jsonResponse = {
             "data": [
                 {
                     "pNum": '1234',
+                    "pCategory": '마이프로틴',
+                    "pName": '코카콜라난난나나나나나나나나나나나나나나ㅏ나나',
+                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                    "pPrice": 1320,
+                },
+                {
+                    "pNum": '21321',
+                    "pCategory": '마이프로틴',
+                    "pName": '코카콜라',
+                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                    "pPrice": 1320,
+                },
+                {
+                    "pNum": '32523523',
+                    "pCategory": '마이프로틴',
+                    "pName": '코카콜라',
+                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                    "pPrice": 1320,
+                },
+                {
+                    "pNum": '657657',
                     "pCategory": '마이프로틴',
                     "pName": '코카콜라',
                     "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
@@ -48,24 +74,117 @@ function SearchResultScreen({route} : {route: RouteProp<ParamListBase> }){
         };
         setProducts([...jsonResponse.data]);
     };
+    const onSearchResultButton = () =>{
+        //recentkeyword에 해당 keyword 추가하도록 서버에 요청해야됨
+        navigation.navigate('SearchResult', {resultKeyword:keyword});
+    };
+    const onCartButton = () =>{
+        navigation.navigate('Cart');
+    };
+    const onBackButton = () =>{
+        navigation.goBack();
+    }
+    const onMyPageButton = () =>{
+    
+    };
+    const onProductButton = (pNum: string) =>{
+        navigation.navigate('ProductDetail',{pNum: pNum});
+    };
+
+    const onChangeKeyword = (text: string) => {
+        //trim: 양쪽끝의 공백을 제거함
+        setKeyword(text.trim());
+    };
 
     useEffect(()=>{
         getResultdata();
     },[]);
 
+    const scrollViewRef = React.useRef<ScrollView>(null);
+    const scrollToTop = () => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ y: 0, animated: true });
+          }
+      };
+
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        if (offsetY > 100) { // 예시: 스크롤이 100px 이상 내려갔을 때 버튼을 보이게 함
+            setScrollToTopButtonVisible(true);
+        } else {
+            setScrollToTopButtonVisible(false);
+        }
+    };
+
     return(
-        <View>
-            <ScrollView>
-                {products.map((product, index) =>(
-                    <View key={product.pNum}>
-                        <Text>{product.pName}</Text>
-                        <Text>{product.pCategory}</Text>
-                        <Image source={{uri:product.pImage}} style={{width: 200, height: 200}}/>
-                        <Text>{product.pPrice}원</Text>
-                    </View> 
-                ))}
-            </ScrollView>
-        </View>
+        <SafeAreaView style={{
+            flex: 1,
+            backgroundColor: 'white',
+          }}>
+            {/* header */}
+            <View style={styles.HeaderContainer}>
+              <View style={{flexDirection:'row', justifyContent: 'center'}}>
+                <TouchableOpacity onPress={onBackButton} >
+                  <Image 
+                source={require('../assets/icon/back.png')}
+                style={{width: 50, height: 50}}/>
+                </TouchableOpacity>
+                <Text style={styles.HeaderTitleText}>
+                 검색
+                </Text>
+              </View>   
+              <View style={styles.SearchContainer}>
+                <TextInput
+                  style = {styles.searchInputText}
+                  placeholder={resultKeyword}
+                  onChangeText={onChangeKeyword}
+                />
+                <TouchableOpacity onPress={onSearchResultButton} style={styles.SearchButton}>
+                  <Ionicons name ='search' size={50} color={'black'}/>
+                </TouchableOpacity>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity onPress={onCartButton} style={{marginRight: 12}}>
+                  <Image 
+                    source={require('../assets/icon/shoppingCart.png')}
+                    style={{width: 50, height: 53}}  
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
+                  <Ionicons name='person' size={50} color={'black'}/>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.BodyContainer}>
+                <View style={styles.SearchResultProductContainer}>
+                    <ScrollView 
+                        ref={scrollViewRef}
+                        onScroll={handleScroll}
+                        scrollEventThrottle={16}>
+                        {products.map((product, index) =>(
+                            <TouchableOpacity key={index} onPress={()=>onProductButton(product.pNum)} style={styles.SearchResultProductNode}>
+                                <Image source={{uri:product.pImage}} style={styles.SearchResultProductImage}/>
+                                <View style={styles.SRProductDetailContainer}>
+                                    <Text style={styles.SRProductDetailText}>{product.pCategory}</Text>
+                                    <Text style={[styles.SRProductDetailText]}>{product.pName}</Text>
+                                    <Text style={   [styles.SRProductDetailText,{fontFamily: 'Pretendard-Bold',alignSelf: 'flex-end'}]}>{product.pPrice}원</Text>
+                                </View>
+                                
+                            </TouchableOpacity> 
+                        ))}
+                    </ScrollView>
+                    {scrollToTopButtonVisible && (
+                        <TouchableOpacity onPress={scrollToTop} style={{alignSelf:'center'}}>
+                            <AntDesign name='upcircleo'
+                            size={42} color='black'/>
+                        </TouchableOpacity>
+                    )}
+                    
+                </View>
+            </View>
+            
+        </SafeAreaView>
     );
 }
 export default SearchResultScreen;
