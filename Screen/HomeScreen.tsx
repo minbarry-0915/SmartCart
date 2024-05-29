@@ -6,8 +6,13 @@ import styles from "./StyleSheet";
 function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) { //navigation의 타입을 정의를 해주어야함 
     const [id, setId] = useState('');
     const [password, setPW] = useState('');
+    const [loginstatus, setLoginStatus] = useState<boolean>(false);
+
     const onLoginButton = () => {
-      navigation.navigate('Cart')
+      //서버요청 작성 필요 success 반환받으면 이동
+      setLoginStatus(true);
+
+      navigation.navigate('Cart',{id:id});
     };
   
     const onJoinButton = () => {
@@ -21,6 +26,8 @@ function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     const onFindPWButton = () => {
   
     };
+
+    
   
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -42,7 +49,10 @@ function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
           defaultValue={password}
         />
   
-        <TouchableOpacity onPress={onLoginButton} activeOpacity={0.8} style={styles.loginButton}>
+        <TouchableOpacity 
+        onPress={onLoginButton} 
+        activeOpacity={0.8} 
+        style={styles.loginButton}>
           <Text style={styles.loginButtonText}>LOGIN</Text>
         </TouchableOpacity>
   

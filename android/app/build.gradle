@@ -104,6 +104,11 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'generateReleaseLintVitalReportModel') {
+            task.dependsOn 'copyReactNativeVectorIconFonts'
+        }
+    }
 }
 
 dependencies {

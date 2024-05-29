@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "../Screen/StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
@@ -11,6 +11,7 @@ const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showC
     const [searchButton, setSearchButton] = useState(false);
     const [cartButton, setCartButton] = useState(false);
     const [myPageButton, setMyPageButton] = useState(false);
+    const [keyword, setKeyword] = useState<string>('');
 
     useEffect(() => {
         setBackButton(showBackButton);
@@ -33,6 +34,21 @@ const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showC
     const onMyPageButton = () => {
         navigation.navigate('MyPage');
     }
+    const onSearchResultButton = () =>{
+        navigation.navigate('SearchResult', {resultKeyword:keyword});
+        //recentkeyword put으로 업데이트 해야됨
+    };
+    const onRecentKeywordNode = (pNum:string) =>{
+        //recentkeyword put으로 업데이트 해야됨
+        navigation.navigate('ProductDetail',{pNum:pNum});
+    };
+    const onChangeKeyword = (text: string) => {
+        //trim: 양쪽끝의 공백을 제거함
+        setKeyword(text.trim());
+    };
+    const onTextInput = () =>{
+        navigation.navigate('Search');
+    }
 
     return(
         <View style={styles.HeaderContainer}>
@@ -47,7 +63,21 @@ const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showC
                 <Text style={styles.HeaderTitleText}>
                  {title}
                 </Text>
-              </View>   
+              </View>
+                {showSearchContainer == true && (
+                    <View style={styles.SearchContainer}>
+                        <TextInput
+                        style = {styles.searchInputText}
+                        placeholder='검색어를 입력하세요'
+                        onChangeText={onChangeKeyword}
+                        //onFocus={onTextInput}
+                        />
+                        <TouchableOpacity onPress={()=>onSearchResultButton()}style={styles.SearchButton}>
+                            <Ionicons name ='search' size={50} color={'black'}/>
+                        </TouchableOpacity>
+                    </View> 
+                )}
+                
               <View style={{flexDirection: 'row'}}>
                 {searchButton == true && (
                     <TouchableOpacity onPress={onSearchButton} style={styles.SearchButton}>
@@ -60,7 +90,7 @@ const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showC
                         source={require('../assets/icon/shoppingCart.png')}
                         style={{width: 50, height: 53}}  
                         />
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
                 )}
                 {myPageButton == true && (
                     <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>

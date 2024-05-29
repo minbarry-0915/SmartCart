@@ -1,8 +1,10 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import React,{useEffect, useState} from "react";
+import React,{useEffect, useRef, useState} from "react";
 import styles from "./StyleSheet";
-import { Button, Image, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Animated, Button, Easing, Image, Modal, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Header from "../Components/Header";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Feather from "react-native-vector-icons/Feather";
 //import ProductBottomModal from "../Components/ProductBottomModal";
 
 interface MyParams{
@@ -32,6 +34,11 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
      });
     const [isInfoButtonPressed, setIsInfoButtonPressed] = useState<boolean>(true);
     const [isReviewButtonPressed, setIsReviewButtonPressed] = useState<boolean>(false);
+    const [locationModalVisible, setLocationModalVisible] = useState<boolean>(false);
+    const [addCartModalVisible, setAddCartModalVisible] = useState<boolean>(false);
+    const slideAnim = useRef(new Animated.Value(300)).current;
+    const [count, setCount] = useState<number>(0);
+    const [grandPrice, setGrandPrice] = useState<number>(0);
     
     const handleInfoPressIn = () =>{
         setIsInfoButtonPressed(true);
@@ -41,8 +48,27 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
         setIsInfoButtonPressed(false);
         setIsReviewButtonPressed(true);
     };
+    const toggleLocationModal = () => {
+        setLocationModalVisible(!locationModalVisible);
+    };
+    const toggleAddCartModal = () => {
+        if (addCartModalVisible) {
+          // 모달이 닫힐 때 슬라이드 다운 애니메이션 실행
+          Animated.timing(slideAnim, {
+            toValue: 300,
+            duration: 300,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            setAddCartModalVisible(false);
+          });
+        } else {
+          setAddCartModalVisible(true);
+        }
+      };
 
     const getProductDetail = () => {
+        console.log(pNum);
         //서버요청 작성 필요
         const jsonResponse = {
             "pNum": "1234",
@@ -57,11 +83,51 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
             "location": "e3",
         };  
         setProduct(jsonResponse);
+        setCount(1);
+        setGrandPrice(product.price);
+    }
+    const increaseCount = () =>{
+        const newCount = count + 1;
+        setCount(newCount);
+    }
+    const decreaseCount = () =>{
+        if(count > 1){
+            const newCount = count - 1;
+            setCount(newCount);
+        }
+    }
+    const onAddCartButton = (id:string, count:number) => {
+        //서버 카트에 등록해야됨
+
+        toggleAddCartModal();
     }
 
     useEffect(()=>{
+        if (addCartModalVisible) {
+            Animated.timing(slideAnim, {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.ease,
+              useNativeDriver: true,
+            }).start();
+          } else {
+            Animated.timing(slideAnim, {
+              toValue: 300,
+              duration: 300,
+              easing: Easing.ease,
+              useNativeDriver: true,
+            }).start();
+          }
         getProductDetail();
-    },[]);
+        
+    },[addCartModalVisible, slideAnim]);
+
+    useEffect(()=>{
+        const newGrandPrice = product.price * count;
+        setGrandPrice(newGrandPrice);
+        console.log(count);
+    },[count])
+    
     
 
     return(
@@ -119,6 +185,7 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
                         activeOpacity={0.6}
                         style={[styles.ProductBottomButton,{borderEndWidth: 1, backgroundColor: '#FFE68C',borderTopStartRadius:20,
                         }]}
+                        onPress={toggleLocationModal}
                     >
                         <Text style={styles.ProductBottomButtonText}>상품위치보기</Text>
                     </TouchableOpacity>
@@ -126,10 +193,92 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
                         activeOpacity={0.6}
                         style={[styles.ProductBottomButton,{borderEndWidth: 1, backgroundColor: '#9AB4F5',borderTopEndRadius:20,
                         }]}
+                        onPress={toggleAddCartModal}
                     >
                         <Text style={styles.ProductBottomButtonText}>장바구니에 담기</Text>
                     </TouchableOpacity>
+            </View>
+            {/* locationModal */}
+            <Modal 
+            animationType='fade'
+            transparent={true}
+            visible={locationModalVisible}
+            onRequestClose={toggleLocationModal}
+            >
+                <TouchableOpacity
+                activeOpacity={1} 
+                style={styles.ProductLocationModalContainer}>
+                    <View style={styles.ProductLocationModalContent}>
+                        <View style={styles.ProductLocationModalContentHeader}>
+                            <View style={{flexDirection:'row', alignItems:'baseline',justifyContent:'center'}}>
+                                <Text style={[styles.SemiBoldText,{fontSize: 36,color:'#0262F1'}]}>{product.location} </Text>
+                                <Text style={styles.MainText}>에 위치하고 있어요!</Text>
+                            </View>
+                            <TouchableOpacity onPress={toggleLocationModal}>
+                                <AntDesign name="closecircleo" size={40} color={'black'}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.ProductLocationModalMapContainter}>
+                            <Text>this is map</Text>   
+                        </View>
+                    </View>
+                    
+                </TouchableOpacity>
+            </Modal>
+            {/* addCartModal */}
+            <Modal
+            animationType='fade'
+            transparent={true}
+            visible={addCartModalVisible}
+            onRequestClose={toggleAddCartModal}
+            >
+                <View style={styles.AddCartModalContainer}>
+                    <Animated.View style={[styles.AddCartModalContent, { transform: [{ translateY: slideAnim }] }]}>
+                        <View style={{alignItems:"center"}}>
+                            <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={toggleAddCartModal}
+                            >
+                                <Feather name="chevron-down" size={40} color='black'/>
+                            </TouchableOpacity>
+                            <View 
+                            style={{
+                                width:'100%',
+                                flexDirection: 'row',justifyContent:'space-between',    
+                            }}>
+                                <Text style={styles.MainText}>{grandPrice}원</Text>
+                                <View style={{justifyContent:'center',alignItems:'center',flexDirection: 'row'}}>
+                                    <TouchableOpacity
+                                    onPress={decreaseCount} 
+                                    style={styles.ModalIconContainer}>
+                                        <Feather 
+                                        name="minus-circle" 
+                                        size={24} 
+                                        color={'black'}/>
+                                    </TouchableOpacity>
+                                    <Text style={styles.MainText}>{count}</Text>
+                                    <TouchableOpacity
+                                    onPress={increaseCount}
+                                    style={[styles.ModalIconContainer,{marginRight:0}]}>
+                                        <Feather 
+                                        name="plus-circle" 
+                                        size={24}
+                                        color={'black'}/>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                        
+                        
+                        <TouchableOpacity
+                        onPress={()=>{onAddCartButton(product.pNum,count)}}
+                        style={styles.AddCartButton}>
+                            <Text style={[styles.MediumText,{fontSize:20}]} >장바구니 추가</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
                 </View>
+            </Modal>
+
         </SafeAreaView>
     );
 }

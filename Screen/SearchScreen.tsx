@@ -5,6 +5,7 @@ import styles from "./StyleSheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Header from "../Components/Header";
 
 interface Keyword {
     pNum: string,
@@ -107,75 +108,28 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
         setKeywordArray(newKeywordArray);   
     };
 
-    const onSearchResultButton = () =>{
-      navigation.navigate('SearchResult', {resultKeyword:keyword});
-      //recentkeyword put으로 업데이트 해야됨
-    };
-    const onMyPageButton = () =>{
-    };
-    const onBackButton = () => {
-      navigation.goBack();
-    };
-    const onCartButton = () =>{
-      navigation.navigate('Cart');
-    }
     const onRecentKeywordNode = (pNum:string) =>{
       //recentkeyword put으로 업데이트 해야됨
       navigation.navigate('ProductDetail',{pNum:pNum});
-
     };
-
-    const onChangeKeyword = (text: string) => {
-        //trim: 양쪽끝의 공백을 제거함
-        setKeyword(text.trim());
-    };
-
-
 
     return(
         <SafeAreaView style={{
             flex: 1,
             backgroundColor: 'white',
           }}>
-            {/* header */}
-            <View style={styles.HeaderContainer}>
-              <View style={{flexDirection:'row', justifyContent: 'center'}}>
-                <TouchableOpacity onPress={onBackButton} >
-                  <Image 
-                source={require('../assets/icon/back.png')}
-                style={{width: 50, height: 50}}/>
-                </TouchableOpacity>
-                <Text style={styles.HeaderTitleText}>
-                 검색
-                </Text>
-              </View>   
-              <View style={styles.SearchContainer}>
-                <TextInput
-                  style = {styles.searchInputText}
-                  placeholder='검색어를 입력하세요'
-                  onChangeText={onChangeKeyword}
-                />
-                <TouchableOpacity onPress={onSearchResultButton} style={styles.SearchButton}>
-                  <Ionicons name ='search' size={50} color={'black'}/>
-                </TouchableOpacity>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity onPress={onCartButton} style={{marginRight: 12}}>
-                  <Image 
-                    source={require('../assets/icon/shoppingCart.png')}
-                    style={{width: 50, height: 53}}  
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
-                  <Ionicons name='person' size={50} color={'black'}/>
-                </TouchableOpacity>
-              </View>
-              
-            </View>
+            <Header 
+            showBackButton={true}
+            showCartButton={true}
+            showMyPageButton={true}
+            showSearchContainer={true}
+            navigation={navigation}/>
 
             <View style={styles.BodyContainer}>
                 <View style={{flex: 0.4}}>
-                    <ScrollView style={styles.RecentKeywordContainer}> 
+                    <ScrollView
+                    showsVerticalScrollIndicator={false} 
+                    style={styles.RecentKeywordContainer}> 
                         {keywordArray.map((keyword, index)=>(
                         <View key={index} style={styles.RecentKeywordNode}>
                         <TouchableOpacity onPress={()=>onRecentKeywordNode(keyword.pNum)} style={styles.RecentKeywordTextContainer}>
