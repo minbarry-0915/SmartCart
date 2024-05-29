@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       marginBottom: 12, 
       paddingHorizontal: 24,
+      paddingVertical: 6,
     },
     RecentKeywordTextContainer:{
       flex: 1,
@@ -378,6 +379,63 @@ const styles = StyleSheet.create({
       paddingVertical: 12,
       color: 'black',
     },
+    ProductLocationModalContainer:{
+      flex:1,
+      justifyContent: 'center',
+      alignItems:'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    ProductLocationModalContent:{
+      width: '50%',
+      height: '80%',
+      backgroundColor:'white',
+      borderWidth: 2,
+      borderRadius: 20,
+      justifyContent: 'flex-start',
+      padding:42,
+    },
+    ProductLocationModalContentHeader:{
+      width: "100%",
+      height: 40,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'center',
+      marginBottom: 24,
+    },
+    ProductLocationModalMapContainter:{
+      flex: 1,
+      borderWidth:2,
+    },
+    AddCartModalContainer:{
+      flex:1,
+      justifyContent:'flex-end',
+      alignItems:'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    AddCartModalContent:{
+      width:'30%',
+      height:248,
+      justifyContent:'space-between',
+      alignItems:'center',
+      backgroundColor:'white',
+      borderWidth: 1,
+      borderTopLeftRadius:20,
+      borderTopRightRadius:20,
+      paddingHorizontal:24,
+      paddingVertical:12,
+    },
+    ModalIconContainer:{
+      marginHorizontal: 12,
+    },
+    AddCartButton:{
+      justifyContent: 'center',
+      alignItems:'center',
+      backgroundColor:'#9AB4F5',
+      borderRadius: 15,
+      paddingVertical: 8,
+      paddingHorizontal: 24,
+      alignSelf: 'flex-end'
+    },
     MyPageMenuContainer:{
       width: '50%',
       borderWidth: 1  ,
@@ -406,6 +464,66 @@ const styles = StyleSheet.create({
     MyPageMenuIcon:{
       width: '100%', 
       height: '100%'
+    },
+    RecentProductContainer:{
+      //borderWidth:2,
+      width: 150,
+      height: 244,
+      marginRight: 12
+    },
+    RecentProductImage:{
+      width: '100%',
+      height: 188,
+      borderRadius: 20,
+      marginBottom: 8.5,
+    },
+    SemiBoldText:{
+      fontFamily: 'Pretendard-SemiBold',
+      color: 'black',
+    },
+    OrderContainer:{
+      width: '50%',
+      borderWidth:1,
+      borderRadius: 20,
+      marginBottom: 24,
+      paddingHorizontal:24,
+      paddingVertical:12,
+    },
+    OrderSubContainer:{
+      width: '100%',
+      paddingVertical:12,
+      justifyContent: 'flex-start',
+      alignItems:'flex-start',
+      //borderWidth:1,
+    },
+    OrderProductImageContainer:{
+      width: 100,
+      height: 125,
+      marginRight: 12,
+      borderRadius: 20,
+      borderWidth: 1,
+      backgroundColor:'#FFE68C'
+    },
+    OrderProductImage:{
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+      borderRadius: 20,
+    },
+    OrderListPNameContainer:{
+      width:'100%',
+      justifyContent:'center',
+      marginBottom: 24,
+      //borderWidth:2,
+    },
+    OrderProductQuantityText:{
+      fontFamily:'Pretendard-Light',
+      color:'#696969',
+      fontSize: 14,
+    },
+    MediumText:{
+      fontFamily:'Pretendard-Medium',
+      color: 'black',
     }
   });
 

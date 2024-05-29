@@ -4,6 +4,7 @@ import styles from "./StyleSheet";
 import { Button, Image, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Header from "../Components/Header";
 
 interface MyParams {
     resultKeyword: string;
@@ -24,6 +25,7 @@ function SearchResultScreen({route, navigation} : {route: RouteProp<ParamListBas
     const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
 
     const getResultdata = () =>{
+        console.log({resultKeyword});
         //서버요청 작성 필요
         const jsonResponse = {
             "data": [
@@ -74,26 +76,9 @@ function SearchResultScreen({route, navigation} : {route: RouteProp<ParamListBas
         };
         setProducts([...jsonResponse.data]);
     };
-    const onSearchResultButton = () =>{
-        //recentkeyword에 해당 keyword 추가하도록 서버에 요청해야됨
-        navigation.navigate('SearchResult', {resultKeyword:keyword});
-    };
-    const onCartButton = () =>{
-        navigation.navigate('Cart');
-    };
-    const onBackButton = () =>{
-        navigation.goBack();
-    }
-    const onMyPageButton = () =>{
-    
-    };
+   
     const onProductButton = (pNum: string) =>{
         navigation.navigate('ProductDetail',{pNum: pNum});
-    };
-
-    const onChangeKeyword = (text: string) => {
-        //trim: 양쪽끝의 공백을 제거함
-        setKeyword(text.trim());
     };
 
     useEffect(()=>{
@@ -121,47 +106,21 @@ function SearchResultScreen({route, navigation} : {route: RouteProp<ParamListBas
             flex: 1,
             backgroundColor: 'white',
           }}>
-            {/* header */}
-            <View style={styles.HeaderContainer}>
-              <View style={{flexDirection:'row', justifyContent: 'center'}}>
-                <TouchableOpacity onPress={onBackButton} >
-                  <Image 
-                source={require('../assets/icon/back.png')}
-                style={{width: 50, height: 50}}/>
-                </TouchableOpacity>
-                <Text style={styles.HeaderTitleText}>
-                 검색
-                </Text>
-              </View>   
-              <View style={styles.SearchContainer}>
-                <TextInput
-                  style = {styles.searchInputText}
-                  placeholder={resultKeyword}
-                  onChangeText={onChangeKeyword}
-                />
-                <TouchableOpacity onPress={onSearchResultButton} style={styles.SearchButton}>
-                  <Ionicons name ='search' size={50} color={'black'}/>
-                </TouchableOpacity>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity onPress={onCartButton} style={{marginRight: 12}}>
-                  <Image 
-                    source={require('../assets/icon/shoppingCart.png')}
-                    style={{width: 50, height: 53}}  
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onMyPageButton} style={styles.MyPageButton}>
-                  <Ionicons name='person' size={50} color={'black'}/>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <Header 
+            showBackButton={true}
+            showCartButton={true}
+            showMyPageButton={true}
+            showSearchContainer={true}
+            navigation={navigation}/>
 
             <View style={styles.BodyContainer}>
                 <View style={styles.SearchResultProductContainer}>
                     <ScrollView 
                         ref={scrollViewRef}
                         onScroll={handleScroll}
-                        scrollEventThrottle={16}>
+                        showsVerticalScrollIndicator={false}
+                        scrollEventThrottle={16}
+                        >
                         {products.map((product, index) =>(
                             <TouchableOpacity key={index} onPress={()=>onProductButton(product.pNum)} style={styles.SearchResultProductNode}>
                                 <Image source={{uri:product.pImage}} style={styles.SearchResultProductImage}/>

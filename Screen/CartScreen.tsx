@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState} from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
@@ -22,159 +22,216 @@ interface Product {
 //   grandDiscountPrice: number,
 //   grandCount: number,
 // }
+interface MyParams {
+  //유저 id
+  id: string,
+}
 
-function CartScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
-    const [barcodeData, setBarcodeData] = useState<string>('');
-    const [responses, setResponses] = useState<Product[]>([]);
-    const [grandTotal, setGrandTotal] = useState<number>(0);
-    const [grandDiscount, setGrandDiscount] = useState<number>(0);
-    const [grandCount, setGrandCount] = useState<number>(0);
-    const [grandPrice, setGrandPrice] = useState<number>(0);
-    
-    
+function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigation: NavigationProp<ParamListBase>}){
+  const {id} = route.params as MyParams;
+
+  const [barcodeData, setBarcodeData] = useState<string>('');
+  const [responses, setResponses] = useState<Product[]>([]);
+  const [grandTotal, setGrandTotal] = useState<number>(0);
+  const [grandDiscount, setGrandDiscount] = useState<number>(0);
+  const [grandCount, setGrandCount] = useState<number>(0);
+  const [grandPrice, setGrandPrice] = useState<number>(0);
   
-    const onSearchButton = () => {
-      navigation.navigate('Search');
-    };
-
-    const onMyPageButton = () => {
-      
-    };
-
-    const onBackButton = () => {
-      navigation.goBack();
-    };
   
-    const deleteNodeButton = (index: number) =>{
-      const newResponses = [...responses];
-      //index의 위치에서 1개의 node를 제거
-      newResponses.splice(index,1);
-      setResponses(newResponses);
-    };
 
-    const deleteAllNodes = () =>{
-      setResponses([]);
-    };
+  const onSearchButton = () => {
+    navigation.navigate('Search');
+  };
 
-    const decreaseCount = (response: Product) =>{
-      if(response.count!= 1){
-        const updateResponses = responses.map(product =>{
-        if(response.pNum == product.pNum){
-          const newCount:number = product.count-1;
-          const newTotal:number = newCount*(product.price-product.discount);
+  const onMyPageButton = () => {
+    
+  };
 
-          //spread 문법
-          return {...product,count:newCount,total:newTotal};
-        }
-        else{
-          return product;
-        }
-      });
-      setResponses(updateResponses);
-      }
-    };
-    const increaseCount = (response: Product) =>{
+  const onBackButton = () => {
+    navigation.goBack();
+  };
+
+  const deleteNodeButton = (index: number) =>{
+    const newResponses = [...responses];
+    //index의 위치에서 1개의 node를 제거
+    newResponses.splice(index,1);
+    setResponses(newResponses);
+  };
+
+  const deleteAllNodes = () =>{
+    setResponses([]);
+  };
+  const decreaseCount = (response: Product) =>{
+    if(response.count!= 1){
       const updateResponses = responses.map(product =>{
-        if(response.pNum == product.pNum){
+      if(response.pNum == product.pNum){
+        const newCount:number = product.count-1;
+        const newTotal:number = newCount*(product.price-product.discount);
+
+        //spread 문법
+        return {...product,count:newCount,total:newTotal};
+      }
+      else{
+        return product;
+      }
+    });
+    setResponses(updateResponses);
+    }
+  };
+  const increaseCount = (response: Product) =>{
+    const updateResponses = responses.map(product =>{
+      if(response.pNum == product.pNum){
+        const newCount:number = product.count+1;
+        const newTotal:number = newCount*(product.price-product.discount);
+
+        //spread 문법
+        return {...product,count:newCount,total:newTotal};
+      }
+      else{
+        return product;
+      }
+    });
+    setResponses(updateResponses);
+  };
+
+  const getCartList = () => {
+    //서버에 아이디를 이용해서 요청해야됨
+    console.log('welcome'+id);
+    const jsonResponse = [
+      {
+        "pNum": "P001",
+        "pName": "Product 1",
+        "count": 10,
+        "price": 100,
+        "discount": 10,
+        "total": 90
+      },
+      {
+        "pNum": "P002",
+        "pName": "Product 2",
+        "count": 5,
+        "price": 200,
+        "discount": 20,
+        "total": 180
+      },
+      {
+        "pNum": "P003",
+        "pName": "Product 3",
+        "count": 3,
+        "price": 300,
+        "discount": 15,
+        "total": 285
+      },
+      {
+        "pNum": "P004",
+        "pName": "Product 4",
+        "count": 7,
+        "price": 400,
+        "discount": 25,
+        "total": 375
+      },
+      {
+        "pNum": "P005",
+        "pName": "Product 5",
+        "count": 12,
+        "price": 150,
+        "discount": 5,
+        "total": 145
+      }
+    ]
+    setResponses(jsonResponse);
+  }
+
+  useEffect(()=>{
+    getCartList();
+  },[])
+
+  useEffect(() => {
+    // 총 결제금액, 할인 금액, 수량 업데이트
+    let newGrandTotal: number = 0;
+    let newGrandDiscount: number = 0;
+    let newGrandCount: number = 0;
+    let newGrandPrice: number = 0;
+    responses.forEach(product => {
+      newGrandTotal += product.total;
+      newGrandDiscount += product.discount*product.count;
+      newGrandCount += product.count;
+      newGrandPrice += product.price*product.count;
+    });
+    setGrandTotal(newGrandTotal);
+    setGrandDiscount(newGrandDiscount);
+    setGrandCount(newGrandCount);
+    setGrandPrice(newGrandPrice);
+  }, [responses]);
+  
+  const handleBarcodeScan = (data: string) => {
+    //바코드데이터 세팅하고 이 바코드로 서버에 요청 보내야 됨.
+    setBarcodeData(data);
+    //요청 부분 작성 필요
+    
+    //기존 response배열에 있는지 탐색
+    const foundProduct = responses.find(product => product.pNum == data)
+
+    //있으면 count 업데이트
+    if(foundProduct){
+      const updateResponses = responses.map(product => {
+        if(product.pNum == data){
           const newCount:number = product.count+1;
           const newTotal:number = newCount*(product.price-product.discount);
 
           //spread 문법
           return {...product,count:newCount,total:newTotal};
         }
-        else{
+        else
           return product;
-        }
       });
       setResponses(updateResponses);
-    };
-
-    useEffect(() => {
-      // 총 결제금액, 할인 금액, 수량 업데이트
-      let newGrandTotal: number = 0;
-      let newGrandDiscount: number = 0;
-      let newGrandCount: number = 0;
-      let newGrandPrice: number = 0;
-      responses.forEach(product => {
-        newGrandTotal += product.total;
-        newGrandDiscount += product.discount*product.count;
-        newGrandCount += product.count;
-        newGrandPrice += product.price*product.count;
-      });
-      setGrandTotal(newGrandTotal);
-      setGrandDiscount(newGrandDiscount);
-      setGrandCount(newGrandCount);
-      setGrandPrice(newGrandPrice);
-    }, [responses]);
-    
-    const handleBarcodeScan = (data: string) => {
-      //바코드데이터 세팅하고 이 바코드로 서버에 요청 보내야 됨.
-      setBarcodeData(data);
-      //요청 부분 작성 필요
-      
-      //기존 response배열에 있는지 탐색
-      const foundProduct = responses.find(product => product.pNum == data)
-
-      //있으면 count 업데이트
-      if(foundProduct){
-        const updateResponses = responses.map(product => {
-          if(product.pNum == data){
-            const newCount:number = product.count+1;
-            const newTotal:number = newCount*(product.price-product.discount);
-
-            //spread 문법
-            return {...product,count:newCount,total:newTotal};
-          }
-          else
-            return product;
-        });
-        setResponses(updateResponses);
-      }//없으면 post로 받아온 json값 response배열에 추가
-      else{
-        const jsonResponse = {
-          pNum: 'as123121412123',
-          pName: '이건 상품명이다',
-          count: 1,
-          price: 100000,
-          discount: 10000,
-        };
-        const total: number = jsonResponse.price - jsonResponse.discount;
-        const response = {
-          pNum: jsonResponse.pNum,
-          pName: jsonResponse.pName,
-          count: jsonResponse.count,
-          price: jsonResponse.price,
-          discount: jsonResponse.discount,
-          total: total
-        };
-        setResponses([...responses, response]);
-      }
-      //총 결제금액, 할인 금액, 수량 업데이트
-      
+    }//없으면 post로 받아온 json값 response배열에 추가
+    else{
+      const jsonResponse = {
+        pNum: 'as123121412123',
+        pName: '이건 상품명이다',
+        count: 1,
+        price: 100000,
+        discount: 10000,
+      };
+      const total: number = jsonResponse.price - jsonResponse.discount;
+      const response = {
+        pNum: jsonResponse.pNum,
+        pName: jsonResponse.pName,
+        count: jsonResponse.count,
+        price: jsonResponse.price,
+        discount: jsonResponse.discount,
+        total: total
+      };
+      setResponses([...responses, response]);
     }
+    //총 결제금액, 할인 금액, 수량 업데이트
+    
+  }
 
-    // const sendData = async () =>{
-    //   try{
-    //     const dataToSend = {
-    //       barcodeData: barcodeData,
-    //     };
-    //     //주소 넣어야됨
-    //     const response = await fetch('',{
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type':'application/json', 
-    //       },
-    //       body: JSON.stringify(dataToSend)
-    //     });
-    //     const jsonResponse = await response.json();
-    //   } catch(error){
-    //     console.error('Error fetching Data: ', error);
-    //   }
-    // };
+  // const sendData = async () =>{
+  //   try{
+  //     const dataToSend = {
+  //       barcodeData: barcodeData,
+  //     };
+  //     //주소 넣어야됨
+  //     const response = await fetch('',{
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type':'application/json', 
+  //       },
+  //       body: JSON.stringify(dataToSend)
+  //     });
+  //     const jsonResponse = await response.json();
+  //   } catch(error){
+  //     console.error('Error fetching Data: ', error);
+  //   }
+  // };
 
 
-    return(
-      <SafeAreaView style={{
+  return(
+    <SafeAreaView style={{
         flex: 1,
         backgroundColor: 'white',
       }}>
