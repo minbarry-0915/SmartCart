@@ -8,7 +8,7 @@ import { Camera, CameraType } from "react-native-camera-kit";
 import styles from "../Screen/StyleSheet";
 
 const BarcodeScanner = ({onScan} : {onScan: (data: string) => void}) => {
-  const [scaned, setScaned] = useState<boolean>(true);
+  const [scaned, setScaned] = useState<boolean>(false);
   const [barcodeData, setBarcodeData] = useState<string>('');
 
   useEffect(() => {

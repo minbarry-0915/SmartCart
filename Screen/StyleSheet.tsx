@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
       paddingVertical: 25,
     },
     loginButton: {
-      width: 360,
+      width: "30%",
       height: 50,
       backgroundColor: "#000000",
       padding: 10,
@@ -37,9 +37,11 @@ const styles = StyleSheet.create({
       fontFamily: 'Pretendard-SemiBold',
       textAlign: 'center',
     },
+    TextInputContainer:{
+      width: '30%'
+    },
     inputText: {
       height: 50,
-      width: 360,
       fontSize: 18,
       fontFamily: 'Pretendard-Regular',
       borderWidth: 1,
@@ -48,7 +50,9 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       backgroundColor: '#D9D9D9',
       color: "#696969",
-      paddingHorizontal: 12
+      paddingHorizontal: 12,
+      justifyContent:"center",
+      alignItems:'center'
     },
     subButtonGroup:{
       justifyContent: 'center',
@@ -64,6 +68,35 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       fontFamily: 'Pretendard-Regular',
       fontSize: 15,
+    },
+    JoinContent:{
+      width:"45%",
+      flexDirection:'row',
+      justifyContent:'space-between', 
+      alignItems:'center',
+      //borderWidth: 2,
+      marginBottom:24,
+    },
+    DropDownButton:{
+      flex: 1,
+      height: 50,
+      backgroundColor: '#D9D9D9',
+      borderRadius: 10,
+      borderWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 12,
+    },
+    DropDownItem:{
+      width:'100%',
+      justifyContent:'center',
+      alignItems:'center',
+      paddingVertical: 8,
+    },
+    DropdownMenu:{
+      borderRadius: 10,
+      backgroundColor:'#D9D9D9',  
     },
     HeaderContainer:{
       justifyContent: 'space-between',
@@ -520,6 +553,32 @@ const styles = StyleSheet.create({
       fontFamily:'Pretendard-Light',
       color:'#696969',
       fontSize: 14,
+    },
+    OrderTotalContainer:{
+      width:'100%',
+      //borderWidth: 2,
+      paddingHorizontal: 12,
+    },
+    OrderTotalContent:{
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems:"center",
+      marginBottom: 12,
+    },
+    LightText:{
+      fontFamily:'Pretendard-Light',
+      color: 'black',
+      fontSize: 18,
+    },
+    OrderListButton:{
+      width: '100%',
+      height: 52,
+      justifyContent: 'center',
+      alignItems:'center',
+      borderRadius: 14,
+      borderWidth: 1,
+      backgroundColor: '#757575'
     },
     MediumText:{
       fontFamily:'Pretendard-Medium',

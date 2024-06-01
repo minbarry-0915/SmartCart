@@ -4,9 +4,9 @@ import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "r
 import Header from "../Components/Header";
 import styles from "./StyleSheet";
 import OrderList from "../Components/OrderList";
-interface MyParams{
-    id: string,
-};
+import { useSelector } from "react-redux";
+import { RootState } from "../Redux/store";
+
 
 interface Product {
     pNum: string;
@@ -26,10 +26,13 @@ interface Order {
 
 
 function OrderListScreen({navigation, route}:{navigation:NavigationProp<ParamListBase>, route:RouteProp<ParamListBase>}){
-    const {id} = route.params as MyParams;
+    //redux
+    const {isLoggedIn, userId} = useSelector((state: RootState)=> state.auth);
+
     const [orderlist, setOrderList] = useState<Order[]>([]); 
 
     useEffect(()=>{
+        console.log('loginStatus:',isLoggedIn);
         getOrderList();
     },[])
 
@@ -110,12 +113,10 @@ function OrderListScreen({navigation, route}:{navigation:NavigationProp<ParamLis
         setOrderList(jsonResponse.orders);
     };
 
-
     return(
         <SafeAreaView style={{
             flex: 1,
             backgroundColor: 'white'}}>
-
             <Header 
             title="주문목록조회"
             showBackButton={true}
@@ -127,7 +128,7 @@ function OrderListScreen({navigation, route}:{navigation:NavigationProp<ParamLis
 
             <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
                 <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>
-                    <OrderList data={orderlist} navigation={navigation}/>     
+                    <OrderList data={orderlist} navigation={navigation} route={route}/>     
                 </ScrollView>
             </View>
         </SafeAreaView>

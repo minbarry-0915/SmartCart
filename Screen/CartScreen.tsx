@@ -8,6 +8,8 @@ import Feather from "react-native-vector-icons/Feather";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BarcodeScanner from "../Components/BarcodeScanner";
 import Header from "../Components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../Redux/store";
 
 interface Product {
   pNum: string,
@@ -17,18 +19,11 @@ interface Product {
   discount: number,
   total: number,
 }
-// interface GrandPrice {
-//   grandTotalPrice: number,
-//   grandDiscountPrice: number,
-//   grandCount: number,
-// }
-interface MyParams {
-  //유저 id
-  id: string,
-}
 
 function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigation: NavigationProp<ParamListBase>}){
-  const {id} = route.params as MyParams;
+  //로그인하고 서버에 데이터 요청해야됨
+  const {isLoggedIn, userId} = useSelector((state: RootState) => state.auth)
+  const dispatch = useDispatch<AppDispatch>();
 
   const [barcodeData, setBarcodeData] = useState<string>('');
   const [responses, setResponses] = useState<Product[]>([]);
@@ -36,8 +31,6 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
   const [grandDiscount, setGrandDiscount] = useState<number>(0);
   const [grandCount, setGrandCount] = useState<number>(0);
   const [grandPrice, setGrandPrice] = useState<number>(0);
-  
-  
 
   const onSearchButton = () => {
     navigation.navigate('Search');
@@ -96,7 +89,7 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
 
   const getCartList = () => {
     //서버에 아이디를 이용해서 요청해야됨
-    console.log('welcome'+id);
+    
     const jsonResponse = [
       {
         "pNum": "P001",
@@ -143,6 +136,8 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
   }
 
   useEffect(()=>{
+    console.log('loginStatus:',isLoggedIn);
+    console.log('welcome', userId);
     getCartList();
   },[])
 
@@ -234,75 +229,87 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
     <SafeAreaView style={{
         flex: 1,
         backgroundColor: 'white',
-      }}>
-        {/* header */}
-        <Header showBackButton={true} title={'장바구니'} showSearchContainer={false} showCartButton={false} showMyPageButton={true} showSearchButton={true} navigation={navigation}/>
-        
-        <View style={styles.BodyContainer}>
-          <View style={styles.BuyingListContainer}>
-            <View style={styles.BLCHeaderContainer}>
-              <View style= {styles.BLCHeader}>
-                <Text style= {styles.BLCHeaderText}>스캔 목록</Text>
-                <TouchableOpacity activeOpacity={0.9} style= {styles.BLCHeaderEraseButton} onPress={deleteAllNodes}>
-                  <Text style={styles.BLCHeaderEraseButtonText}>전체삭제</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            {/* BuyingListContainerCatergory */}
-            <View style= {styles.BLCpNode}>
-              <Text style={styles.BLCpNodeText}>상품명</Text>
-              <Text style={[styles.BLCpNodeText,{width: '15%'}]}>수량</Text>
-              <Text style={[styles.BLCpNodeText,{width: '17%'}]}>단가</Text>
-              <Text style={[styles.BLCpNodeText,{width: '15%'}]}>할인</Text>
-              <Text style={[styles.BLCpNodeText,{width: '20%'}]}>합계</Text>
-            </View>
-            <View style= {styles.Stick}/>
+    }}>
+      {isLoggedIn ? (
+        <View style={{flex: 1,}}> 
+          <Header 
+          showBackButton={true} 
+          title={'장바구니'} 
+          showSearchContainer={false} 
+          showCartButton={false} 
+          showMyPageButton={true} 
+          showSearchButton={true} 
+          navigation={navigation}
+          />
 
-            {responses.map((response, index) => (
-              <View key={index} style={styles.BLCpNode}>
-                <Text style={styles.BLCpNodeText}>{response.pName}</Text>
-                <TouchableOpacity onPress={() =>decreaseCount(response)} style={{marginRight:5}}>
-                  <Feather name='minus-circle' size={25} color='black'></Feather>
-                </TouchableOpacity>
-                <Text style={[styles.BLCpNodeText,{width: '4%'}]}>{response.count}</Text>
-                <TouchableOpacity onPress={()=>increaseCount(response)} style={{marginRight:10}}>
-                  <Feather name='plus-circle' size={25} color='black' ></Feather>
-                </TouchableOpacity>
-                <Text style={[styles.BLCpNodeText,{width: '17%', marginLeft: 5,}]}>{response.price}</Text>
-                <Text style={[styles.BLCpNodeText,{width: '15%'}]}>{response.discount}</Text>
-                <Text style={[styles.BLCpNodeText,{width: '16%'}]}>{response.total}</Text>
-                <TouchableOpacity onPress={()=>deleteNodeButton(index)}>
-                  <AntDesign name='closecircle' size={25} color='black'/>
-                </TouchableOpacity>
+          <View style={styles.BodyContainer}>
+            <View style={styles.BuyingListContainer}>
+              <View style={styles.BLCHeaderContainer}>
+                <View style= {styles.BLCHeader}>
+                  <Text style= {styles.BLCHeaderText}>스캔 목록</Text>
+                  <TouchableOpacity activeOpacity={0.9} style= {styles.BLCHeaderEraseButton} onPress={deleteAllNodes}>
+                    <Text style={styles.BLCHeaderEraseButtonText}>전체삭제</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            ))}
-          </View>
-          <View style={{flex: 0.4}}>
-            <BarcodeScanner onScan={handleBarcodeScan}/>
-            <View style={styles.GrandContainer}>
-              <View style={styles.GrandTextContainer}>
-                <Text style={styles.GrandText}>총 결제 예상 금액</Text>
-                <Text style={styles.GrandText}>{grandTotal}원</Text>
+              {/* BuyingListContainerCatergory */}
+              <View style= {styles.BLCpNode}>
+                <Text style={styles.BLCpNodeText}>상품명</Text>
+                <Text style={[styles.BLCpNodeText,{width: '15%'}]}>수량</Text>
+                <Text style={[styles.BLCpNodeText,{width: '17%'}]}>단가</Text>
+                <Text style={[styles.BLCpNodeText,{width: '15%'}]}>할인</Text>
+                <Text style={[styles.BLCpNodeText,{width: '20%'}]}>합계</Text>
               </View>
-              <View style= {[styles.Stick, {backgroundColor: 'black', marginTop: 0, marginBottom: 14, width: '100%'}]}/>
-              <View style={styles.GrandTextContainer}>
-                <Text style={styles.GrandSubText}>총 상품 금액</Text>
-                <Text style={styles.GrandSubText}>{grandPrice}원</Text>
-              </View>
-              <View style={styles.GrandTextContainer}>
-                <Text style={styles.GrandSubText}>총 할인 금액</Text>
-                <Text style={[styles.GrandSubText, {color: '#ED7272'}]}>-{grandDiscount}원</Text>
-              </View>
-              <View style={styles.GrandTextContainer}>
-                <Text style={styles.GrandSubText}>총 수량</Text>
-                <Text style={styles.GrandSubText}>{grandCount}개</Text>
+              <View style= {styles.Stick}/>
+
+              {responses.map((response, index) => (
+                <View key={index} style={styles.BLCpNode}>
+                  <Text style={styles.BLCpNodeText}>{response.pName}</Text>
+                  <TouchableOpacity onPress={() =>decreaseCount(response)} style={{marginRight:5}}>
+                    <Feather name='minus-circle' size={25} color='black'></Feather>
+                  </TouchableOpacity>
+                  <Text style={[styles.BLCpNodeText,{width: '4%'}]}>{response.count}</Text>
+                  <TouchableOpacity onPress={()=>increaseCount(response)} style={{marginRight:10}}>
+                    <Feather name='plus-circle' size={25} color='black' ></Feather>
+                  </TouchableOpacity>
+                  <Text style={[styles.BLCpNodeText,{width: '17%', marginLeft: 5,}]}>{response.price}</Text>
+                  <Text style={[styles.BLCpNodeText,{width: '15%'}]}>{response.discount}</Text>
+                  <Text style={[styles.BLCpNodeText,{width: '16%'}]}>{response.total}</Text>
+                  <TouchableOpacity onPress={()=>deleteNodeButton(index)}>
+                    <AntDesign name='closecircle' size={25} color='black'/>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+            <View style={{flex: 0.4}}>
+              <BarcodeScanner onScan={handleBarcodeScan}/>
+              <View style={styles.GrandContainer}>
+                <View style={styles.GrandTextContainer}>
+                  <Text style={styles.GrandText}>총 결제 예상 금액</Text>
+                  <Text style={styles.GrandText}>{grandTotal}원</Text>
+                </View>
+                <View style= {[styles.Stick, {backgroundColor: 'black', marginTop: 0, marginBottom: 14, width: '100%'}]}/>
+                <View style={styles.GrandTextContainer}>
+                  <Text style={styles.GrandSubText}>총 상품 금액</Text>
+                  <Text style={styles.GrandSubText}>{grandPrice}원</Text>
+                </View>
+                <View style={styles.GrandTextContainer}>
+                  <Text style={styles.GrandSubText}>총 할인 금액</Text>
+                  <Text style={[styles.GrandSubText, {color: '#ED7272'}]}>-{grandDiscount}원</Text>
+                </View>
+                <View style={styles.GrandTextContainer}>
+                  <Text style={styles.GrandSubText}>총 수량</Text>
+                  <Text style={styles.GrandSubText}>{grandCount}개</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>       
-        
+        </View>
+      ):(
+        <Text>Please Login</Text>
+      )}  
       </SafeAreaView>
-    )
+    );
   }
 
   export default CartScreen;
