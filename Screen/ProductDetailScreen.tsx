@@ -5,8 +5,10 @@ import { Animated, Button, Easing, Image, Modal, NativeScrollEvent, NativeSynthe
 import Header from "../Components/Header";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../Redux/store";
 //import ProductBottomModal from "../Components/ProductBottomModal";
-
+//
 interface MyParams{
     pNum: string,
 };
@@ -22,6 +24,9 @@ interface Product{
 }
 
 function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase>}) {
+    const {isLoggedIn, userId} = useSelector((state: RootState)=> state.auth);
+    const dispatch = useDispatch<AppDispatch>();
+
     const {pNum} = route.params as MyParams;
     const [product, setProduct] = useState<Product>({
         pNum: '', 
@@ -68,7 +73,7 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
       };
 
     const getProductDetail = () => {
-        console.log(pNum);
+        console.log('pNum:'+pNum);
         //서버요청 작성 필요
         const jsonResponse = {
             "pNum": "1234",
@@ -125,7 +130,7 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
     useEffect(()=>{
         const newGrandPrice = product.price * count;
         setGrandPrice(newGrandPrice);
-        console.log(count);
+        console.log("currentCount:",count);
     },[count])
     
     

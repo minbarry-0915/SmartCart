@@ -1,9 +1,8 @@
 // In App.js in a new project
 
-import React,{useCallback, useEffect, useState} from 'react';
-import { NavigationContainer, NavigationProp, ParamListBase } from '@react-navigation/native';
+import React,{ useEffect, } from 'react';
+import { NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './Screen/HomeScreen';
 import JoinScreen from './Screen/JoinScreen';
 import SearchScreen from './Screen/SearchScreen';
 import SearchResultScreen from './Screen/SearchResultScreen';
@@ -13,9 +12,13 @@ import MyPageScreen from './Screen/MyPageScreen';
 import { PermissionsAndroid, Platform } from 'react-native';
 import OrderListScreen from './Screen/OrderListScreen';
 import OrderListDetailScreen from './Screen/OrderListDetailScreen';
+import { Provider } from 'react-redux';
+import store from './Redux/store';
+import LoginScreen from './Screen/LoginScreen';
 
 
 const Stack = createNativeStackNavigator();
+//const CartStack = createNativeStackNavigator();
 
 const requestCameraPermission = async () => {
   try {
@@ -48,19 +51,22 @@ function App() {
   
   //화면들을 담는 컨테이너 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Join" component={JoinScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false,}}/>
-        <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false,animation:'fade'}} />
-        <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation:'fade'}}/>
-        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false ,animation:'fade'}}/>
-        <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false ,animation:'fade'}}/>
-        <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false}} />
-        <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} />
-      </Stack.Navigator>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Join" component={JoinScreen} options={{ headerShown: false ,animation:'fade'}}/>
+          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false}}/>
+          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false,animation:'fade'}} />
+          <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation:'fade'}}/>
+          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false ,animation:'fade'}}/>
+          <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false ,animation:'fade'}}/>
+          <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'ios'}} />
+          <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} options={{ headerShown: false ,animation:'default'}}/>
+        </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
+    
   );
 }
 

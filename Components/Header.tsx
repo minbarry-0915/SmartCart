@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "../Screen/StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 
+interface MyParams{
+    id: string,
+}
 
 const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showCartButton,showMyPageButton, navigation}:{showBackButton:boolean, title: string, showSearchContainer:boolean, showSearchButton: boolean, showCartButton:boolean, showMyPageButton:boolean, navigation: NavigationProp<ParamListBase>}) =>{
+
     const [backButton, setBackButton] = useState(false);
     const [searchContainer, setSearchContainer] = useState(false);
     const [searchButton, setSearchButton] = useState(false);
@@ -26,7 +30,7 @@ const Header = ({showBackButton,title,showSearchContainer,showSearchButton,showC
         navigation.goBack();
     };
     const onSearchButton = () => {
-        navigation.navigate('Search');
+        navigation.navigate('Search',);
     }
     const onCartButton = () => {
         navigation.navigate('Cart');
