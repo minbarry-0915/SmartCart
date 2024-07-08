@@ -7,14 +7,10 @@ import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { logout } from "../Redux/authSlice";
-//
+
 interface User {
     id: string,
     name: string
-}
-
-interface MyParams {
-    id: string,
 }
 
 interface Product {
@@ -34,13 +30,16 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
     const [products, setProducts] = useState<Product[]>([]);
     const [isOrderListPressed, setIsOrderListPressed] = useState<boolean>(false);
     const [isModifyInfoPressed, setIsModifyInfoPressed] = useState<boolean>(false);
+    const [isLogoutPressed, setIsLogOutPressed] = useState<boolean>(false);
 
     const getId = () => {
-        const jsonResponse = {
-            "id": "1234",
-            "name": "이지민"
+        if (userId != null){
+            const jsonResponse = {
+                "id": userId,
+                "name": "이지민"
+            }
+            setUser(jsonResponse);
         }
-        setUser(jsonResponse);
     }
 
     const getProduct = () => {
@@ -100,9 +99,25 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
         setProducts([...parsedJsonResponse]);
     }
 
-    const onOrderListButton = (id: string ='') =>{
+
+    //버튼 핸들러
+    const onProductInfo = (id: string) => {
+        console.log(id);
+        navigation.navigate('ProductDetail',{pNum: id});
+    }
+    const onOrderListButton = (id: string = '') =>{
         navigation.navigate('OrderList', {id});
     }
+    const onModifyInfoButton = () => {
+        navigation.navigate('UserInfoModify');
+    }
+    const onLogoutButton = () => {
+        dispatch(logout());
+        navigation.navigate('Login');
+    }
+     
+
+    //버튼 눌릴때 애니매이션
     const handleOrderListButtonPressIn = () => {
         setIsOrderListPressed(true)
     }
@@ -110,20 +125,17 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
         setIsOrderListPressed(false)
     }
     const handleModifyInfoButtonPressedIn = () =>{
-        setIsModifyInfoPressed(true)
+        setIsModifyInfoPressed(true);
     }
     const handleModifyInfoButtonPressedOut = () =>{
         setIsModifyInfoPressed(false)
     }
-    const onProductInfo = (id: string) => {
-        console.log(id);
-        navigation.navigate('ProductDetail',{pNum: id});
-    } 
-    const onLogoutButton = () => {
-        dispatch(logout());
-        navigation.navigate('Login');
+    const handleLogoutButtonPressedIn = () =>{
+        setIsLogOutPressed(true);
     }
-    
+    const handleLogoutButtonPressedOut = () =>{
+        setIsLogOutPressed(false);
+    }
 
     useEffect(()=>{
         console.log('loginStatus:',isLoggedIn);
@@ -131,6 +143,7 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
         getProduct();
         setIsOrderListPressed(false);
         setIsModifyInfoPressed(false);
+        setIsLogOutPressed(false);
     },[]);
 
     return(
@@ -198,6 +211,7 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
                             style={[styles.MyPageMenuContainer,isModifyInfoPressed && {backgroundColor:'#FFE68C'}]}
                             onPressIn={handleModifyInfoButtonPressedIn}
                             onPressOut={handleModifyInfoButtonPressedOut}
+                            onPress={onModifyInfoButton}
                             >
                                 <View style = {styles.MyPageMenuIconContainer}>
                                     <Image 
@@ -207,8 +221,10 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
                             </TouchableOpacity>
                             <TouchableOpacity 
                             activeOpacity={0.7} 
+                            onPressIn={handleLogoutButtonPressedIn}
+                            onPressOut={handleLogoutButtonPressedOut}
                             onPress={onLogoutButton}
-                            style={styles.MyPageMenuContainer}>
+                            style={[styles.MyPageMenuContainer,isLogoutPressed && {backgroundColor:'#FFE68C'}]}>
                                 <View style = {styles.MyPageMenuIconContainer}>
                                     <Image 
                                     source={require('../assets/icon/mynaui_logout.png')} style={styles.MyPageMenuIcon} resizeMode='contain'/>
@@ -219,8 +235,8 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
                     </View>
                 </View>
             ):(
-                <View style={{flex: 1}}>
-                    <Text>Login Again</Text>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={styles.MainText}>Login Again</Text>
                 </View>
             )}   
         </SafeAreaView>

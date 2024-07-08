@@ -583,6 +583,38 @@ const styles = StyleSheet.create({
     MediumText:{
       fontFamily:'Pretendard-Medium',
       color: 'black',
+    },
+    ModifyPagePasswordInputContainer:{
+      width: "50%",
+      borderWidth: 1,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems:'flex-start',
+      paddingVertical: 24,
+      paddingHorizontal: 24,
+      marginBottom: 36,
+    },
+    ModifyPagePasswordInputContent:{
+      width: "100%",
+      //borderWidth: 1,
+      paddingVertical: 12,
+    },
+    ModifyInfoInputContainer:{
+      width: "50%",
+      borderWidth: 1,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems:'flex-start',
+      paddingVertical: 12,
+      marginBottom: 12,
+    },
+    ModifyInfoInputContent:{
+      width: "100%",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems:'center',
+      paddingHorizontal: 36,
+      paddingVertical: 12,
     }
   });
 

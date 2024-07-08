@@ -15,11 +15,13 @@ import OrderListDetailScreen from './Screen/OrderListDetailScreen';
 import { Provider } from 'react-redux';
 import store from './Redux/store';
 import LoginScreen from './Screen/LoginScreen';
+import UserInfoModifyScreen from './Screen/UserInfoModifyScreen';
+import UserInfoModifyDetailScreen from './Screen/UserInfoModifyDetailScreen';
 
 
 const Stack = createNativeStackNavigator();
-//const CartStack = createNativeStackNavigator();
 
+//카메라 권한 요청
 const requestCameraPermission = async () => {
   try {
     if (Platform.OS === 'android') {
@@ -63,6 +65,8 @@ function App() {
           <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false ,animation:'fade'}}/>
           <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'ios'}} />
           <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} options={{ headerShown: false ,animation:'default'}}/>
+          <Stack.Screen name="UserInfoModify" component={UserInfoModifyScreen} options={{headerShown: false ,animation:'default'}}/>
+          <Stack.Screen name="UserInfoModifyDetail" component={UserInfoModifyDetailScreen} options={{animation:'default'}}/>
         </Stack.Navigator>
     </NavigationContainer>
     </Provider>
