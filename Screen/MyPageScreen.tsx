@@ -7,7 +7,7 @@ import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { logout } from "../Redux/authSlice";
-
+//
 interface User {
     id: string,
     name: string

@@ -10,7 +10,7 @@ import BarcodeScanner from "../Components/BarcodeScanner";
 import Header from "../Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
-
+//
 interface Product {
   pNum: string,
   pName: string,

@@ -5,7 +5,7 @@ import styles from "./StyleSheet";
 import Header from "../Components/Header";
 import SelectDropdown from "react-native-select-dropdown";
 import SelectDropDown from "../Components/SelectDropDown";
-
+//
 function JoinScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');

@@ -7,7 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Header from "../Components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
-
+//
 interface MyParams {
     resultKeyword: string;
     // 다른 매개변수가 있다면 여기에 추가

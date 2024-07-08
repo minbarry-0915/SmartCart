@@ -5,7 +5,7 @@ import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { login } from "../Redux/authSlice";
-
+//
 function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) { //navigation의 타입을 정의를 해주어야함 
   //redux
   const {isLoggedIn} = useSelector((state: RootState)=> state.auth);

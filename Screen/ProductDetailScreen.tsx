@@ -8,7 +8,7 @@ import Feather from "react-native-vector-icons/Feather";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 //import ProductBottomModal from "../Components/ProductBottomModal";
-
+//
 interface MyParams{
     pNum: string,
 };
