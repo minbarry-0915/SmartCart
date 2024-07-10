@@ -479,8 +479,9 @@ const styles = StyleSheet.create({
       paddingHorizontal: 24,
       paddingVertical: 28,
       marginBottom: 16,
-      backgroundColor: 'white'
-,    },
+      backgroundColor: 'white',
+      //elevation:10
+    },
     MainText: {
       fontFamily: 'Pretendard-Regular',
       fontSize: 24,
@@ -615,6 +616,45 @@ const styles = StyleSheet.create({
       alignItems:'center',
       paddingHorizontal: 36,
       paddingVertical: 12,
+    },
+    ModifyInfoButtonContainer:{
+      width: "50%",
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems:'center',
+      paddingVertical: 24,
+    },
+    ModifyInfoCancelButton:{
+      width: 200,
+      height: 48,
+      justifyContent: 'center',
+      alignItems:'center',
+      backgroundColor:'#FFB0B0',
+      paddingHorizontal: 32,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+    },
+    WarningModalContent:{
+      elevation: 20,
+      width: '30%',
+      backgroundColor: 'white',
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 36,
+      paddingHorizontal: 24,
+    },
+    WaringModalButton:{
+      justifyContent: 'center',
+      alignItems:'center',
+      paddingVertical: 8,
+      paddingHorizontal: 24,
+      backgroundColor:'white',
+      borderRadius: 12,
+      borderWidth: 1,
+      marginTop: 12,
+
     }
   });
 

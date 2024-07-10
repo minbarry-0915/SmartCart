@@ -66,7 +66,7 @@ function App() {
           <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'ios'}} />
           <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} options={{ headerShown: false ,animation:'default'}}/>
           <Stack.Screen name="UserInfoModify" component={UserInfoModifyScreen} options={{headerShown: false ,animation:'default'}}/>
-          <Stack.Screen name="UserInfoModifyDetail" component={UserInfoModifyDetailScreen} options={{animation:'default'}}/>
+          <Stack.Screen name="UserInfoModifyDetail" component={UserInfoModifyDetailScreen} options={{headerShown: false, animation:'default'}}/>
         </Stack.Navigator>
     </NavigationContainer>
     </Provider>
