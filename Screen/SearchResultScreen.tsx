@@ -4,9 +4,9 @@ import styles from "./StyleSheet";
 import { Button, Image, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 //
 interface MyParams {
     resultKeyword: string;

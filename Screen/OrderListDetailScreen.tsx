@@ -2,9 +2,9 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import styles from "./StyleSheet";
-import OrderComponent from "../Components/Order";
+import OrderComponent from "../components/Order";
 //
 interface MyParams{
     orderId: string,

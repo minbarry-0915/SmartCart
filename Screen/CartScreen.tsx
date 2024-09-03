@@ -1,15 +1,16 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState} from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BarcodeScanner from "../Components/BarcodeScanner";
-import Header from "../Components/Header";
+import BarcodeScanner from "../components/BarcodeScanner";
+import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
+import { AppDispatch, RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //
 interface Product {
   pNum: string,
@@ -226,22 +227,19 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
 
 
   return(
-    <SafeAreaView style={{
-        flex: 1,
-        backgroundColor: 'white',
-    }}>
-      {isLoggedIn ? (
+      <KeyboardAvoidingView
+      style={{ flex: 1 , backgroundColor: 'white'}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}>
+        {isLoggedIn ? (
         <View style={{flex: 1,}}> 
-          <Header 
-          showBackButton={true} 
-          title={'장바구니'} 
-          showSearchContainer={false} 
-          showCartButton={false} 
-          showMyPageButton={true} 
-          showSearchButton={true} 
+          <TopNavigator
+          title="장바구니"
           navigation={navigation}
           />
-
           <View style={styles.BodyContainer}>
             <View style={styles.BuyingListContainer}>
               <View style={styles.BLCHeaderContainer}>
@@ -308,7 +306,8 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
       ):(
         <Text>Please Login</Text>
       )}  
-      </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView> 
     );
   }
 

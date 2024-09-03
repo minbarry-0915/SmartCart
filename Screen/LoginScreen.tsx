@@ -3,8 +3,10 @@ import React, {useEffect, useState} from "react";
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
-import { login } from "../Redux/authSlice";
+import { AppDispatch, RootState } from "../redux/store";
+import { login } from "../redux/authSlice";
+import GlobalStyles from "../styles/GlobalStyles";
+import LoginStyles from "../styles/LoginScreenStyles";
 //
 function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) { //navigation의 타입을 정의를 해주어야함 
   //redux
@@ -14,15 +16,17 @@ function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) 
   //state
   const [id, setId] = useState('');
   const [password, setPW] = useState('');
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
+
   
   const onLoginButton = () => {
     //서버요청 작성 필요
-    dispatch(login(id));  
+    dispatch(login(id));  //커스텀 훅으로 옮겨야됨
     //navigation.navigate('CartStack');
     navigation.navigate('Cart');
   };
 
-  const onJoinButton = () => {
+  const onSignUPButton = () => {
     navigation.navigate('Join')
   };
 
@@ -39,43 +43,64 @@ function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) 
   },[isLoggedIn])
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.logoContainer}>
-        <Text style={[styles.logoText, {color: '#FFC700', paddingLeft: 24, }]}>S</Text>
-        <Text style={[styles.logoText, {paddingRight: 24}]}>MARTCART</Text>
+    <KeyboardAvoidingView style={GlobalStyles.container} behavior="padding">
+      <View style={[LoginStyles.logo, {flexDirection: 'row'}]}>
+        <Text style={[GlobalStyles.ExtraBoldText, {color: '#FFC700'}]}>S</Text>
+        <Text style={[GlobalStyles.ExtraBoldText]}>MARTCART</Text>
       </View>
-      <View style={styles.TextInputContainer}>
+      {/* id */}
+      <View style={LoginStyles.content}>
         <TextInput
-          style={styles.inputText}
-          placeholder="ID"
-          onChangeText={newId => setId(newId)}
-          defaultValue={id}
+        placeholder="ID"
+        placeholderTextColor={'#696969'}
+        onChangeText={setId}
+        value={id}
+        style={LoginStyles.textInput}
         />
+        
+      </View>
+      {/* pw */}
+      <View style={LoginStyles.content}>
         <TextInput
-          style={styles.inputText}
-          placeholder="PASSWORD"
-          onChangeText={newPW => setPW(newPW)}
-          defaultValue={password}
+        secureTextEntry={true}
+        placeholder="PASSWORD"
+        placeholderTextColor={'#696969'}
+        onChangeText={setPW}
+        value={password}
+        style={LoginStyles.textInput}
         />
       </View>
-      <TouchableOpacity 
-      onPress={onLoginButton} 
-      activeOpacity={0.8} 
-      style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>LOGIN</Text>
-      </TouchableOpacity>
 
-      <View style={styles.subButtonGroup}>
-        <TouchableOpacity onPress={onJoinButton} activeOpacity={0.8} style={styles.subButton}>
-          <Text style={styles.subButtonText}>회원가입</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onFindIDButton} activeOpacity={0.8} style={styles.subButton}>
-          <Text style={styles.subButtonText}>아이디찾기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onFindPWButton} activeOpacity={0.8} style={styles.subButton}>
-          <Text style={styles.subButtonText}>비밀번호찾기</Text>
+      <View style={LoginStyles.content}>
+        <TouchableOpacity 
+        onPress={onLoginButton}
+        activeOpacity={0.7}
+        style={GlobalStyles.blackButton}>
+          <Text style={[GlobalStyles.BoldText, {color: 'white'}]}>
+            LOGIN
+          </Text>
         </TouchableOpacity>
       </View>
+
+      {/* 회원가입/아이디찾기/비밀번호찾기 */}
+      <View style={LoginStyles.optionContainer}>
+        <TouchableOpacity 
+        onPress={onSignUPButton}
+        style={LoginStyles.optionContent}>
+            <Text style={[GlobalStyles.regularText,{color: '#696969'}]}>회원가입</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+        onPress={onFindIDButton}
+        style={LoginStyles.optionContent}>
+            <Text style={[GlobalStyles.regularText,{color: '#696969'}]}>아이디찾기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+        onPress={onFindPWButton}
+        style={LoginStyles.optionContent}>
+            <Text style={[GlobalStyles.regularText,{color: '#696969'}]}>비밀번호찾기</Text>
+        </TouchableOpacity>
+    </View>
+      
     </KeyboardAvoidingView>
   );
 };

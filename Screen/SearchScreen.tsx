@@ -5,9 +5,9 @@ import styles from "./StyleSheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 //
 interface Keyword {
   pNum: string,

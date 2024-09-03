@@ -2,11 +2,11 @@ import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/nati
 import React,{useEffect, useRef, useState} from "react";
 import styles from "./StyleSheet";
 import { Animated, Button, Easing, Image, Modal, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 //import ProductBottomModal from "../Components/ProductBottomModal";
 //
 interface MyParams{

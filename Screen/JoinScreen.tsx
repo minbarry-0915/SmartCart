@@ -2,9 +2,9 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import SelectDropdown from "react-native-select-dropdown";
-import SelectDropDown from "../Components/SelectDropDown";
+import SelectDropDown from "../components/SelectDropDown";
 //
 function JoinScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
     const [id, setId] = useState('');

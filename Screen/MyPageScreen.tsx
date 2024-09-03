@@ -2,11 +2,11 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
-import { logout } from "../Redux/authSlice";
+import { AppDispatch, RootState } from "../redux/store";
+import { logout } from "../redux/authSlice";
 //
 interface User {
     id: string,

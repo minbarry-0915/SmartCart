@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import styles from "../Screen/StyleSheet";
+import styles from "../screen/StyleSheet";
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { RootState } from "../Redux/store";
+import { RootState } from "../redux/store";
 
 interface Product {
     pNum: string;
