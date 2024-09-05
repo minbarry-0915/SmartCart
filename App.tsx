@@ -13,10 +13,10 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import OrderListScreen from './screen/OrderListScreen';
 import OrderListDetailScreen from './screen/OrderListDetailScreen';
 import { Provider } from 'react-redux';
-import store from './Redux/store';
-import LoginScreen from './Screen/LoginScreen';
-import UserInfoModifyScreen from './Screen/UserInfoModifyScreen';
-import UserInfoModifyDetailScreen from './Screen/UserInfoModifyDetailScreen';
+import store from './redux/store';
+import LoginScreen from './screen/LoginScreen';
+import UserInfoModifyScreen from './screen/UserInfoModifyScreen';
+import UserInfoModifyDetailScreen from './screen/UserInfoModifyDetailScreen';
 
 
 const Stack = createNativeStackNavigator();
