@@ -7,6 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //import ProductBottomModal from "../Components/ProductBottomModal";
 //
 interface MyParams{
@@ -140,8 +141,10 @@ function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase
             flex: 1,
             backgroundColor: 'white',
           }}>
-            {/* header */}
-            <Header showBackButton={true} title={'상품'} showSearchContainer={false} showCartButton={true} showMyPageButton={true} showSearchButton={true} navigation={navigation}/>
+            <TopNavigator
+            title="장바구니"
+            navigation={navigation}
+            />
 
             {/* body */}
             <View style={[styles.BodyContainer,{flexDirection:'column', paddingBottom: 0}]}>

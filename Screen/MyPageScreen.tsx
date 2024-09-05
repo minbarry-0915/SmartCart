@@ -7,6 +7,7 @@ import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { logout } from "../redux/authSlice";
+import TopNavigator from "../components/TopNavigator";
 //
 interface User {
     id: string,
@@ -140,14 +141,10 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
           }}>
             {isLoggedIn ? (
                 <View style={{flex: 1}}>
-                    <Header 
-                    showBackButton={true} 
-                    title="마이페이지" 
-                    showSearchButton={true}
-                    showCartButton={true}
-                    showMyPageButton={false}
-                    showSearchContainer={false} 
-                    navigation={navigation}/>
+                    <TopNavigator
+                    title="장바구니"
+                    navigation={navigation}
+                    />
 
                     {/* body */}
                     <View style={[styles.BodyContainer,{flexDirection:'column'}]}>

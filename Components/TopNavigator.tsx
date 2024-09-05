@@ -36,6 +36,10 @@ const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navi
         navigation.navigate('MyPage');
     }
 
+    const onCartButton = () => {
+        navigation.navigate('Cart');
+    }
+
     const onSearchResultButton = () => {
         navigation.navigate('SearchResult', { resultKeyword: keyword });
     }
@@ -92,6 +96,7 @@ const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navi
             </TouchableOpacity>
 
             <TouchableOpacity
+                onPress={onCartButton}
                 activeOpacity={0.8}
                 style={{ marginRight: 12 }}>
                 <CartIcon width={40} height={40} />

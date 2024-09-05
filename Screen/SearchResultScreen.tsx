@@ -7,6 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //
 interface MyParams {
     resultKeyword: string;
@@ -109,57 +110,53 @@ function SearchResultScreen({route, navigation} : {route: RouteProp<ParamListBas
     };
 
     return(
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: 'white',
-          }}>
-            {isLoggedIn ? (
-                <View style={{flex:1}}>
-                    <Header 
-                    title='검색결과'
-                    showBackButton={true}
-                    showCartButton={true}
-                    showMyPageButton={true}
-                    showSearchContainer={true}
-                    showSearchButton={false}
-                    navigation={navigation}/>
+    <SafeAreaView style={{
+        flex: 1,
+        backgroundColor: 'white',
+        }}>
+        {isLoggedIn ? (
+        <View style={{flex:1}}>
+            <TopNavigator
+            title="장바구니"
+            navigation={navigation}
+            />
 
-                    <View style={styles.BodyContainer}>
-                        <View style={styles.SearchResultProductContainer}>
-                            <ScrollView 
-                                ref={scrollViewRef}
-                                onScroll={handleScroll}
-                                showsVerticalScrollIndicator={false}
-                                scrollEventThrottle={16}
-                                >
-                                {products.map((product, index) =>(
-                                    <TouchableOpacity key={index} onPress={()=>onProductButton(product.pNum)} style={styles.SearchResultProductNode}>
-                                        <Image source={{uri:product.pImage}} style={styles.SearchResultProductImage}/>
-                                        <View style={styles.SRProductDetailContainer}>
-                                            <Text style={styles.SRProductDetailText}>{product.pCategory}</Text>
-                                            <Text style={[styles.SRProductDetailText]}>{product.pName}</Text>
-                                            <Text style={   [styles.SRProductDetailText,{fontFamily: 'Pretendard-Bold',alignSelf: 'flex-end'}]}>{product.pPrice}원</Text>
-                                        </View>
-                                        
-                                    </TouchableOpacity> 
-                                ))}
-                            </ScrollView>
-                            {scrollToTopButtonVisible && (
-                                <TouchableOpacity onPress={scrollToTop} style={{alignSelf:'center'}}>
-                                    <AntDesign name='upcircleo'
-                                    size={42} color='black'/>
-                                </TouchableOpacity>
-                            )}
-                            
-                        </View>
-                    </View>
+            <View style={styles.BodyContainer}>
+                <View style={styles.SearchResultProductContainer}>
+                    <ScrollView 
+                        ref={scrollViewRef}
+                        onScroll={handleScroll}
+                        showsVerticalScrollIndicator={false}
+                        scrollEventThrottle={16}
+                        >
+                        {products.map((product, index) =>(
+                            <TouchableOpacity key={index} onPress={()=>onProductButton(product.pNum)} style={styles.SearchResultProductNode}>
+                                <Image source={{uri:product.pImage}} style={styles.SearchResultProductImage}/>
+                                <View style={styles.SRProductDetailContainer}>
+                                    <Text style={styles.SRProductDetailText}>{product.pCategory}</Text>
+                                    <Text style={[styles.SRProductDetailText]}>{product.pName}</Text>
+                                    <Text style={   [styles.SRProductDetailText,{fontFamily: 'Pretendard-Bold',alignSelf: 'flex-end'}]}>{product.pPrice}원</Text>
+                                </View>
+                                
+                            </TouchableOpacity> 
+                        ))}
+                    </ScrollView>
+                    {scrollToTopButtonVisible && (
+                        <TouchableOpacity onPress={scrollToTop} style={{alignSelf:'center'}}>
+                            <AntDesign name='upcircleo'
+                            size={42} color='black'/>
+                        </TouchableOpacity>
+                    )}
+                    
                 </View>
-            ):(
-                <View style={{flex:1}}>
-                    <Text>Login Again</Text>
-                </View>
-            )}
-        </SafeAreaView>
+            </View>
+        </View>
+        ):(
+        <View style={{flex:1}}>
+            <Text>Login Again</Text>
+        </View>
+        )}
+    </SafeAreaView>
     );
 }
 export default SearchResultScreen;

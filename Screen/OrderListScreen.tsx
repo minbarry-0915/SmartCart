@@ -6,6 +6,7 @@ import styles from "./StyleSheet";
 import OrderList from "../components/OrderList";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //
 
 interface Product {
@@ -117,14 +118,10 @@ function OrderListScreen({navigation, route}:{navigation:NavigationProp<ParamLis
         <SafeAreaView style={{
             flex: 1,
             backgroundColor: 'white'}}>
-            <Header 
-            title="주문목록조회"
-            showBackButton={true}
-            showCartButton={true}
-            showSearchButton={true}
-            showSearchContainer={false}
-            showMyPageButton={false}
-            navigation={navigation}/>
+            <TopNavigator
+            title="장바구니"
+            navigation={navigation}
+            />
 
             <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
                 <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>

@@ -8,6 +8,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //
 interface Keyword {
   pNum: string,
@@ -127,14 +128,10 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
       }}>
         {isLoggedIn ? (
           <View style={{flex: 1}}>
-            <Header
-            title='검색' 
-            showBackButton={true}
-            showCartButton={true}
-            showMyPageButton={true}
-            showSearchContainer={true}
-            showSearchButton={false}
-            navigation={navigation}/>
+            <TopNavigator
+            title="장바구니"
+            navigation={navigation}
+            />
 
             <View style={styles.BodyContainer}>
                 <View style={{flex: 0.4}}>
