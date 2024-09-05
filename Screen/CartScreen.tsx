@@ -1,15 +1,16 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState} from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BarcodeScanner from "../Components/BarcodeScanner";
-import Header from "../Components/Header";
+import BarcodeScanner from "../components/BarcodeScanner";
+import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
+import { AppDispatch, RootState } from "../redux/store";
+import TopNavigator from "../components/TopNavigator";
 //
 interface Product {
   pNum: string,
@@ -21,7 +22,7 @@ interface Product {
 }
 
 function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigation: NavigationProp<ParamListBase>}){
-  //로그인하고 서버에 데이터 요청해야됨
+  //로그인상태 관리
   const {isLoggedIn, userId} = useSelector((state: RootState) => state.auth)
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,18 +32,6 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
   const [grandDiscount, setGrandDiscount] = useState<number>(0);
   const [grandCount, setGrandCount] = useState<number>(0);
   const [grandPrice, setGrandPrice] = useState<number>(0);
-
-  const onSearchButton = () => {
-    navigation.navigate('Search');
-  };
-
-  const onMyPageButton = () => {
-    
-  };
-
-  const onBackButton = () => {
-    navigation.goBack();
-  };
 
   const deleteNodeButton = (index: number) =>{
     const newResponses = [...responses];
@@ -202,46 +191,23 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
       setResponses([...responses, response]);
     }
     //총 결제금액, 할인 금액, 수량 업데이트
-    
   }
-
-  // const sendData = async () =>{
-  //   try{
-  //     const dataToSend = {
-  //       barcodeData: barcodeData,
-  //     };
-  //     //주소 넣어야됨
-  //     const response = await fetch('',{
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type':'application/json', 
-  //       },
-  //       body: JSON.stringify(dataToSend)
-  //     });
-  //     const jsonResponse = await response.json();
-  //   } catch(error){
-  //     console.error('Error fetching Data: ', error);
-  //   }
-  // };
-
-
   return(
-    <SafeAreaView style={{
-        flex: 1,
-        backgroundColor: 'white',
-    }}>
-      {isLoggedIn ? (
-        <View style={{flex: 1,}}> 
-          <Header 
-          showBackButton={true} 
-          title={'장바구니'} 
-          showSearchContainer={false} 
-          showCartButton={false} 
-          showMyPageButton={true} 
-          showSearchButton={true} 
+      <KeyboardAvoidingView
+      style={{ flex: 1 , backgroundColor: 'white'}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}>
+        {isLoggedIn ? (
+        <View style={{flex: 1,}}>
+          {/* topNavigator */}
+          <TopNavigator
+          title="장바구니"
           navigation={navigation}
           />
-
+          {/* body */}
           <View style={styles.BodyContainer}>
             <View style={styles.BuyingListContainer}>
               <View style={styles.BLCHeaderContainer}>
@@ -281,7 +247,7 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
                 </View>
               ))}
             </View>
-            <View style={{flex: 0.4}}>
+            <View style={{flex: 0.4, borderWidth: 1,}}>
               <BarcodeScanner onScan={handleBarcodeScan}/>
               <View style={styles.GrandContainer}>
                 <View style={styles.GrandTextContainer}>
@@ -308,7 +274,8 @@ function CartScreen({route,navigation}: {route: RouteProp<ParamListBase>,navigat
       ):(
         <Text>Please Login</Text>
       )}  
-      </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView> 
     );
   }
 

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import SelectDropdown from "react-native-select-dropdown";
 import Feather from 'react-native-vector-icons/Feather';
-import styles from "../Screen/StyleSheet";
+import styles from "../screen/StyleSheet";
 
 type SelectDropDownProps = {
   data: { title: string }[];

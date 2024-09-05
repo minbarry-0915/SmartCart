@@ -2,11 +2,13 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../Redux/store";
-import { logout } from "../Redux/authSlice";
+
+import { AppDispatch, RootState } from "../redux/store";
+import { logout } from "../redux/authSlice";
+import TopNavigator from "../components/TopNavigator";
 
 interface User {
     id: string,
@@ -153,14 +155,10 @@ function MyPageScreen({route}:{route:RouteProp<ParamListBase>}){
           }}>
             {isLoggedIn ? (
                 <View style={{flex: 1}}>
-                    <Header 
-                    showBackButton={true} 
-                    title="마이페이지" 
-                    showSearchButton={true}
-                    showCartButton={true}
-                    showMyPageButton={false}
-                    showSearchContainer={false} 
-                    navigation={navigation}/>
+                    <TopNavigator
+                    title="장바구니"
+                    navigation={navigation}
+                    />
 
                     {/* body */}
                     <View style={[styles.BodyContainer,{flexDirection:'column'}]}>

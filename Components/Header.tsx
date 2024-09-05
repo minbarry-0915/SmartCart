@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import styles from "../Screen/StyleSheet";
+import styles from "../screen/StyleSheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 
