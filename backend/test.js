@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
 const uuidAPIKey = require('uuid-apikey');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const PORT = 3001;
 const key = {
-    apiKey: 'PFVBWWH-MDH49MC-J43VBCM-CSS8P1D',
-    uuid: 'b3f6be72-a362-44d1-9107-b5b266728b05'
+    apiKey: process.env.PERSONAL_API_KEY,
+    uuid: process.env.UUID
 };
 
 /* console.log(uuidAPIKey.create()); // API key 생성 */

@@ -3,11 +3,14 @@ const app = express();
 const uuidAPIKey = require('uuid-apikey');
 const mysql = require('mysql2/promise'); // mysql2/promise를 사용하여 async/await를 지원
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const PORT = 3001;
 const key = {
-    apiKey: 'PFVBWWH-MDH49MC-J43VBCM-CSS8P1D',
-    uuid: 'b3f6be72-a362-44d1-9107-b5b266728b05'
+    apiKey: process.env.PERSONAL_API_KEY,
+    uuid: process.env.UUID
 };
 
 /* console.log(uuidAPIKey.create()); // API key 생성 */
@@ -19,11 +22,11 @@ const key = {
 
 // MariaDB 연결 설정
 const db = mysql.createPool({
-    host: '10.198.137.97', // MariaDB 서버 호스트
-    user: 'guest', // MariaDB 사용자 이름
-    password: '1234', // MariaDB 사용자 비밀번호
-    database: 'SmartCart', // 사용할 데이터베이스 이름
-    port: 6151
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USERNAME, // MariaDB 사용자 이름
+    password: process.env.MYSQL_PASSWORD, // MariaDB 사용자 비밀번호
+    database: process.env.MYSQL_DATABASE, // 사용할 데이터베이스 이름
+    port: process.env.MYSQL_PORT
 });
 
 // JSON 요청 본문 파싱을 위한 미들웨어 추가
