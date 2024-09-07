@@ -17,8 +17,9 @@ const TopNavigatorStyles = StyleSheet.create({
     },
     textInputBlack:{
         width: '100%',
+        height: 40,
         fontFamily: 'Pretendard-Medium',
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         letterSpacing: -0.8,
         justifyContent: 'center',

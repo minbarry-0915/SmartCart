@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet, Dimensions } from "react-native"
+
+const screenWidth = Dimensions.get('screen').width;  // topbar를 제외한 화면 너비
+const screenHeight = Dimensions.get('screen').height;
 
 const GlobalStyles = StyleSheet.create({
     container: {
@@ -64,5 +67,8 @@ const GlobalStyles = StyleSheet.create({
         borderRadius: 12,
         marginTop: 12,
     },
+    gradientWhite:{
+        //...StyleSheet.absoluteFillObject
+    }
 });
 export default GlobalStyles;

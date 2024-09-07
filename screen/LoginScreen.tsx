@@ -43,7 +43,9 @@ function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) 
   },[isLoggedIn])
 
   return (
-    <KeyboardAvoidingView style={GlobalStyles.container} behavior="padding">
+    <KeyboardAvoidingView 
+    style={GlobalStyles.container} 
+    behavior="padding">
       <View style={[LoginStyles.logo, {flexDirection: 'row'}]}>
         <Text style={[GlobalStyles.ExtraBoldText, {color: '#FFC700'}]}>S</Text>
         <Text style={[GlobalStyles.ExtraBoldText]}>MARTCART</Text>

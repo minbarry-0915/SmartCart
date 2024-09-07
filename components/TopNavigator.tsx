@@ -15,13 +15,14 @@ import GlobalStyles from "../styles/GlobalStyles";
 
 interface Prop {
     showBackButton?: boolean,
+    showSearchButton?: boolean,
     title: string,
     showSearchBar?: boolean,
     navigation: NavigationProp<ParamListBase>,
     mode?: string,
 }
 
-const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navigation, mode = "white" }: Prop) => {
+const TopNavigator = ({ showBackButton = true, showSearchButton = true,title, showSearchBar = false, navigation, mode = "white" }: Prop) => {
     const [keyword, setKeyword] = useState<string>('');
 
     const onBackButton = () => {
@@ -101,13 +102,14 @@ const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navi
                 style={{ marginRight: 12 }}>
                 <CartIcon width={40} height={40} />
             </TouchableOpacity>
-
-            <TouchableOpacity
+            {showSearchButton ? (
+                <TouchableOpacity
                 onPress={onSearchButton}
                 activeOpacity={0.8}
             >
                 <SearchIcon width={40} height={40} />
             </TouchableOpacity>
+            ): (null)}
         </View>
     </View>
     );

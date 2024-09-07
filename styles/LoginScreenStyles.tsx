@@ -21,7 +21,7 @@ const LoginStyles = StyleSheet.create({
         letterSpacing: -0.8,
         justifyContent: 'center',
         textAlignVertical:'center',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
     },
     optionContainer:{
         flexDirection:'row',

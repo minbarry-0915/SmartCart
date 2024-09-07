@@ -129,8 +129,10 @@ function SearchScreen({navigation}: {navigation: NavigationProp<ParamListBase>})
         {isLoggedIn ? (
           <View style={{flex: 1}}>
             <TopNavigator
-            title="장바구니"
+            title="검색"
             navigation={navigation}
+            showSearchButton={false}
+            showSearchBar={true}
             />
 
             <View style={styles.BodyContainer}>
