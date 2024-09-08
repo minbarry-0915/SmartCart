@@ -28,7 +28,6 @@ const BarcodeScanner = ({onScan} : {onScan: (data: string) => void}) => {
   const onBarCodeRead = (event: any) => {
     if (!scaned) return;
     setScaned(false);
-    console.log("QR Code", event.nativeEvent.codeStringValue);
     setBarcodeData(event.nativeEvent.codeStringValue);
     onScan(barcodeData);
   };

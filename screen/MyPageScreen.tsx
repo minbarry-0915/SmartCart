@@ -159,7 +159,6 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
             {isLoggedIn ? (
                 <LinearGradient
                     colors={['#FFFFFF', '#D9D9D9', '#000000']}
-                    style={GlobalStyles.gradientWhite}
                 >
                     <TopNavigator
                         title="마이페이지"
@@ -169,7 +168,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                     {/* body */}
                     <ScrollView
                         showsVerticalScrollIndicator={false}
-                        contentContainerStyle={MyPageStyles.scrollContainer}>
+                        contentContainerStyle={GlobalStyles.scrollContainer}>
                         <View style={[MyPageStyles.content, { flexDirection: 'row', elevation: 0 }]}>
                             <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#6E91EB' }]}>{user?.name}</Text>
                             <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}> 님 환영합니다</Text>

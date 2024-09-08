@@ -12,6 +12,7 @@ import CartBlackIcon from '../assets/icons/cart_black.svg';
 import CartWhiteIcon from '../assets/icons/cart_white.svg';
 
 import GlobalStyles from "../styles/GlobalStyles";
+import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";
 
 interface Prop {
     showBackButton?: boolean,
@@ -23,7 +24,7 @@ interface Prop {
 }
 
 const TopNavigator = ({ showBackButton = true, showSearchButton = true,title, showSearchBar = false, navigation, mode = "white" }: Prop) => {
-    const [keyword, setKeyword] = useState<string>('');
+    const [keyword, setKeyword] = useState<string>('');   
 
     const onBackButton = () => {
         navigation.goBack();
