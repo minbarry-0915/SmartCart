@@ -70,7 +70,7 @@ app.post('/api/login', async (req, res) => {
 
     try {
         // 사용자 입력값을 SQL 쿼리에 안전하게 삽입하기 위해 준비된 쿼리 사용
-        const [rows] = await db.query('SELECT * FROM User WHERE userid = ? AND password = ?', [userid, password]);
+        const [rows] = await db.query('SELECT * FROM User2 WHERE userid = ? AND password = ?', [userid, password]);
 
         if (rows.length > 0) {
             res.send('Login successful!');
@@ -95,7 +95,7 @@ app.post('/api/register', async (req, res) => {
     try {
         // 데이터베이스에 데이터 삽입
         const [result] = await db.query(
-            'INSERT INTO User (userid, password, Phone_Num, Name, Email) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO User2 (userid, password, Phone_Num, Name, Email) VALUES (?, ?, ?, ?, ?)',
             [userId, password, phoneNumber, name, email]
         );
 
@@ -139,7 +139,7 @@ app.get('/api/users/:apikey/type/:type', async (req, res) => {
 app.get('/api/products/:apikey', verifyApiKey, async (req, res) => {
     try {
         // 필요한 제품 정보를 선택합니다. 
-        const [rows] = await db.query('SELECT Product_id, Product_Name, Price, Category FROM Product');
+        const [rows] = await db.query('SELECT Product_id, Product_Name, Price, Category FROM Product2');
 
         if (rows.length > 0) {
             res.json(rows); // JSON 형태로 데이터 전송
@@ -166,7 +166,7 @@ app.post('/api/products/:apikey/add', async (req, res) => {
     try {
         // 새 상품 데이터 삽입
         const [result] = await db.query(
-            'INSERT INTO Product (Product_Name, Price, Category) VALUES (?, ?, ?)',
+            'INSERT INTO Product2 (Product_Name, Price, Category) VALUES (?, ?, ?)',
             [Product_Name, Price, Category]
         );
 
