@@ -8,6 +8,10 @@ const AnimationStyles = StyleSheet.create({
     loading:{
         width: 100,
         height: 100,
+    },
+    location:{
+        width: 200,
+        height: 200
     }
 });
 export default AnimationStyles;

@@ -15,6 +15,7 @@ import AnimationStyles from "../styles/AnimationStyles";
 
 import useGetProduct from "../customHooks/useGetProduct";
 import usePostCartList from "../customHooks/usePostCartList";
+import formatNumber from "../customHooks/fomatNumber";
 
 interface Product {
   pNum: string,
@@ -52,6 +53,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   const deleteAllNodes = () => {
     setResponses([]);
   };
+  
   const decreaseCount = (response: Product) => {
     if (response.count != 1) {
       const updateResponses = responses.map(product => {
@@ -84,79 +86,6 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
     });
     setResponses(updateResponses);
   };
-
-  // const getCartList = () => {
-  //   //서버에 아이디를 이용해서 요청해야됨
-
-  //   const jsonResponse = [
-  //     {
-  //       "pNum": "P001",
-  //       "pName": "Product 1",
-  //       "count": 10,
-  //       "price": 100,
-  //       "discount": 10,
-  //       "total": 90
-  //     },
-  //     {
-  //       "pNum": "P002",
-  //       "pName": "Product 2",
-  //       "count": 5,
-  //       "price": 200,
-  //       "discount": 20,
-  //       "total": 180
-  //     },
-  //     {
-  //       "pNum": "P003",
-  //       "pName": "Product 3",
-  //       "count": 3,
-  //       "price": 300,
-  //       "discount": 15,
-  //       "total": 285
-  //     },
-  //     {
-  //       "pNum": "P004",
-  //       "pName": "Product 4",
-  //       "count": 7,
-  //       "price": 400,
-  //       "discount": 25,
-  //       "total": 375
-  //     },
-  //     {
-  //       "pNum": "P005",
-  //       "pName": "Product 5",
-  //       "count": 12,
-  //       "price": 150,
-  //       "discount": 5,
-  //       "total": 145
-  //     }
-  //   ]
-  //   setResponses(jsonResponse);
-  // }
-
-  // useEffect(() => {
-  //   console.log('loginStatus:', isLoggedIn);
-  //   console.log('welcome', userId);
-  //   getCartList();
-  // }, [])
-
-  // useEffect(() => {
-  //   // 총 결제금액, 할인 금액, 수량 업데이트
-  //   let newGrandTotal: number = 0;
-  //   let newGrandDiscount: number = 0;
-  //   let newGrandCount: number = 0;
-  //   let newGrandPrice: number = 0;
-  //   responses.forEach(product => {
-  //     newGrandTotal += product.total;
-  //     newGrandDiscount += product.discount * product.count;
-  //     newGrandCount += product.count;
-  //     newGrandPrice += product.price * product.count;
-  //   });
-  //   setGrandTotal(newGrandTotal);
-  //   setGrandDiscount(newGrandDiscount);
-  //   setGrandCount(newGrandCount);
-  //   setGrandPrice(newGrandPrice);
-  // }, [responses]);
-
 
   const { handleBarcodeScan } = useGetProduct(responses, setResponses);
   
@@ -228,11 +157,11 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                       </View>
 
                       {/* 단가 */}
-                      <Text style={[CartStyles.categoryText, { width: '20%' }]}>{response.price}</Text>
+                      <Text style={[CartStyles.categoryText, { width: '20%' }]}>{formatNumber(response.price)}</Text>
                       {/* 할인 */}
-                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{response.discount}</Text>
+                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(response.discount)}</Text>
                       {/* 합계 */}
-                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{response.total}</Text>
+                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(response.total)}</Text>
 
                       {/* 삭제버튼 */}
                       <TouchableOpacity onPress={() => deleteNodeButton(index)}>
@@ -259,18 +188,18 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
                 <View style={CartStyles.totalTextContainer}>
                   <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>총 결제 예상 금액</Text>
-                  <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>{grandTotal}원</Text>
+                  <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>{formatNumber(grandTotal)}원</Text>
                 </View>
                 <View style={[CartStyles.stick, { backgroundColor: 'black', marginTop: 0, marginBottom: 12, width: '100%' }]} />
 
                 <View style={CartStyles.totalTextContainer}>
                   <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#696969' }]}>총 상품 금액</Text>
-                  <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#696969' }]}>{grandPrice}원</Text>
+                  <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#696969' }]}>{formatNumber(grandPrice)}원</Text>
                 </View>
 
                 <View style={CartStyles.totalTextContainer}>
                   <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#696969' }]}>총 할인 금액</Text>
-                  <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#E33434' }]}>-{grandDiscount}원</Text>
+                  <Text style={[GlobalStyles.regularText, { fontSize: 20, color: '#E33434' }]}>-{formatNumber(grandDiscount)}원</Text>
                 </View>
 
                 <View style={CartStyles.totalTextContainer}>
