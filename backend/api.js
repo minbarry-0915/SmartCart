@@ -107,14 +107,15 @@ app.post('/api/register', async (req, res) => {
 });
 
 
-// (디비연결 test용) 사용자 정보 반환 API
+/* 
+(디비연결 test용) 사용자 정보 반환 API
 app.get('/api/users/:apikey/type/:type', async (req, res) => {
     let { apikey, type } = req.params;
 
-  /*  // API 키 유효성 검증
+   // API 키 유효성 검증
     if (!uuidAPIKey.check(apikey, key.uuid)) {
         return res.status(403).send('API key is not valid.');
-    }*/
+    }
 
     if (!await checkApiKey(apikey)) {
         return res.status(403).send('API key is not valid.');
@@ -133,7 +134,7 @@ app.get('/api/users/:apikey/type/:type', async (req, res) => {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-});
+}); */
 
 // 상품 목록 조회 API
 app.get('/api/products/:apikey', verifyApiKey, async (req, res) => {
@@ -200,3 +201,26 @@ app.get('/api/sales/:apikey/type/:year', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+// 최근 검색기록 조회 API
+app.get('/api/search-history/:apikey/:userId', verifyApiKey, async (req, res) => {
+    const { apikey, userId } = req.params;
+
+    try {
+        // 특정 User_id에 대한 검색 기록 조회
+        const [rows] = await db.query('SELECT DISTINCT Product_Name FROM Search_History2 WHERE User_id = ?', [userId]);
+
+        if (rows.length > 0) {
+            const productNames = rows.map(row => row.Product_Name);
+            res.json(productNames); // 유저별 검색한 제품명 반환
+        } else {
+            res.status(404).send('No search history found for this user.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
