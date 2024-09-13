@@ -2,14 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import TopNavigatorStyles from "../styles/TopNavigatorStyles";
-import BackBlackIcon from '../assets/icons/back_black.svg';
-import BackWhiteIcon from '../assets/icons/back_white.svg';
-import SearchBlackIcon from '../assets/icons/search_black.svg';
-import SearchWhiteIcon from '../assets/icons/search_white.svg';
-import PersonBlackIcon from '../assets/icons/person_black.svg';
-import PersonWhiteIcon from '../assets/icons/person_white.svg';
-import CartBlackIcon from '../assets/icons/cart_black.svg';
-import CartWhiteIcon from '../assets/icons/cart_white.svg';
+import { BackBlackIcon, BackWhiteIcon, SearchBlackIcon, SearchWhiteIcon,CartBlackIcon,CartWhiteIcon, PersonBlackIcon, PersonWhiteIcon } from "../assets/icons";
 
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";

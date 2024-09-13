@@ -2,7 +2,6 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -87,14 +86,7 @@ function UserInfoModifyScreen({navigation}:{navigation: NavigationProp<ParamList
         }}>
             {isLoggedIn ? (
                 <View style = {{flex : 1}}>
-                    <Header 
-                    showBackButton={true} 
-                    title="개인정보수정" 
-                    showSearchButton={false}
-                    showCartButton={false}
-                    showMyPageButton={false}
-                    showSearchContainer={false} 
-                    navigation={navigation}/>  
+   
 
                     {/* body */}
                     <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
@@ -114,13 +106,13 @@ function UserInfoModifyScreen({navigation}:{navigation: NavigationProp<ParamList
                                 </View>
                             </View>
                             <View>
-                                <TouchableOpacity 
+                                {/* <TouchableOpacity 
                                 activeOpacity={0.7}
                                 style={[styles.loginButton, {width: 154}]}
                                 onPress={onVerifyButton}
                                 >
                                     <Text style={styles.loginButtonText}>확인</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </ScrollView>
                     </View>

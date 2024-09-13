@@ -5,7 +5,7 @@ import Location from "./animations/location";
 import AnimationStyles from "../styles/AnimationStyles";
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetLocation from "../customHooks/useGetLocation";
-import UpwardIcon from "../assets/icons/upward.svg";
+import { UpwardIcon } from "../assets/icons";
 
 function LocationModal({ modalVisible, toggleLocationModal } : { modalVisible: boolean, toggleLocationModal: () => void }) {
     const [visible, setVisible] = useState(modalVisible);

@@ -7,13 +7,11 @@ import TopNavigator from "../components/TopNavigator";
 import GlobalStyles from "../styles/GlobalStyles";
 import CartStyles from "../styles/CartScreenStyles";
 import LinearGradient from "react-native-linear-gradient";
-import UpwardIcon from '../assets/icons/upward.svg';
 import useGetProductDetail from "../customHooks/useGetProductDetail";
 import ProductDetailStyles from "../styles/ProductDetailScreenStyles";
-import AddCartIcon from '../assets/icons/addCart.svg';
-import LocationIcon from '../assets/icons/location.svg';
 import LocationModal from "../components/LocationModal";
 import CartModal from "../components/CartModal";
+import { AddCartIcon, UpwardIcon, LocationIcon } from "../assets/icons";
 
 interface MyParams {
     pNum: string,

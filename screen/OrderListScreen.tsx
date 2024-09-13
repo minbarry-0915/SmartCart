@@ -1,7 +1,6 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import Header from "../components/Header";
 import styles from "./StyleSheet";
 import OrderList from "../components/OrderList";
 import { useSelector } from "react-redux";

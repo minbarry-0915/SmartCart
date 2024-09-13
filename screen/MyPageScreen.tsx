@@ -2,8 +2,6 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
-import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "../redux/store";
@@ -246,7 +244,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                 </LinearGradient>
             ) : (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={styles.MainText}>Login Again</Text>
+                    <Text style={GlobalStyles.semiBoldText}>Login Again</Text>
                 </View>
             )}
         </View>

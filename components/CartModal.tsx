@@ -5,9 +5,7 @@ import Location from "./animations/location";
 import AnimationStyles from "../styles/AnimationStyles";
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetLocation from "../customHooks/useGetLocation";
-import UpwardIcon from "../assets/icons/upward.svg";
-import MinusIcon from '../assets/icons/minus.svg';
-import PlusIcon from '../assets/icons/plus.svg';
+import { UpwardIcon, PlusIcon, MinusIcon } from "../assets/icons";
 import formatNumber from "../customHooks/fomatNumber";
 
 interface Prop {

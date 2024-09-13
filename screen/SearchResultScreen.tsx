@@ -1,20 +1,16 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import styles from "./StyleSheet";
 import { Button, Image, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import TopNavigator from "../components/TopNavigator";
 import useGetSearchResults from "../customHooks/useGetSearchResult";
 import LinearGradient from "react-native-linear-gradient";
 import GlobalStyles from "../styles/GlobalStyles";
-import UpwardIcon from '../assets/icons/upward.svg';
 import SearchStyles from "../styles/SearchScreenStyles";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
+import { UpwardIcon } from "../assets/icons";
 import { logout } from "../redux/authSlice";
 //
 interface MyParams {

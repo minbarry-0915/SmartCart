@@ -1,7 +1,6 @@
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { login } from "../redux/authSlice";

@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { Animated, Easing, Text, TouchableOpacity, View } from "react-native";
-import UpwardIcon from "../assets/icons/upward.svg";
+import { UpwardIcon } from "../assets/icons";
 import LocationModalStyles from "../styles/LocationModalStyles";
 import GlobalStyles from "../styles/GlobalStyles";
 

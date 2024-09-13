@@ -2,7 +2,6 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
-import Header from "../components/Header";
 import SelectDropdown from "react-native-select-dropdown";
 import SelectDropDown from "../components/SelectDropDown";
 //
@@ -72,15 +71,6 @@ function JoinScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
         flex:1,
         backgroundColor:'white',
       }}>
-        <Header
-        showBackButton={true}
-        showCartButton={false}
-        showMyPageButton={false}
-        showSearchButton={false}
-        showSearchContainer={false}
-        title='회원가입'
-        navigation={navigation}
-        />
         {/* body */}
         <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
           <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>
@@ -186,12 +176,12 @@ function JoinScreen({navigation}: {navigation: NavigationProp<ParamListBase>}){
               
             </View>
             
-            <TouchableOpacity
+            {/* <TouchableOpacity
             onPress={onJoinButton}
             style={styles.loginButton}
             >
               <Text style={styles.loginButtonText}>가입하기</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </ScrollView>
         </View>
       </SafeAreaView>

@@ -8,12 +8,11 @@ import TopNavigator from "../components/TopNavigator";
 import SearchStyles from "../styles/SearchScreenStyles";
 import GlobalStyles from "../styles/GlobalStyles";
 import LinearGradient from "react-native-linear-gradient";
-import CancelIcon from '../assets/icons/cancel_without_circle.svg';
 import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
 import usePostRecentKeywords from "../customHooks/usePostRecentKeywords";
-
+import { CancelIcon } from "../assets/icons";
 
 function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   //redux

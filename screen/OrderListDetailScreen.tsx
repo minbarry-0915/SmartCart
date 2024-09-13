@@ -2,10 +2,10 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
 import styles from "./StyleSheet";
 import OrderComponent from "../components/Order";
 import TopNavigator from "../components/TopNavigator";
+import GlobalStyles from "../styles/GlobalStyles";
 //
 interface MyParams{
     orderId: string,
@@ -120,7 +120,7 @@ function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListB
                             onPress={onOrderListButton}
                             activeOpacity={0.7}
                             style={styles.OrderListButton}>
-                                <Text style={[styles.MainText, {color: 'white'}]}>목록</Text>
+                                <Text style={[GlobalStyles.semiBoldText, {color: 'white'}]}>목록</Text>
                             </TouchableOpacity>
                         </View>
 
