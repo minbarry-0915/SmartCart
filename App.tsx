@@ -63,7 +63,7 @@ function App() {
           <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation:'none'}}/>
           <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false ,animation:'none'}}/>
           <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false ,animation:'fade'}}/>
-          <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'fade'}} />
+          <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'default'}} />
           <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} options={{ headerShown: false ,animation:'default'}}/>
           <Stack.Screen name="UserInfoModify" component={UserInfoModifyScreen} options={{headerShown: false ,animation:'default'}}/>
           <Stack.Screen name="UserInfoModifyDetail" component={UserInfoModifyDetailScreen} options={{headerShown: false, animation:'default'}}/>

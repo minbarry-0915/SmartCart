@@ -1,20 +1,20 @@
-import AddCartIcon from '../assets/icons/addCart.svg';
-import BackBlackIcon from '../assets/icons/back_black.svg';
-import BackWhiteIcon from '../assets/icons/back_white.svg';
-import CancelIcon from '../assets/icons/cancel_without_circle.svg';
-import CartBlackIcon from '../assets/icons/cart_black.svg';
-import CartWhiteIcon from '../assets/icons/cart_white.svg';
-import LogOutIcon from '../assets/icons/logout.svg';
-import MinusIcon from '../assets/icons/minus.svg';
-import PersonBlackIcon from '../assets/icons/person_black.svg';
-import PersonIcon from '../assets/icons/person_black.svg';
-import PersonWhiteIcon from '../assets/icons/person_white.svg';
-import PlusIcon from '../assets/icons/plus.svg';
-import SearchBlackIcon from '../assets/icons/search_black.svg';
-import SearchWhiteIcon from '../assets/icons/search_white.svg';
-import ShoppingBagIcon from '../assets/icons/shoppingBag.svg';
-import UpwardIcon from '../assets/icons/upward.svg';
-import LocationIcon from '../assets/icons/location.svg';
+import AddCartIcon from './addCart.svg';
+import BackBlackIcon from './back_black.svg';
+import BackWhiteIcon from './back_white.svg';
+import CancelIcon from './cancel_without_circle.svg';
+import CartBlackIcon from './cart_black.svg';
+import CartWhiteIcon from './cart_white.svg';
+import LogOutIcon from './logout.svg';
+import MinusIcon from './minus.svg';
+import PersonBlackIcon from './person_black.svg';
+import PersonIcon from './person_black.svg';
+import PersonWhiteIcon from './person_white.svg';
+import PlusIcon from './plus.svg';
+import SearchBlackIcon from './search_black.svg';
+import SearchWhiteIcon from './search_white.svg';
+import ShoppingBagIcon from './shoppingBag.svg';
+import UpwardIcon from './upward.svg';
+import LocationIcon from './location.svg';
 
 export {
   AddCartIcon,

@@ -13,6 +13,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 import ShoppingBagIcon from '../assets/icons/shoppingBag.svg';
 import PersonIcon from '../assets/icons/person_black.svg';
 import LogOutIcon from '../assets/icons/logout.svg';
+import formatNumber from "../customHooks/fomatNumber";
 
 interface User {
     id: string,
@@ -193,7 +194,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                                             <Text
                                                 numberOfLines={1}
                                                 style={[GlobalStyles.regularText, { fontSize: 12 }]}>{product.pName}</Text>
-                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{product.pPrice} 원</Text>
+                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(product.pPrice)} 원</Text>
                                         </TouchableOpacity>
                                         {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
                                         {index !== products.length - 1 && (

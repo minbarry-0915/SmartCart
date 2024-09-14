@@ -6,9 +6,10 @@ import styles from "./StyleSheet";
 import OrderComponent from "../components/Order";
 import TopNavigator from "../components/TopNavigator";
 import GlobalStyles from "../styles/GlobalStyles";
+import LinearGradient from "react-native-linear-gradient";
 //
 interface MyParams{
-    orderId: string,
+    order: Order,
 }
 
 interface Product {
@@ -34,61 +35,10 @@ interface Order {
 }
 
 function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListBase>, navigation:NavigationProp<ParamListBase>}){
-    const {orderId} = route.params as MyParams;
-    
-    const [order, setOrder] = useState<Order>();
-
-    const getOrderList = () =>{
-        const jsonResponse ={
-            "id": "order12345",
-            "orderDate": "2024-05-28T12:34:56.789Z",
-            "productList": [
-                {
-                    "pNum": "P001",
-                    "pCategory": "Electronics",
-                    "pName": "Smartphone",
-                    "pImage": "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
-                    "pPrice": 699.99,
-                    "quantity": 1
-                },
-                {
-                    "pNum": "P002",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                },
-                {
-                    "pNum": "P003",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                },
-                {
-                    "pNum": "P004",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                }
-            ],
-            "tag": true,
-            "totalProductPrice": 1000000,
-            "totalDiscountPrice": 100,
-            "paymentCard": '신한카드',
-            "paymentCardNum": '4221555845457878',
-            "totalPaymentPrice": 999900,
-        } 
-        setOrder(jsonResponse);
-    };
+    const { order } = route.params as MyParams;
 
     useEffect(()=>{
-        console.log('oderId:',orderId);
-        getOrderList();
+        console.log('orderId:',order.id);
     },[])
 
     const onOrderListButton = () => {
@@ -96,25 +46,28 @@ function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListB
     };
 
     return(
-        <SafeAreaView style={{
+        <View style={{
             flex: 1,
-            backgroundColor: 'white',
         }}>
+            <LinearGradient
+                colors={['#FFFFFF', '#D9D9D9', '#000000']}
+                style={{flexGrow: 1}}
+            >
             <TopNavigator
-            title="장바구니"
+            title="주문목록조회"
             navigation={navigation}
             />
 
             {order && (
-                <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
                     <ScrollView 
                     showsVerticalScrollIndicator={true}
-                    contentContainerStyle={styles.ProductDetailScrollContainer}>
+                    contentContainerStyle={GlobalStyles.scrollContainer}>
                         <OrderComponent
                         data={order}
                         navigation={navigation}
                         route={route}
                         />
+
                         <View style={{width: '50%'}}>
                             <TouchableOpacity
                             onPress={onOrderListButton}
@@ -126,11 +79,10 @@ function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListB
 
                         
                     </ScrollView>
-                </View>
                 
             )}
-            
-        </SafeAreaView>    
+            </LinearGradient>
+        </View>    
     );
 
 }

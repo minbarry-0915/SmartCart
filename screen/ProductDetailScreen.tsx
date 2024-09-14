@@ -150,8 +150,9 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
             {/* addCartModal */}
             <CartModal
                 modalVisible = {addCartModalVisible}
-                toggleLocationModal={toggleAddCartModal}
+                toggleAddCartModal={toggleAddCartModal}
                 price={product?.price}
+                navigation={navigation}
             />
         </View>
     );
