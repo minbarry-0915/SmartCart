@@ -1,23 +1,24 @@
-// In App.js in a new project
-
-import React,{ useEffect, } from 'react';
-import { NavigationContainer} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import JoinScreen from './screen/JoinScreen';
-import SearchScreen from './screen/SearchScreen';
-import SearchResultScreen from './screen/SearchResultScreen';
-import ProductDetailScreen from './screen/ProductDetailScreen';
-import CartScreen from './screen/CartScreen';
-import MyPageScreen from './screen/MyPageScreen';
 import { PermissionsAndroid, Platform } from 'react-native';
-import OrderListScreen from './screen/OrderListScreen';
-import OrderListDetailScreen from './screen/OrderListDetailScreen';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import LoginScreen from './screen/LoginScreen';
-import UserInfoModifyScreen from './screen/UserInfoModifyScreen';
-import UserInfoModifyDetailScreen from './screen/UserInfoModifyDetailScreen';
 
+// screen import from index.js
+import {
+  JoinScreen,
+  SearchScreen,
+  SearchResultScreen,
+  ProductDetailScreen,
+  CartScreen,
+  MyPageScreen,
+  OrderListScreen,
+  OrderListDetailScreen,
+  LoginScreen,
+  UserInfoModifyScreen,
+  UserInfoModifyDetailScreen
+} from './screen/index';
 
 const Stack = createNativeStackNavigator();
 
