@@ -1,25 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-    quantity: number;  // 수량 추가
-}
-
-interface Order {
-    id: string;
-    orderDate: string;
-    productList: Product[];
-    tag: boolean; // true: online, false: offline
-    totalProductPrice: number;
-    totalDiscountPrice: number;
-    paymentCard: string;
-    paymentCardNum: string;
-    totalPaymentPrice: number;
-}
+import { Order}  from "../types";
 
 function useGetOrderList() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -38,27 +18,27 @@ function useGetOrderList() {
                         "productList": [
                             {
                                 "pNum": "P001",
-                                "pCategory": "Electronics",
+                                "category": "Electronics",
                                 "pName": "Smartsssssssssss냐냐냐ㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑphone",
-                                "pImage": "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
-                                "pPrice": 4845484,
-                                "quantity": 1
+                                "pMainImage": "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
+                                "price": 4845484,
+                                "count": 1
                             },
                             {
                                 "pNum": "P002",
-                                "pCategory": "Home Appliance",
+                                "category": "Home Appliance",
                                 "pName": "Blender",
-                                "pImage": "https://example.com/images/blender.jpg",
-                                "pPrice": 4861315,
-                                "quantity": 2
+                                "pMainImage": "https://example.com/images/blender.jpg",
+                                "price": 4861315,
+                                "count": 2
                             },
                             {
                                 "pNum": "P003",
-                                "pCategory": "Home Appliance",
+                                "category": "Home Appliance",
                                 "pName": "Blender",
-                                "pImage": "https://example.com/images/blender.jpg",
-                                "pPrice": 48215,
-                                "quantity": 2
+                                "pMainImage": "https://example.com/images/blender.jpg",
+                                "price": 48215,
+                                "count": 2
                             }
                         ],
                         "tag": true,
@@ -74,19 +54,19 @@ function useGetOrderList() {
                         "productList": [
                             {
                                 "pNum": "P003",
-                                "pCategory": "Books",
+                                "category": "Books",
                                 "pName": "TypeScript Handbook",
-                                "pImage": "https://example.com/images/typescript_handbook.jpg",
-                                "pPrice": 29.99,
-                                "quantity": 3
+                                "pMainImage": "https://example.com/images/typescript_handbook.jpg",
+                                "price": 29.99,
+                                "count": 3
                             },
                             {
                                 "pNum": "P004",
-                                "pCategory": "Clothing",
+                                "category": "Clothing",
                                 "pName": "T-shirtsssssssssssssssssssssssssssssssssssssssssss",
-                                "pImage": "https://example.com/images/tshirt.jpg",
-                                "pPrice": 19.99,
-                                "quantity": 5
+                                "pMainImage": "https://example.com/images/tshirt.jpg",
+                                "price": 19.99,
+                                "count": 5
                             }
                         ],
                         "tag": false,
@@ -102,11 +82,11 @@ function useGetOrderList() {
                         "productList": [
                             {
                                 "pNum": "P005",
-                                "pCategory": "Grocery",
+                                "category": "Grocery",
                                 "pName": "Organic Apples",
-                                "pImage": "https://example.com/images/apples.jpg",
-                                "pPrice": 5.99,
-                                "quantity": 10
+                                "pMainImage": "https://example.com/images/apples.jpg",
+                                "price": 5.99,
+                                "count": 10
                             }
                         ],
                         "tag": true,

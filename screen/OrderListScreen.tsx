@@ -2,31 +2,13 @@ import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/nati
 import React, { useEffect, useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from "./StyleSheet";
-import OrderList from "../components/OrderList";
+import OrderItem from "../components/OrderList";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import TopNavigator from "../components/TopNavigator";
 import LinearGradient from "react-native-linear-gradient";
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetOrderList from "../customHooks/useGetOrderList";
-//
-
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-    quantity: number;  // 수량 추가
-}
-
-interface Order {
-    id: string;
-    orderDate: string;
-    productList: Product[];
-    tag: boolean; // true: online, false: offline
-}
-
 
 function OrderListScreen({ navigation, route }: { navigation: NavigationProp<ParamListBase>, route: RouteProp<ParamListBase> }) {
     //redux
@@ -54,10 +36,18 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={GlobalStyles.scrollContainer}>
-                    <OrderList 
-                    data={orderList} 
-                    navigation={navigation} 
-                    route={route} />
+
+                    {orderList.map((order, index) =>(
+                        <>
+                            <OrderItem
+                            data= {order}
+                            navigation={navigation}
+                            route={route}
+                            mode='briefMode'
+                            />
+                        </>
+                    ))}
+
                 </ScrollView>
             </LinearGradient>
 

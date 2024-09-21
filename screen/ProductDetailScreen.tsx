@@ -12,6 +12,8 @@ import ProductDetailStyles from "../styles/ProductDetailScreenStyles";
 import LocationModal from "../components/LocationModal";
 import CartModal from "../components/CartModal";
 import { AddCartIcon, UpwardIcon, LocationIcon } from "../assets/icons";
+import Loading from "../components/animations/loading";
+import AnimationStyles from "../styles/AnimationStyles";
 
 interface MyParams {
     pNum: string,
@@ -20,24 +22,31 @@ interface MyParams {
 function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
+
     const { pNum } = route.params as MyParams;
+    
     const { product, loading, error } = useGetProductDetail(pNum);
 
     const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
     const [locationModalVisible, setLocationModalVisible] = useState<boolean>(false);
     const [addCartModalVisible, setAddCartModalVisible] = useState<boolean>(false);
+    const [recommendationModalVisible, setRecommendationModalVisible] = useState<boolean>(false);
+
 
     const slideAnim = useRef(new Animated.Value(300)).current;
     const [count, setCount] = useState<number>(0);
     const [grandPrice, setGrandPrice] = useState<number>(0);
     const textColor = 'white';
-   
+
     const toggleLocationModal = () => {
         setLocationModalVisible(!locationModalVisible);
     };
     const toggleAddCartModal = () => {
         setAddCartModalVisible(!addCartModalVisible);
     };
+    const toggleRecommendationModal = () => {
+        setRecommendationModalVisible(!recommendationModalVisible);
+    }
 
     useEffect(() => {
         if (product) {
@@ -74,62 +83,69 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                     mode="black"
                 />
 
-                {/* body */}
-                {product ? (
-                    <ScrollView
-                        ref={scrollViewRef}
-                        onScroll={handleScroll}
-                        showsVerticalScrollIndicator={false}
-                        scrollEventThrottle={16}
-                        contentContainerStyle={[GlobalStyles.scrollContainer, { paddingBottom: 24, marginHorizontal: 126 }]}>
-
-                        <View style={ProductDetailStyles.content}>
-                            {/* 메인이미지 */}
-                            <View style={ProductDetailStyles.mainImageContainer}>
-                                <Image
-                                    source={{ uri: product.pMainImage }}
-                                    style={ProductDetailStyles.mainImage} />
-                            </View>
-                            {/* 브랜드 */}
-                            <Text style={[GlobalStyles.semiBoldText, { color: textColor, fontSize: 24, marginBottom: 24 }]}>{product.category}</Text>
-                            {/* 상품명 */}
-                            <Text style={[GlobalStyles.mediumText, { color: textColor, marginBottom: 24 }]}>{product.pName}</Text>
-
-                            <View style={{flexDirection: 'row', marginBottom: 24}}>
-                                {/* 상품위치보기버튼 */}
-                                <TouchableOpacity
-                                    onPress={toggleLocationModal}
-                                    activeOpacity={0.8}
-                                    style={{marginRight: 12}}
-                                >
-                                    <LocationIcon width={50} height={50} />
-                                </TouchableOpacity>
-                                {/* 장바구니추가하기버튼 */}
-                                <TouchableOpacity
-                                    onPress={toggleAddCartModal}
-                                    activeOpacity={0.8}
-                                >
-                                    <AddCartIcon width={50} height={50} />
-                                </TouchableOpacity>
-
-                            </View>
-                        </View>
-
-                        <View style={[CartStyles.stick, { marginBottom: 24 }]} />
-
-                        <View style={[ProductDetailStyles.content, { width: '40%', flexWrap: 'wrap', }]}>
-                            {product.pDetailImage.map((image, index) => (
-                                <Text style={[GlobalStyles.regularText, { color: textColor, fontSize: 16}]}>
-                                    {image}
-                                </Text>
-                            ))}
-                        </View>
-                    </ScrollView>
-                ) : (
-                    <View style={{ flex: 1 }}>
-                        <Text>Failed to fetch product info</Text>
+                {loading ? (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Loading style={[AnimationStyles.loading, { width: 200, height: 200 }]} />
                     </View>
-                )}
+                ) : (
+                    //body
+                    product ? (
+                        <ScrollView
+                            ref={scrollViewRef}
+                            onScroll={handleScroll}
+                            showsVerticalScrollIndicator={false}
+                            scrollEventThrottle={16}
+                            contentContainerStyle={[GlobalStyles.scrollContainer, { paddingBottom: 24, marginHorizontal: 126 }]}>
+
+                            <View style={ProductDetailStyles.content}>
+                                {/* 메인이미지 */}
+                                <View style={ProductDetailStyles.mainImageContainer}>
+                                    <Image
+                                        source={{ uri: product.pMainImage }}
+                                        style={ProductDetailStyles.mainImage} />
+                                </View>
+                                {/* 브랜드 */}
+                                <Text style={[GlobalStyles.semiBoldText, { color: textColor, fontSize: 24, marginBottom: 24 }]}>{product.category}</Text>
+                                {/* 상품명 */}
+                                <Text style={[GlobalStyles.mediumText, { color: textColor, marginBottom: 24 }]}>{product.pName}</Text>
+
+                                <View style={{ flexDirection: 'row', marginBottom: 24 }}>
+                                    {/* 상품위치보기버튼 */}
+                                    <TouchableOpacity
+                                        onPress={toggleLocationModal}
+                                        activeOpacity={0.8}
+                                        style={{ marginRight: 12 }}
+                                    >
+                                        <LocationIcon width={50} height={50} />
+                                    </TouchableOpacity>
+                                    {/* 장바구니추가하기버튼 */}
+                                    <TouchableOpacity
+                                        onPress={toggleAddCartModal}
+                                        activeOpacity={0.8}
+                                    >
+                                        <AddCartIcon width={50} height={50} />
+                                    </TouchableOpacity>
+
+                                </View>
+                            </View>
+
+                            <View style={[CartStyles.stick, { marginBottom: 24 }]} />
+
+                            <View style={[ProductDetailStyles.content, { width: '40%', flexWrap: 'wrap', }]}>
+                                {product.pDetailImage.map((image, index) => (
+                                    <Text style={[GlobalStyles.regularText, { color: textColor, fontSize: 16 }]}>
+                                        {image}
+                                    </Text>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    ) : (
+                        <View style={{ flex: 1 }}>
+                            <Text>Failed to fetch product info</Text>
+                        </View>
+                    ))}
+
+
 
                 {scrollToTopButtonVisible && (
                     <TouchableOpacity
@@ -144,16 +160,17 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
 
             {/* locationModal */}
             <LocationModal
-                modalVisible = {locationModalVisible}
+                modalVisible={locationModalVisible}
                 toggleLocationModal={toggleLocationModal}
             />
             {/* addCartModal */}
             <CartModal
-                modalVisible = {addCartModalVisible}
+                modalVisible={addCartModalVisible}
                 toggleAddCartModal={toggleAddCartModal}
                 price={product?.price}
                 navigation={navigation}
             />
+
         </View>
     );
 }

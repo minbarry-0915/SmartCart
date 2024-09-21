@@ -43,6 +43,17 @@ export const OrderListStyles = StyleSheet.create({
     },
     textItem:{
         marginBottom: 12,
+    },
+    totalInfoContent:{
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        marginBottom: 12,
+    },
+    goBackButton:{
+        
     }
 
 })

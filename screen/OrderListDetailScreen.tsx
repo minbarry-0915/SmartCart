@@ -1,88 +1,76 @@
 import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import styles from "./StyleSheet";
-import OrderComponent from "../components/Order";
 import TopNavigator from "../components/TopNavigator";
 import GlobalStyles from "../styles/GlobalStyles";
 import LinearGradient from "react-native-linear-gradient";
-//
-interface MyParams{
+import OrderItem from "../components/OrderList";
+import { Order } from "../types";
+
+interface MyParams {
     order: Order,
 }
 
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-    quantity: number;  // 수량 추가
-}
-
-interface Order {
-    id: string;
-    orderDate: string;
-    productList: Product[];
-    tag: boolean; // true: online, false: offline
-    
-    totalProductPrice: number;
-    totalDiscountPrice: number;
-    paymentCard: string;
-    paymentCardNum: string;
-    totalPaymentPrice: number;
-}
-
-function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListBase>, navigation:NavigationProp<ParamListBase>}){
+function OrderListDetailScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
     const { order } = route.params as MyParams;
 
-    useEffect(()=>{
-        console.log('orderId:',order.id);
-    },[])
+    useEffect(() => {
+        console.log('orderId:', order.id);
+    }, [])
 
     const onOrderListButton = () => {
         navigation.goBack();
     };
 
-    return(
+    const onProductInfo = (id: string) => {
+        //console.log(id);
+        navigation.navigate('ProductDetail', { pNum: id });
+    }
+
+    if (!order) {
+        return null; // order가 undefined일 경우 아무것도 렌더링하지 않음
+    }
+
+    return (
         <View style={{
             flex: 1,
         }}>
             <LinearGradient
                 colors={['#FFFFFF', '#D9D9D9', '#000000']}
-                style={{flexGrow: 1}}
+                style={{ flexGrow: 1 }}
             >
-            <TopNavigator
-            title="주문목록조회"
-            navigation={navigation}
-            />
+                <TopNavigator
+                    title="주문목록조회"
+                    navigation={navigation}
+                />
 
-            {order && (
-                    <ScrollView 
-                    showsVerticalScrollIndicator={true}
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={GlobalStyles.scrollContainer}>
-                        <OrderComponent
+
+                    <OrderItem
                         data={order}
                         navigation={navigation}
                         route={route}
-                        />
+                        mode='detailedMode'
+                    />
 
-                        <View style={{width: '50%'}}>
-                            <TouchableOpacity
+                    <View style={{ width: '45%' }}>
+                        <TouchableOpacity
                             onPress={onOrderListButton}
                             activeOpacity={0.7}
-                            style={styles.OrderListButton}>
-                                <Text style={[GlobalStyles.semiBoldText, {color: 'white'}]}>목록</Text>
-                            </TouchableOpacity>
-                        </View>
+                            style={[GlobalStyles.blackButton, { elevation: 10 }]}>
+                            <Text style={[GlobalStyles.semiBoldText, { color: 'white' }]}>목록</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        
-                    </ScrollView>
-                
-            )}
+
+                </ScrollView>
+
+
             </LinearGradient>
-        </View>    
+        </View>
     );
 
 }
