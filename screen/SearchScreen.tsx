@@ -46,8 +46,8 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
     setKeywordArray([]);
   };
 
-  const onRecentKeywordNode = (pNum: string) => {
-    navigation.navigate('ProductDetail', { pNum: pNum });
+  const onRecentKeywordNode = (keyword: string) => {
+    navigation.navigate('SearchResult', {resultKeyword: keyword});
   };
 
 
@@ -96,9 +96,9 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
                     key={index}
                     activeOpacity={0.8}
                     style={SearchStyles.keywordNode}
-                    onPress={() => onRecentKeywordNode(keyword.pNum)}
+                    onPress={() => onRecentKeywordNode(keyword.Search_keyword)}
                   >
-                    <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.pName}</Text>
+                    <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Search_keyword}</Text>
                     <TouchableOpacity
                       activeOpacity={0.8}
                       onPress={() => deleteNodeButton(index)}>

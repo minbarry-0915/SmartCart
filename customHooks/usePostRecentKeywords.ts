@@ -1,10 +1,6 @@
 import { useEffect, useRef } from "react";
 import axios from "axios";
-
-interface Keyword {
-    pNum: string,
-    pName: string
-}
+import { Keyword } from "../types";
 
 function usePostRecentKeywords(
     keywordArray: Keyword[],

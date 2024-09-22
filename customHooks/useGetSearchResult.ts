@@ -1,18 +1,12 @@
 // useGetSearchResults.ts
 import { useCallback, useEffect, useState } from "react";
-
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-}
+import axios from "axios";
+import { Product } from "../types";
 
 function useGetSearchResult(keyword: string) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [response, setResponse] = useState<Product[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
 
     const getSearchResults = useCallback(async () => {
         try {
@@ -21,53 +15,39 @@ function useGetSearchResult(keyword: string) {
             console.log('Fetching search results...');
 
             // 예시 데이터
-            const response = {
-                "data": [
+            const jsonResponse = {
+                data: [
                     {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라난난나나나나ssssssssssssssssssaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassssssssssssssssssssssssssssssssssss나나나나나나나나나나ㅏ나나',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 1234,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '음료',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: 0,
+                        Description: 'Refreshing soft drink',
                     },
                     {
-                        "pNum": '21321',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 21321,
+                        Product_name: '마이프로틴',
+                        Price: 18000,
+                        Category: '단백질',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: 2000,
+                        Description: 'High-quality protein powder',
                     },
                     {
-                        "pNum": '32523523',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 32523523,
+                        Product_name: '초코바',
+                        Price: 2500,
+                        Category: '간식',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: 500,
+                        Description: 'Delicious chocolate snack',
                     },
-                    {
-                        "pNum": '657657',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
-                    },
-                    {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
-                    },
-                    {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
-                    }
+                    // 추가 데이터...
                 ]
             };
-            setResponse(response.data);
+            setProducts(jsonResponse.data);
         } catch (err: any) {
             console.error('Fail to fetch search results', err);
             setError(err);
@@ -84,7 +64,7 @@ function useGetSearchResult(keyword: string) {
     }, [keyword, getSearchResults]);
 
     return {
-        response,
+        products,
         loading,
         error,
     };

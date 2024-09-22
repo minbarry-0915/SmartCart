@@ -14,19 +14,14 @@ import ShoppingBagIcon from '../assets/icons/shoppingBag.svg';
 import PersonIcon from '../assets/icons/person_black.svg';
 import LogOutIcon from '../assets/icons/logout.svg';
 import formatNumber from "../customHooks/fomatNumber";
+import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
+import { Product } from "../types";
 
 interface User {
     id: string,
     name: string
 }
 
-interface Product {
-    pNum: string,
-    pCategory: string,
-    pName: string,
-    pImage: string,
-    pPrice: number,
-}
 
 function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
@@ -34,7 +29,6 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
     const [user, setUser] = useState<User>()
-    const [products, setProducts] = useState<Product[]>([]);
     const [isOrderListPressed, setIsOrderListPressed] = useState<boolean>(false);
     const [isModifyInfoPressed, setIsModifyInfoPressed] = useState<boolean>(false);
     const [isLogoutPressed, setIsLogOutPressed] = useState<boolean>(false);
@@ -49,68 +43,12 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
         }
     }
 
-    const getProduct = () => {
-        const jsonResponse = {
-            "data": [
-                {
-                    "pNum": '1234',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라난sssssssssss난나나나나나나나나나나나나나나ㅏ나나',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                },
-                {
-                    "pNum": '21321',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                },
-                {
-                    "pNum": '32523523',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                },
-                {
-                    "pNum": '657657',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                },
-                {
-                    "pNum": '1234',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                },
-                {
-                    "pNum": '1234',
-                    "pCategory": '마이프로틴',
-                    "pName": '코카콜라',
-                    "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                    "pPrice": 1320,
-                }
-            ]
-        };
-
-        //상품명 10글자이상은 자르기
-        const parsedJsonResponse = jsonResponse.data.map(product => ({
-            ...product,
-            pName: product.pName.substring(0, 10)
-        }));
-
-        setProducts([...parsedJsonResponse]);
-    }
-
+    const {loading, error, products} = useGetRecommendProductList();
 
     //버튼 핸들러
-    const onProductInfo = (id: string) => {
+    const onProductInfo = (id: number) => {
         console.log(id);
-        navigation.navigate('ProductDetail', { pNum: id });
+        navigation.navigate('ProductDetail', { productId: id });
     }
     const onOrderListButton = (id: string = '') => {
         navigation.navigate('OrderList', { id });
@@ -147,7 +85,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
     useEffect(() => {
         console.log('loginStatus:', isLoggedIn);
         getId();
-        getProduct();
+
         setIsOrderListPressed(false);
         setIsModifyInfoPressed(false);
         setIsLogOutPressed(false);
@@ -183,18 +121,18 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={MyPageStyles.recommendListContainer}>
-                                {products.map((product, index) => (
+                                {products.map((item, index) => (
                                     <View key={index} style={{ flexDirection: 'row' }}>
                                         <TouchableOpacity
-                                            onPress={() => { onProductInfo(product.pNum) }}
+                                            onPress={() => { onProductInfo(item.Product_id) }}
                                             style={MyPageStyles.recommendProductContainer}
                                             activeOpacity={0.8}
                                         >
-                                            <Image source={{ uri: product.pImage }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
+                                            <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
                                             <Text
                                                 numberOfLines={1}
-                                                style={[GlobalStyles.regularText, { fontSize: 12 }]}>{product.pName}</Text>
-                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(product.pPrice)} 원</Text>
+                                                style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
+                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text>
                                         </TouchableOpacity>
                                         {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
                                         {index !== products.length - 1 && (

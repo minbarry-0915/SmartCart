@@ -8,7 +8,7 @@ import { OrderListStyles } from "../styles/OrderListStyles";
 import GlobalStyles from "../styles/GlobalStyles";
 import formatNumber from "../customHooks/fomatNumber";
 import maskNumber from "../customHooks/maskString";
-import { Order, Product } from "../types";
+import { Order } from "../types";
 
 interface OrderListProps {
     data: Order;
@@ -20,19 +20,19 @@ interface OrderListProps {
 function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListProps) {
     const { userId } = useSelector((state: RootState) => state.auth);
 
-    const [order, setOrder] = useState<Order>();
+    const [order, setOrder] = useState<Order | undefined>(data);
 
     useEffect(() => {
         setOrder(data);
     }, [data]);
 
     const onOrderDetailButton = (order: Order) => {
-        navigation.navigate('OrderListDetail', { order: order });
-    }
+        navigation.navigate('OrderListDetail', { order });
+    };
+
     const onProductInfo = (id: string) => {
-        //console.log(id);
         navigation.navigate('ProductDetail', { pNum: id });
-    }
+    };
 
     if (!order) {
         return null; // order가 undefined일 경우 아무것도 렌더링하지 않음
@@ -45,7 +45,7 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
                 <Text style={[GlobalStyles.semiBoldText, { fontSize: 24 }]}>{order.orderDate}</Text>
             </View>
 
-            {/* 오프라인 온라인 */}
+            {/* 구매 타입 */}
             <View style={[OrderListStyles.orderContent, { paddingVertical: 12 }]}>
                 {order.tag ? (
                     <Text style={[GlobalStyles.regularText, { color: '#D10000', fontSize: 18 }]}>온라인 구매</Text>
@@ -54,47 +54,43 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
                 )}
             </View>
 
-            {/* 간소화버전: 세개까지, 상세버전: 전체 다 */}
-            {(mode === 'briefMode' ? order.productList.slice(0, 3) : order.productList).map(
-                (product, index) => (
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        key={index}
-                        style={[OrderListStyles.orderContent]}
-                        onPress={() => onProductInfo(product.pNum)}>
-                        <View style={OrderListStyles.orderItem}>
-                            {/* 상품이미지 */}
-                            <View style={OrderListStyles.imageContainer}>
-                                <Image source={{ uri: product.pMainImage }} style={styles.OrderProductImage} />
-                            </View>
-
-                            {/* 상품명 */}
-                            <View style={OrderListStyles.textContainer}>
-                                <View style={OrderListStyles.textItem}>
-                                    <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>{product.pName}</Text>
-                                </View>
-
-                                <View style={OrderListStyles.textItem}>
-                                    <Text style={[GlobalStyles.mediumText, { color: '#696969' }]}>수량: {product.count}개</Text>
-                                </View>
-
-                                <View style={OrderListStyles.textItem}>
-                                    <Text style={[GlobalStyles.semiBoldText]}>{formatNumber(product.price)} 원</Text>
-                                </View>
-                            </View>
+            {/* 제품 목록 표시 */}
+            {(mode === 'briefMode' ? order.orderItems.slice(0, 3) : order.orderItems).map((product, index) => (
+                <TouchableOpacity
+                    activeOpacity={0.8}
+                    key={index}
+                    style={[OrderListStyles.orderContent]}
+                    onPress={() => onProductInfo(product.product.Product_id.toString())}>
+                    <View style={OrderListStyles.orderItem}>
+                        {/* 상품이미지 */}
+                        <View style={OrderListStyles.imageContainer}>
+                            <Image source={{ uri: product.product.Main_image }} style={styles.OrderProductImage} />
                         </View>
 
-                        <View
-                            style={{ width: '100%', height: 2, backgroundColor: '#D9D9D9', marginTop: 12 }}
-                        />
-                    </TouchableOpacity>
-                )
-            )}
+                        {/* 상품명 */}
+                        <View style={OrderListStyles.textContainer}>
+                            <View style={OrderListStyles.textItem}>
+                                <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>{product.product.Product_name}</Text>
+                            </View>
+
+                            <View style={OrderListStyles.textItem}>
+                                <Text style={[GlobalStyles.mediumText, { color: '#696969' }]}>수량: {product.quantity}개</Text>
+                            </View>
+
+                            <View style={OrderListStyles.textItem}>
+                                <Text style={[GlobalStyles.semiBoldText]}>{formatNumber(product.product.Price)} 원</Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={{ width: '100%', height: 2, backgroundColor: '#D9D9D9', marginTop: 12 }} />
+                </TouchableOpacity>
+            ))}
 
             {/* '...' 표시 및 상세보기 버튼 */}
             {mode === 'briefMode' ? (
                 <>
-                    {order.productList.length >= 3 && (
+                    {order.orderItems.length >= 3 && (
                         <View style={[OrderListStyles.orderContent, { alignItems: 'center', paddingVertical: 0 }]}>
                             <Text style={[GlobalStyles.BoldText, { fontSize: 18 }]}> . . . </Text>
                         </View>
@@ -116,7 +112,7 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
                         </View>
                         <View style={OrderListStyles.totalInfoContent}>
                             <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>쿠폰 할인금액</Text>
-                            <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>- {formatNumber(order.totalDiscountPrice)} 원</Text>
+                            <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>{formatNumber(order.totalDiscountPrice)} 원</Text>
                         </View>
                         <View style={OrderListStyles.totalInfoContent}>
                             <Text style={[GlobalStyles.regularText, { fontSize: 18 }]}>결제 정보</Text>
@@ -129,12 +125,8 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
                     </View>
                 </>
             )}
-
-
-
         </View>
-
     );
-};
+}
 
 export default OrderItem;

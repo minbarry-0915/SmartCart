@@ -6,15 +6,20 @@ export interface Product {
     Price: number,
     Category: string,
     Main_image?: string,
-    Discount?: number,
+    Discount: number | undefined,
     Description: string,
     Location_id?: string,
+}
+
+export interface Keyword {
+    Search_id: number,
+    Search_keyword: string,
 }
 
 export interface Order {
     id: string;
     orderDate: string;
-    productList: OrderItem[];
+    orderItems: OrderItem[];
     tag: boolean; // true: online, false: offline
     totalProductPrice: number;
     totalDiscountPrice: number;

@@ -22,7 +22,7 @@ function RecommendModal({
  }: Prop) {
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [visible, setVisible] = useState<boolean>(false);
-    const { product } = useGetRecommendProductList(); //추천 상품리스트 가져오기
+    const { products } = useGetRecommendProductList(); //추천 상품리스트 가져오기
 
     // 애니메이션 실행 함수
     const animateModal = (anim: Animated.Value, toValue: number, callback?: () => void) => {
@@ -37,11 +37,11 @@ function RecommendModal({
     };
 
     // 제품 정보 화면으로 이동
-    const onProductInfo = (id: string) => {
+    const onProductInfo = (id: number) => {
         animateModal(slideAnim, 500, () => {
             setVisible(false);
             closeCartModal();
-            navigation.navigate('ProductDetail', { pNum: id });
+            navigation.navigate('ProductDetail', { productId: id });
         });
     };
 
@@ -100,21 +100,21 @@ function RecommendModal({
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={MyPageStyles.recommendListContainer}
                         >
-                            {product.map((item, index) => (
+                            {products.map((item, index) => (
                                 <View key={index} style={{ flexDirection: 'row' }}>
                                     <TouchableOpacity
-                                        onPress={() => { onProductInfo(item.pNum) }}
+                                        onPress={() => { onProductInfo(item.Product_id) }}
                                         style={MyPageStyles.recommendProductContainer}
                                         activeOpacity={0.8}
                                     >
-                                        <Image source={{ uri: item.pImage }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
+                                        <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
                                         <Text
                                             numberOfLines={1}
-                                            style={[GlobalStyles.regularText, { fontSize: 16 }]}>{item.pName}</Text>
-                                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{item.pPrice} 원</Text>
+                                            style={[GlobalStyles.regularText, { fontSize: 16 }]}>{item.Product_name}</Text>
+                                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{item.Price} 원</Text>
                                     </TouchableOpacity>
                                     {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
-                                    {index !== product.length - 1 && (
+                                    {index !== products.length - 1 && (
                                         <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
                                     )}
                                 </View>

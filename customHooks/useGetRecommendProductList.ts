@@ -1,89 +1,112 @@
 import { useState, useCallback, useEffect } from "react";
+import { Product } from "../types";
 
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-}
-
-
-function useGetRecommendProductList(){
+function useGetRecommendProductList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [product, setProduct ] = useState<Product[]>([]);
-    const getRecommendProductList = useCallback (async() => {
+    const [products, setProducts] = useState<Product[]>([]);
+
+    const getRecommendProductList = useCallback(async () => {
         setLoading(true);
         setError(null);
 
         try {
             console.log('Fetching recommended product list...');
             const jsonResponse = {
-                "data": [
+                data: [
                     {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라난sssssssssss난나나나나나나나나나나나나나나ㅏ나나',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 1234,
+                        Product_name: '코카콜라난sssssssssss난나나나나나나나나나나나나나나ㅏ나나',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     },
                     {
-                        "pNum": '21321',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 21321,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     },
                     {
-                        "pNum": '32523523',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 32523523,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     },
                     {
-                        "pNum": '657657',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 32523523,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     },
                     {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 32523523,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     },
                     {
-                        "pNum": '1234',
-                        "pCategory": '마이프로틴',
-                        "pName": '코카콜라',
-                        "pImage": 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        "pPrice": 1320,
+                        Product_id: 32523523,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
+                    },
+                    {
+                        Product_id: 32523523,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
+                    },
+                    {
+                        Product_id: 657657,
+                        Product_name: '코카콜라',
+                        Price: 1320,
+                        Category: '마이프로틴',
+                        Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                        Discount: undefined,
+                        Description: 'Refreshing beverage',
                     }
                 ]
-            }
-            setProduct(jsonResponse.data);
+            };
+            setProducts(jsonResponse.data);
         } catch (error: any) {
             console.error('Failed to Fetch: ', error);
-            setError(error);
+            setError(error.message || 'Failed to fetch recommended products');
         } finally {
             console.log('Fetch Done.');
             setLoading(false);
         }
-        
-    },[])
+    }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         getRecommendProductList();
-    },[])
+    }, [getRecommendProductList]);
     
     return {
         loading,
         error,
-        product
-    }
+        products
+    };
 }
+
 export default useGetRecommendProductList;
