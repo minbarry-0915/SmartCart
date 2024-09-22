@@ -1,37 +1,27 @@
-// usePostCartList.ts
+// useGetProduct.ts
 import { useState, useCallback } from 'react';
+import { Product, CartItem } from '../types';
 
-interface Product {
-    pNum: string;
-    pName: string;
-    count: number;
-    price: number;
-    discount: number;
-    total: number;
-}
-
-function useGetProduct(initialResponses: Product[], setResponses: (responses: Product[]) => void) {
+function useGetProduct(initialResponses: CartItem[], setResponses: (responses: CartItem[]) => void) {
     const [barcodeData, setBarcodeData] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-
 
     const handleBarcodeScan = useCallback(async (data: string) => {
         console.log(`Scanned: ${data}`);
         setBarcodeData(data);
 
         // 기존 response 배열에서 제품 찾기
-        const foundProduct = initialResponses.find(product => product.pNum === data);
+        const foundItem = initialResponses.find(item => item.product.Product_id.toString() === data);
 
-        if (foundProduct) {
+        if (foundItem) {
             // 제품이 있으면 수량 업데이트
-            const updateResponses = initialResponses.map(product => {
-                if (product.pNum === data) {
-                    const newCount = product.count + 1;
-                    const newTotal = newCount * (product.price - product.discount);
-                    return { ...product, count: newCount, total: newTotal };
+            const updateResponses = initialResponses.map(item => {
+                if (item.product.Product_id.toString() === data) {
+                    const newCount = item.quantity + 1;
+                    return { ...item, quantity: newCount };
                 } else {
-                    return product;
+                    return item;
                 }
             });
             setResponses(updateResponses);
@@ -42,26 +32,23 @@ function useGetProduct(initialResponses: Product[], setResponses: (responses: Pr
                 setError(null);
 
                 const jsonResponse = {
-                    pNum: 'as123121412123',
-                    pName: '이건 상품명ssssssssssssssssssssssssssss이다',
-                    count: 1,
-                    price: 100000,
-                    discount: 10000,
+                    Product_id: 12345678,
+                    Product_name: "Product as12345678",
+                    Price: 150,
+                    Discount: 5,
+                    Description: "Description of Product 5",
+                    Category: "Category 5",
+                    quantity: 12,
                 };
-                const total = jsonResponse.price - jsonResponse.discount;
-                const newProduct = {
-                    pNum: jsonResponse.pNum,
-                    pName: jsonResponse.pName,
-                    count: jsonResponse.count,
-                    price: jsonResponse.price,
-                    discount: jsonResponse.discount,
-                    total: total
+                const newItem: CartItem = {
+                    product: jsonResponse,
+                    quantity: 1,
                 };
-                setResponses([...initialResponses, newProduct]);
+                setResponses([...initialResponses, newItem]);
             } catch (error: any) {
                 setError(error);
-            } finally { 
-                setLoading(true);
+            } finally {
+                setLoading(false);
             }
         }
     }, [initialResponses, setResponses]);

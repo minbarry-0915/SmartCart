@@ -11,6 +11,8 @@ import ScannerStyles from "../styles/BarcodeScannerStyles";
 import { CancelIcon } from '../assets/icons';
 import Barcode from "./animations/barcode";
 import AnimationStyles from "../styles/AnimationStyles";
+
+
 const BarcodeScanner = ({ onScan }: { onScan: (data: string) => void }) => {
   const [scaned, setScaned] = useState<boolean>(false);
   const [barcodeData, setBarcodeData] = useState<string>('');

@@ -1,16 +1,8 @@
 import { useEffect, useRef } from "react";
 import axios from "axios";
+import { CartItem } from "../types";
 
-interface Product {
-    pNum: string;
-    pName: string;
-    count: number;
-    price: number;
-    discount: number;
-    total: number;
-}
-
-function usePostCartList(responses: Product[], setResponses: React.Dispatch<React.SetStateAction<Product[]>>) {
+function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<React.SetStateAction<CartItem[]>>) {
     const isInitialMount = useRef(true);
    
     useEffect(() => {

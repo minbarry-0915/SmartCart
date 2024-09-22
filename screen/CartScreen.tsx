@@ -1,5 +1,5 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -17,35 +17,24 @@ import useGetProduct from "../customHooks/useGetProduct";
 import usePostCartList from "../customHooks/usePostCartList";
 import formatNumber from "../customHooks/fomatNumber";
 
-interface Product {
-  pNum: string,
-  pName: string,
-  count: number,
-  price: number,
-  discount: number,
-  total: number,
-}
+import { CartItem } from "../types";
 
 function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
-  //로그인상태 관리
-  const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth)
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
 
   const {
     responses,
     loading,
-    error,
     grandTotal,
     grandDiscount,
     grandCount,
     grandPrice,
-    getCartList,
     setResponses,
   } = useGetCartList();
 
   const deleteNodeButton = (index: number) => {
     const newResponses = [...responses];
-    //index의 위치에서 1개의 node를 제거
     newResponses.splice(index, 1);
     setResponses(newResponses);
   };
@@ -53,60 +42,47 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   const deleteAllNodes = () => {
     setResponses([]);
   };
-  
-  const decreaseCount = (response: Product) => {
-    if (response.count != 1) {
-      const updateResponses = responses.map(product => {
-        if (response.pNum == product.pNum) {
-          const newCount: number = product.count - 1;
-          const newTotal: number = newCount * (product.price - product.discount);
 
-          //spread 문법
-          return { ...product, count: newCount, total: newTotal };
+  //상품별 총 합계 계산 
+  const calculateTotal = (cartItem: CartItem) => {
+    return cartItem.quantity * (cartItem.product.Price - (cartItem.product.Discount || 0));
+  };
+
+  const decreaseCount = (cartItem: CartItem) => {
+    if (cartItem.quantity > 1) {
+      const updatedResponses = responses.map(item => {
+        if (cartItem.product.Product_id === item.product.Product_id) {
+          const newCount = item.quantity - 1;
+          return { ...item, quantity: newCount };
         }
-        else {
-          return product;
-        }
+        return item;
       });
-      setResponses(updateResponses);
+      setResponses(updatedResponses);
     }
   };
-  const increaseCount = (response: Product) => {
-    const updateResponses = responses.map(product => {
-      if (response.pNum == product.pNum) {
-        const newCount: number = product.count + 1;
-        const newTotal: number = newCount * (product.price - product.discount);
 
-        //spread 문법
-        return { ...product, count: newCount, total: newTotal };
+  const increaseCount = (cartItem: CartItem) => {
+    const updatedResponses = responses.map(item => {
+      if (cartItem.product.Product_id === item.product.Product_id) {
+        const newCount = item.quantity + 1;
+        return { ...item, quantity: newCount };
       }
-      else {
-        return product;
-      }
+      return item;
     });
-    setResponses(updateResponses);
+    setResponses(updatedResponses);
   };
 
   const { handleBarcodeScan } = useGetProduct(responses, setResponses);
   
   usePostCartList(responses, setResponses);
-  
+
   return (
     <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: 'white' }}>
-
       {isLoggedIn ? (
         <View style={{ flex: 1 }}>
-          {/* topNavigator */}
-          <TopNavigator
-            title="장바구니"
-            navigation={navigation}
-            showBackButton={false}
-          />
-          {/* body */}
+          <TopNavigator title="장바구니" navigation={navigation} showBackButton={false} />
           <View style={CartStyles.bodyContainer}>
-            {/* 스캔목록 */}
             <View style={CartStyles.buyingListContainer}>
-              {/* 스캔목록 헤더 */}
               <View style={CartStyles.buyingListHeader}>
                 <Text style={[GlobalStyles.semiBoldText, { fontSize: 30, color: '#757575' }]}>스캔 목록</Text>
                 <TouchableOpacity activeOpacity={0.9} style={CartStyles.deleteAllButton} onPress={deleteAllNodes}>
@@ -114,7 +90,6 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                 </TouchableOpacity>
               </View>
 
-              {/* 스캔목록 분류 */}
               <View style={CartStyles.listNodeContainer}>
                 <Text style={[CartStyles.categoryText, { width: '25%' }]}>상품명</Text>
                 <Text style={[CartStyles.categoryText, { width: '15%' }]}>수량</Text>
@@ -125,67 +100,51 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
               <View style={CartStyles.stick} />
 
               {loading ? (
-                <View style={{flex: 1, justifyContent: 'center', alignItems:'center'}}>
-                  <Loading style={[AnimationStyles.loading, {width: 200, height: 200}]}/>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <Loading style={[AnimationStyles.loading, { width: 200, height: 200 }]} />
                 </View>
               ) : (
-                <ScrollView
-                showsVerticalScrollIndicator={false}
-                >
-                  {responses.map((response, index) => (
-                    <View key={index} style={CartStyles.listNodeContainer}>
-                      {/* 상품명 */}
-                      <Text numberOfLines={1}
-                        style={[CartStyles.categoryText, { width: '25%' }]}>{response.pName}</Text>
-                      {/* 수량 */}
-                      <View style={{
-                        flexDirection: 'row', justifyContent: 'flex-start',
-                        alignItems: 'center',
-                        paddingHorizontal: 8,
-                        width: '15%'
-                      }}>
-                        {/* 감소버튼 */}
-                        <TouchableOpacity onPress={() => decreaseCount(response)}>
-                          <Feather name='minus-circle' size={25} color='black'></Feather>
-                        </TouchableOpacity>
-                        {/* 수량 숫자 */}
-                        <Text style={[CartStyles.categoryText, { width: 40, textAlign: 'center' }]}>{response.count}</Text>
-                        {/* 증가 버튼 */}
-                        <TouchableOpacity onPress={() => increaseCount(response)}>
-                          <Feather name='plus-circle' size={25} color='black' ></Feather>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {responses.map((cartItem, index) => {
+                    const total = calculateTotal(cartItem);
+                    return (
+                      <View key={index} style={CartStyles.listNodeContainer}>
+                        <Text numberOfLines={1} style={[CartStyles.categoryText, { width: '25%' }]}>{cartItem.product.Product_name}</Text>
+                        <View style={{
+                          flexDirection: 'row', justifyContent: 'flex-start',
+                          alignItems: 'center',
+                          paddingHorizontal: 8,
+                          width: '15%'
+                        }}>
+                          <TouchableOpacity onPress={() => decreaseCount(cartItem)}>
+                            <Feather name='minus-circle' size={25} color='black' />
+                          </TouchableOpacity>
+                          <Text style={[CartStyles.categoryText, { width: 40, textAlign: 'center' }]}>{cartItem.quantity}</Text>
+                          <TouchableOpacity onPress={() => increaseCount(cartItem)}>
+                            <Feather name='plus-circle' size={25} color='black' />
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={[CartStyles.categoryText, { width: '20%' }]}>{formatNumber(cartItem.product.Price)}</Text>
+                        <Text style={[CartStyles.categoryText, { width: '18%' }]}>- {formatNumber(cartItem.product.Discount || 0)}</Text>
+                        <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(total)}</Text>
+                        <TouchableOpacity onPress={() => deleteNodeButton(index)}>
+                          <AntDesign name='closecircle' size={25} color='black' />
                         </TouchableOpacity>
                       </View>
-
-                      {/* 단가 */}
-                      <Text style={[CartStyles.categoryText, { width: '20%' }]}>{formatNumber(response.price)}</Text>
-                      {/* 할인 */}
-                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(response.discount)}</Text>
-                      {/* 합계 */}
-                      <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(response.total)}</Text>
-
-                      {/* 삭제버튼 */}
-                      <TouchableOpacity onPress={() => deleteNodeButton(index)}>
-                        <AntDesign name='closecircle' size={25} color='black' />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
+                    );
+                  })}
                 </ScrollView>
               )}
-
-
             </View>
-
-            {/* 바코드 스캐너, 총 예상 금액 */}
+            
             <View style={{
               flex: 4,
               justifyContent: 'space-between'
             }}>
               {/* 바코드 스캐너 */}
               <BarcodeScanner onScan={handleBarcodeScan} />
-
-              {/* 총 예상 금액 */}
+              {/* 장바구니 총계산 금액 */}
               <View style={CartStyles.totalContainer}>
-
                 <View style={CartStyles.totalTextContainer}>
                   <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>총 결제 예상 금액</Text>
                   <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>{formatNumber(grandTotal)}원</Text>
@@ -208,6 +167,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                 </View>
               </View>
             </View>
+
           </View>
         </View>
       ) : (
