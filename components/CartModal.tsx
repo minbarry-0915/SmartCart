@@ -6,6 +6,9 @@ import { UpwardIcon, PlusIcon, MinusIcon } from "../assets/icons";
 import formatNumber from "../customHooks/fomatNumber";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import RecommendModal from "./RecommendModal";
+import isDiscount from "../customHooks/isDiscount";
+import { Product } from "../types";
+import discountCalculate from "../customHooks/discountCalculate";
 
 interface Prop {
     modalVisible: boolean,
@@ -89,6 +92,34 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
             //animateModal(resSlideAnim, 500);
         });
     };
+
+    const renderPriceText = (product: Product) => {
+        return (
+            <>
+                {!isDiscount(product.Discount) ? (
+                    <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, }]}>
+                        {formatNumber(totalPrice)} 원
+                    </Text>
+                ) : (
+                    <>
+                        <Text
+                            numberOfLines={1}
+                            style={[
+                                GlobalStyles.semiBoldText,
+                                { fontSize: 24, textDecorationLine: 'line-through', marginRight: 8 },
+                            ]}
+                        >{formatNumber(totalPrice)} 원</Text>
+                        <Text
+                            style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#D10000' }]}>
+                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount }))}원
+                        </Text>
+                    </>
+
+                )}
+
+            </>
+        )
+    }
 
     return (
         <Modal

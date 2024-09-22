@@ -6,6 +6,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import MyPageStyles from "../styles/MypageScreenstyles";
+import formatNumber from "../customHooks/fomatNumber";
 
 interface Prop {
     modalVisible: boolean,
@@ -46,7 +47,13 @@ function RecommendModal({
     };
 
     // 장바구니로 이동
-    const onCartButton = () => navigation.navigate('Cart');
+    const onCartButton = () => {
+        animateModal(slideAnim,500, ()=> {
+            toggleRecommendationModal();
+            closeCartModal();
+        });
+        
+        navigation.navigate('Cart')};
 
     useEffect(() => {
         if (modalVisible) {
@@ -59,6 +66,14 @@ function RecommendModal({
         }
     }, [modalVisible]);
 
+    const closeRequestHandler = () => {
+        animateModal(slideAnim,500, ()=> {
+            toggleRecommendationModal();
+            closeCartModal();
+        });
+        
+    }
+
     return (
         <>
             {visible && (
@@ -70,7 +85,7 @@ function RecommendModal({
                     }
                 ]}>
                     <TouchableOpacity
-                        onPress={()=>{}}
+                        onPress={closeRequestHandler}
                         activeOpacity={0.7}
                         style={{ marginBottom: 24, }}
                     >
@@ -111,7 +126,7 @@ function RecommendModal({
                                         <Text
                                             numberOfLines={1}
                                             style={[GlobalStyles.regularText, { fontSize: 16 }]}>{item.Product_name}</Text>
-                                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{item.Price} 원</Text>
+                                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{formatNumber(item.Price)} 원</Text>
                                     </TouchableOpacity>
                                     {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
                                     {index !== products.length - 1 && (
