@@ -1,293 +1,121 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import React,{useEffect, useRef, useState} from "react";
-import styles from "./StyleSheet";
-import { Animated, Button, Easing, Image, Modal, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Header from "../components/Header";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import TopNavigator from "../components/TopNavigator";
-//import ProductBottomModal from "../Components/ProductBottomModal";
-//
-interface MyParams{
-    pNum: string,
-};
+import GlobalStyles from "../styles/GlobalStyles";
+import CartStyles from "../styles/CartScreenStyles";
+import LinearGradient from "react-native-linear-gradient";
+import useGetProductDetail from "../customHooks/useGetProductDetail";
+import ProductDetailStyles from "../styles/ProductDetailScreenStyles";
+import LocationModal from "../components/LocationModal";
+import CartModal from "../components/CartModal";
+import { AddCartIcon, UpwardIcon, LocationIcon } from "../assets/icons";
+import Loading from "../components/animations/loading";
+import AnimationStyles from "../styles/AnimationStyles";
+import { Product } from "../types";
 
-interface Product{
-    pNum: string,
-    category: string,
-    pName: string,
-    pMainImage: string,
-    pDetailImage: string[],
-    price: number,
-    location: string,
+interface MyParams {
+    productId: number;
 }
 
-function ProductDetailScreen({route, navigation}:{route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase>}) {
-    const {isLoggedIn, userId} = useSelector((state: RootState)=> state.auth);
+function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
+    const { isLoggedIn } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
 
-    const {pNum} = route.params as MyParams;
-    const [product, setProduct] = useState<Product>({
-        pNum: '', 
-        category: '', 
-        pName: '', 
-        pMainImage: '', 
-        pDetailImage: [] as string[], 
-        price: 0, 
-        location: ''
-     });
-    const [isInfoButtonPressed, setIsInfoButtonPressed] = useState<boolean>(true);
-    const [isReviewButtonPressed, setIsReviewButtonPressed] = useState<boolean>(false);
+    const { productId } = route.params as MyParams;
+    
+    const { product, loading, error } = useGetProductDetail(productId);
+
+    const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
     const [locationModalVisible, setLocationModalVisible] = useState<boolean>(false);
     const [addCartModalVisible, setAddCartModalVisible] = useState<boolean>(false);
-    const slideAnim = useRef(new Animated.Value(300)).current;
-    const [count, setCount] = useState<number>(0);
-    const [grandPrice, setGrandPrice] = useState<number>(0);
-    
-    const handleInfoPressIn = () =>{
-        setIsInfoButtonPressed(true);
-        setIsReviewButtonPressed(false);
-    };
-    const handleReviewPressIn = () =>{
-        setIsInfoButtonPressed(false);
-        setIsReviewButtonPressed(true);
-    };
-    const toggleLocationModal = () => {
-        setLocationModalVisible(!locationModalVisible);
-    };
-    const toggleAddCartModal = () => {
-        if (addCartModalVisible) {
-          // 모달이 닫힐 때 슬라이드 다운 애니메이션 실행
-          Animated.timing(slideAnim, {
-            toValue: 300,
-            duration: 300,
-            easing: Easing.ease,
-            useNativeDriver: true,
-          }).start(() => {
-            setAddCartModalVisible(false);
-          });
-        } else {
-          setAddCartModalVisible(true);
+
+    const scrollViewRef = useRef<ScrollView>(null);
+
+    const toggleLocationModal = () => setLocationModalVisible(!locationModalVisible);
+    const toggleAddCartModal = () => setAddCartModalVisible(!addCartModalVisible);
+
+    const scrollToTop = () => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ y: 0, animated: true });
         }
-      };
+    };
 
-    const getProductDetail = () => {
-        console.log('pNum:'+pNum);
-        //서버요청 작성 필요
-        const jsonResponse = {
-            "pNum": "1234",
-            "category": "마이프로틴",
-            "pName": "퓨처 웨이(Future Whey) 스트로베리 맛 ",
-            "pMainImage": "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
-            //상세페이지 이미지는 string array형태로 받음
-            "pDetailImage": ["https://shop-phinf.pstatic.net/20230511_154/1683785993017aMJOa_PNG/%EC%9E%90%EC%82%B0_19.png?type=w860",
-            // "https://shop-phinf.pstatic.net/20240418_53/17134278662846L3Ei_JPEG/%EC%9E%90%EC%82%B0_33x-100.jpg?type=w860"
-            ],
-            "price": 38900,
-            "location": "e3",
-        };  
-        setProduct(jsonResponse);
-        setCount(1);
-        setGrandPrice(product.price);
-    }
-    const increaseCount = () =>{
-        const newCount = count + 1;
-        setCount(newCount);
-    }
-    const decreaseCount = () =>{
-        if(count > 1){
-            const newCount = count - 1;
-            setCount(newCount);
-        }
-    }
-    const onAddCartButton = (id:string, count:number) => {
-        //서버 카트에 등록해야됨
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const offsetY = event.nativeEvent.contentOffset.y;
+        setScrollToTopButtonVisible(offsetY > 100);
+    };
 
-        toggleAddCartModal();
-    }
+    return (
+        <View style={{ flex: 1 }}>
+            <LinearGradient colors={['#000000', '#666666']} style={{ flex: 1 }}>
+                <TopNavigator title="상세페이지" navigation={navigation} mode="black" />
 
-    useEffect(()=>{
-        if (addCartModalVisible) {
-            Animated.timing(slideAnim, {
-              toValue: 0,
-              duration: 300,
-              easing: Easing.ease,
-              useNativeDriver: true,
-            }).start();
-          } else {
-            Animated.timing(slideAnim, {
-              toValue: 300,
-              duration: 300,
-              easing: Easing.ease,
-              useNativeDriver: true,
-            }).start();
-          }
-        getProductDetail();
-        
-    },[addCartModalVisible, slideAnim]);
-
-    useEffect(()=>{
-        const newGrandPrice = product.price * count;
-        setGrandPrice(newGrandPrice);
-        console.log("currentCount:",count);
-    },[count])
-    
-    
-
-    return(
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: 'white',
-          }}>
-            <TopNavigator
-            title="장바구니"
-            navigation={navigation}
-            />
-
-            {/* body */}
-            <View style={[styles.BodyContainer,{flexDirection:'column', paddingBottom: 0}]}>
-                <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>
-                    <View style={styles.ProductMainInfoContainer}>
-                        {product.pMainImage ? (
-                            <View style={styles.ImageContainer}>
-                                <Image source={{ uri: product.pMainImage }} style={styles.ProductMainImage} />
-                            </View>     
-                        ) : (
-                                <Text>No Image Available</Text>
-                        )}
-                        <Text style={[styles.ProductText,{textDecorationLine: 'underline'}]}>{product.category}</Text>
-                        <Text style={[styles.ProductText, {fontSize: 24}]}>{product.pName}</Text>
-                        <Text style={[styles.ProductText, {fontFamily: 'Pretendard-Bold',fontSize: 32}]}>{product.price} 원</Text>
+                {loading ? (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Loading style={[AnimationStyles.loading, { width: 200, height: 200 }]} />
                     </View>
-                    <View style= {[styles.Stick, {marginBottom: 24}]}/>
-                    <View style= {styles.ProductSubInfoContainer}>
-                        <View style={styles.ProductSubInfoMenuContainer}>
-                            <TouchableOpacity onPressIn={handleInfoPressIn}
-                            activeOpacity={1}
-                            style={[styles.ProductSubInfoMenuNodeContainer, isInfoButtonPressed&& styles.ProductSubInfoMenuNodeContainer_pressed]}>
-                                <Text style={[styles.ProductSubInfoMenuText, isInfoButtonPressed&&styles.ProductSubInfoMenuText_pressed]}>정보</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPressIn={handleReviewPressIn}
-                            activeOpacity={1}
-                            style={[styles.ProductSubInfoMenuNodeContainer, isReviewButtonPressed&& styles.ProductSubInfoMenuNodeContainer_pressed]}>
-                                <Text style={[styles.ProductSubInfoMenuText, isReviewButtonPressed&&styles.ProductSubInfoMenuText_pressed]}
-                                >
-                                후기</Text>
-                            </TouchableOpacity>
-                        </View>
-                        
-                        {isInfoButtonPressed && product.pDetailImage.map((image,index)=>(
-                            <Image 
-                                key={index} 
-                                source={{uri:image}}
-                                style={styles.ProductDetailImage}    
-                            />
-                        ))}
-                    </View>
-                </ScrollView>
-            </View>
-            <View style={styles.ProductBottomButtonsContainer}>
-                    <TouchableOpacity 
-                        activeOpacity={0.6}
-                        style={[styles.ProductBottomButton,{borderEndWidth: 1, backgroundColor: '#FFE68C',borderTopStartRadius:20,
-                        }]}
-                        onPress={toggleLocationModal}
-                    >
-                        <Text style={styles.ProductBottomButtonText}>상품위치보기</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        activeOpacity={0.6}
-                        style={[styles.ProductBottomButton,{borderEndWidth: 1, backgroundColor: '#9AB4F5',borderTopEndRadius:20,
-                        }]}
-                        onPress={toggleAddCartModal}
-                    >
-                        <Text style={styles.ProductBottomButtonText}>장바구니에 담기</Text>
-                    </TouchableOpacity>
-            </View>
-            {/* locationModal */}
-            <Modal 
-            animationType='fade'
-            transparent={true}
-            visible={locationModalVisible}
-            onRequestClose={toggleLocationModal}
-            >
-                <TouchableOpacity
-                activeOpacity={1} 
-                style={styles.ProductLocationModalContainer}>
-                    <View style={styles.ProductLocationModalContent}>
-                        <View style={styles.ProductLocationModalContentHeader}>
-                            <View style={{flexDirection:'row', alignItems:'baseline',justifyContent:'center'}}>
-                                <Text style={[styles.SemiBoldText,{fontSize: 36,color:'#0262F1'}]}>{product.location} </Text>
-                                <Text style={styles.MainText}>에 위치하고 있어요!</Text>
-                            </View>
-                            <TouchableOpacity onPress={toggleLocationModal}>
-                                <AntDesign name="closecircleo" size={40} color={'black'}/>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.ProductLocationModalMapContainter}>
-                            <Text>this is map</Text>   
-                        </View>
-                    </View>
-                    
-                </TouchableOpacity>
-            </Modal>
-            {/* addCartModal */}
-            <Modal
-            animationType='fade'
-            transparent={true}
-            visible={addCartModalVisible}
-            onRequestClose={toggleAddCartModal}
-            >
-                <View style={styles.AddCartModalContainer}>
-                    <Animated.View style={[styles.AddCartModalContent, { transform: [{ translateY: slideAnim }] }]}>
-                        <View style={{alignItems:"center"}}>
-                            <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPress={toggleAddCartModal}
-                            >
-                                <Feather name="chevron-down" size={40} color='black'/>
-                            </TouchableOpacity>
-                            <View 
-                            style={{
-                                width:'100%',
-                                flexDirection: 'row',justifyContent:'space-between',    
-                            }}>
-                                <Text style={styles.MainText}>{grandPrice}원</Text>
-                                <View style={{justifyContent:'center',alignItems:'center',flexDirection: 'row'}}>
-                                    <TouchableOpacity
-                                    onPress={decreaseCount} 
-                                    style={styles.ModalIconContainer}>
-                                        <Feather 
-                                        name="minus-circle" 
-                                        size={24} 
-                                        color={'black'}/>
+                ) : (
+                    product ? (
+                        <ScrollView
+                            ref={scrollViewRef}
+                            onScroll={handleScroll}
+                            showsVerticalScrollIndicator={false}
+                            scrollEventThrottle={16}
+                            contentContainerStyle={[GlobalStyles.scrollContainer, { paddingBottom: 24, marginHorizontal: 126 }]}>
+                            
+                            <View style={ProductDetailStyles.content}>
+                                {/* 메인이미지 */}
+                                <View style={ProductDetailStyles.mainImageContainer}>
+                                    <Image source={{ uri: product.Main_image }} style={ProductDetailStyles.mainImage} />
+                                </View>
+                                {/* 브랜드 */}
+                                <Text style={[GlobalStyles.semiBoldText, { color: 'white', fontSize: 24, marginBottom: 24 }]}>{product.Category}</Text>
+                                {/* 상품명 */}
+                                <Text style={[GlobalStyles.mediumText, { color: 'white', marginBottom: 24 }]}>{product.Product_name}</Text>
+
+                                <View style={{ flexDirection: 'row', marginBottom: 24 }}>
+                                    {/* 상품위치보기버튼 */}
+                                    <TouchableOpacity onPress={toggleLocationModal} activeOpacity={0.8} style={{ marginRight: 12 }}>
+                                        <LocationIcon width={50} height={50} />
                                     </TouchableOpacity>
-                                    <Text style={styles.MainText}>{count}</Text>
-                                    <TouchableOpacity
-                                    onPress={increaseCount}
-                                    style={[styles.ModalIconContainer,{marginRight:0}]}>
-                                        <Feather 
-                                        name="plus-circle" 
-                                        size={24}
-                                        color={'black'}/>
+                                    {/* 장바구니추가하기버튼 */}
+                                    <TouchableOpacity onPress={toggleAddCartModal} activeOpacity={0.8}>
+                                        <AddCartIcon width={50} height={50} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
-                        
-                        
-                        <TouchableOpacity
-                        onPress={()=>{onAddCartButton(product.pNum,count)}}
-                        style={styles.AddCartButton}>
-                            <Text style={[styles.MediumText,{fontSize:20}]} >장바구니 추가</Text>
-                        </TouchableOpacity>
-                    </Animated.View>
-                </View>
-            </Modal>
 
-        </SafeAreaView>
+                            <View style={[CartStyles.stick, { marginBottom: 24 }]} />
+
+                            <View style={[ProductDetailStyles.content, { width: '40%', flexWrap: 'wrap' }]}>
+                            <Text style={[GlobalStyles.regularText, { color: 'white', fontSize: 16 }]}>
+                                {product.Description}
+                            </Text>
+                            </View>
+                        </ScrollView>
+                    ) : (
+                        <View style={{ flex: 1 }}>
+                            <Text>Failed to fetch product info</Text>
+                        </View>
+                    )
+                )}
+
+                {scrollToTopButtonVisible && (
+                    <TouchableOpacity activeOpacity={0.8} onPress={scrollToTop} style={GlobalStyles.upwardButtonContainer}>
+                        <UpwardIcon width={24} height={24} />
+                    </TouchableOpacity>
+                )}
+            </LinearGradient>
+
+            {/* locationModal */}
+            <LocationModal modalVisible={locationModalVisible} toggleLocationModal={toggleLocationModal} />
+            {/* addCartModal */}
+            <CartModal modalVisible={addCartModalVisible} toggleAddCartModal={toggleAddCartModal} price={product?.Price} navigation={navigation} discount={product?.Discount}/>
+        </View>
     );
 }
+
 export default ProductDetailScreen;

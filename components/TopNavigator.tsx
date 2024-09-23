@@ -2,27 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import TopNavigatorStyles from "../styles/TopNavigatorStyles";
-import BackBlackIcon from '../assets/icons/back_black.svg';
-import BackWhiteIcon from '../assets/icons/back_white.svg';
-import SearchBlackIcon from '../assets/icons/search_black.svg';
-import SearchWhiteIcon from '../assets/icons/search_white.svg';
-import PersonBlackIcon from '../assets/icons/person_black.svg';
-import PersonWhiteIcon from '../assets/icons/person_white.svg';
-import CartBlackIcon from '../assets/icons/cart_black.svg';
-import CartWhiteIcon from '../assets/icons/cart_white.svg';
+import { BackBlackIcon, BackWhiteIcon, SearchBlackIcon, SearchWhiteIcon,CartBlackIcon,CartWhiteIcon, PersonBlackIcon, PersonWhiteIcon } from "../assets/icons";
 
 import GlobalStyles from "../styles/GlobalStyles";
+import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";
 
 interface Prop {
     showBackButton?: boolean,
+    showSearchButton?: boolean,
     title: string,
     showSearchBar?: boolean,
     navigation: NavigationProp<ParamListBase>,
     mode?: string,
 }
 
-const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navigation, mode = "white" }: Prop) => {
-    const [keyword, setKeyword] = useState<string>('');
+const TopNavigator = ({ showBackButton = true, showSearchButton = true,title, showSearchBar = false, navigation, mode = "white" }: Prop) => {
+    const [keyword, setKeyword] = useState<string>('');   
 
     const onBackButton = () => {
         navigation.goBack();
@@ -101,13 +96,14 @@ const TopNavigator = ({ showBackButton = true, title, showSearchBar = true, navi
                 style={{ marginRight: 12 }}>
                 <CartIcon width={40} height={40} />
             </TouchableOpacity>
-
-            <TouchableOpacity
+            {showSearchButton ? (
+                <TouchableOpacity
                 onPress={onSearchButton}
                 activeOpacity={0.8}
             >
                 <SearchIcon width={40} height={40} />
             </TouchableOpacity>
+            ): (null)}
         </View>
     </View>
     );

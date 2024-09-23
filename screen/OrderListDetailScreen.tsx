@@ -1,136 +1,76 @@
 import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
-import styles from "./StyleSheet";
-import OrderComponent from "../components/Order";
 import TopNavigator from "../components/TopNavigator";
-//
-interface MyParams{
-    orderId: string,
+import GlobalStyles from "../styles/GlobalStyles";
+import LinearGradient from "react-native-linear-gradient";
+import OrderItem from "../components/OrderList";
+import { Order } from "../types";
+
+interface MyParams {
+    order: Order,
 }
 
-interface Product {
-    pNum: string;
-    pCategory: string;
-    pName: string;
-    pImage: string;
-    pPrice: number;
-    quantity: number;  // 수량 추가
-}
+function OrderListDetailScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
+    const { order } = route.params as MyParams;
 
-interface Order {
-    id: string;
-    orderDate: string;
-    productList: Product[];
-    tag: boolean; // true: online, false: offline
-    
-    totalProductPrice: number;
-    totalDiscountPrice: number;
-    paymentCard: string;
-    paymentCardNum: string;
-    totalPaymentPrice: number;
-}
-
-function OrderListDetailScreen ({route, navigation}:{route: RouteProp<ParamListBase>, navigation:NavigationProp<ParamListBase>}){
-    const {orderId} = route.params as MyParams;
-    
-    const [order, setOrder] = useState<Order>();
-
-    const getOrderList = () =>{
-        const jsonResponse ={
-            "id": "order12345",
-            "orderDate": "2024-05-28T12:34:56.789Z",
-            "productList": [
-                {
-                    "pNum": "P001",
-                    "pCategory": "Electronics",
-                    "pName": "Smartphone",
-                    "pImage": "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
-                    "pPrice": 699.99,
-                    "quantity": 1
-                },
-                {
-                    "pNum": "P002",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                },
-                {
-                    "pNum": "P003",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                },
-                {
-                    "pNum": "P004",
-                    "pCategory": "Home Appliance",
-                    "pName": "Blender",
-                    "pImage": "https://example.com/images/blender.jpg",
-                    "pPrice": 49.99,
-                    "quantity": 2
-                }
-            ],
-            "tag": true,
-            "totalProductPrice": 1000000,
-            "totalDiscountPrice": 100,
-            "paymentCard": '신한카드',
-            "paymentCardNum": '4221555845457878',
-            "totalPaymentPrice": 999900,
-        } 
-        setOrder(jsonResponse);
-    };
-
-    useEffect(()=>{
-        console.log('oderId:',orderId);
-        getOrderList();
-    },[])
+    useEffect(() => {
+        console.log('orderId:', order.id);
+    }, [])
 
     const onOrderListButton = () => {
         navigation.goBack();
     };
 
-    return(
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: 'white',
-        }}>
-            <TopNavigator
-            title="장바구니"
-            navigation={navigation}
-            />
+    const onProductInfo = (id: string) => {
+        //console.log(id);
+        navigation.navigate('ProductDetail', { pNum: id });
+    }
 
-            {order && (
-                <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
-                    <ScrollView 
-                    showsVerticalScrollIndicator={true}
-                    contentContainerStyle={styles.ProductDetailScrollContainer}>
-                        <OrderComponent
+    if (!order) {
+        return null; // order가 undefined일 경우 아무것도 렌더링하지 않음
+    }
+
+    return (
+        <View style={{
+            flex: 1,
+        }}>
+            <LinearGradient
+                colors={['#FFFFFF', '#D9D9D9', '#000000']}
+                style={{ flexGrow: 1 }}
+            >
+                <TopNavigator
+                    title="주문목록조회"
+                    navigation={navigation}
+                />
+
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={GlobalStyles.scrollContainer}>
+
+                    <OrderItem
                         data={order}
                         navigation={navigation}
                         route={route}
-                        />
-                        <View style={{width: '50%'}}>
-                            <TouchableOpacity
+                        mode='detailedMode'
+                    />
+
+                    <View style={{ width: '45%' }}>
+                        <TouchableOpacity
                             onPress={onOrderListButton}
                             activeOpacity={0.7}
-                            style={styles.OrderListButton}>
-                                <Text style={[styles.MainText, {color: 'white'}]}>목록</Text>
-                            </TouchableOpacity>
-                        </View>
+                            style={[GlobalStyles.blackButton, { elevation: 10 }]}>
+                            <Text style={[GlobalStyles.semiBoldText, { color: 'white' }]}>목록</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        
-                    </ScrollView>
-                </View>
-                
-            )}
-            
-        </SafeAreaView>    
+
+                </ScrollView>
+
+
+            </LinearGradient>
+        </View>
     );
 
 }

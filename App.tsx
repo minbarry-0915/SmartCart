@@ -1,23 +1,24 @@
-// In App.js in a new project
-
-import React,{ useEffect, } from 'react';
-import { NavigationContainer} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import JoinScreen from './screen/JoinScreen';
-import SearchScreen from './screen/SearchScreen';
-import SearchResultScreen from './screen/SearchResultScreen';
-import ProductDetailScreen from './screen/ProductDetailScreen';
-import CartScreen from './screen/CartScreen';
-import MyPageScreen from './screen/MyPageScreen';
 import { PermissionsAndroid, Platform } from 'react-native';
-import OrderListScreen from './screen/OrderListScreen';
-import OrderListDetailScreen from './screen/OrderListDetailScreen';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import LoginScreen from './screen/LoginScreen';
-import UserInfoModifyScreen from './screen/UserInfoModifyScreen';
-import UserInfoModifyDetailScreen from './screen/UserInfoModifyDetailScreen';
 
+// screen import from index.js
+import {
+  JoinScreen,
+  SearchScreen,
+  SearchResultScreen,
+  ProductDetailScreen,
+  CartScreen,
+  MyPageScreen,
+  OrderListScreen,
+  OrderListDetailScreen,
+  LoginScreen,
+  UserInfoModifyScreen,
+  UserInfoModifyDetailScreen
+} from './screen/index';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,12 +59,12 @@ function App() {
         <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Join" component={JoinScreen} options={{ headerShown: false ,animation:'fade'}}/>
-          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false}}/>
-          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false,animation:'fade'}} />
-          <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation:'fade'}}/>
-          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false ,animation:'fade'}}/>
+          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false, animation:'none'}}/>
+          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false,animation:'default'}} />
+          <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation:'none'}}/>
+          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false ,animation:'none'}}/>
           <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false ,animation:'fade'}}/>
-          <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'ios'}} />
+          <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false, animation:'default'}} />
           <Stack.Screen name="OrderListDetail" component={OrderListDetailScreen} options={{ headerShown: false ,animation:'default'}}/>
           <Stack.Screen name="UserInfoModify" component={UserInfoModifyScreen} options={{headerShown: false ,animation:'default'}}/>
           <Stack.Screen name="UserInfoModifyDetail" component={UserInfoModifyDetailScreen} options={{headerShown: false, animation:'default'}}/>

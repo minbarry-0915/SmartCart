@@ -2,7 +2,6 @@ import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-
 import React, { useEffect, useState } from "react";
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -107,14 +106,7 @@ function UserInfoModifyDetailScreen({navigation}:{navigation:NavigationProp<Para
             {isLoggedIn ? (
                 <View style = {{flex : 1}}>
                     {/* header */}
-                    <Header 
-                    showBackButton={false} 
-                    title="개인정보수정" 
-                    showSearchButton={false}
-                    showCartButton={false}
-                    showMyPageButton={false}
-                    showSearchContainer={false} 
-                    navigation={navigation}/>      
+                
                     {/* body */}
                     <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
                         <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>

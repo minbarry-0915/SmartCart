@@ -16,25 +16,26 @@ const TopNavigatorStyles = StyleSheet.create({
         alignItems:"center",
     },
     textInputBlack:{
-        width: '100%',
+        flex: 1,
         fontFamily: 'Pretendard-Medium',
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         letterSpacing: -0.8,
         justifyContent: 'center',
         textAlignVertical:'center',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
     },
     textInputWhite:{
-        width: '100%',
+        flex: 1,
         fontFamily: 'Pretendard-Medium',
         fontSize: 18,
         color: 'white',
         letterSpacing: -0.8,
         justifyContent: 'center',
         textAlignVertical:'center',
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
         borderColor: 'white',
+        paddingVertical: 4,
     }
 });
 export default TopNavigatorStyles;

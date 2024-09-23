@@ -1,7 +1,6 @@
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { login } from "../redux/authSlice";
@@ -43,7 +42,9 @@ function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) 
   },[isLoggedIn])
 
   return (
-    <KeyboardAvoidingView style={GlobalStyles.container} behavior="padding">
+    <KeyboardAvoidingView 
+    style={GlobalStyles.container} 
+    behavior="padding">
       <View style={[LoginStyles.logo, {flexDirection: 'row'}]}>
         <Text style={[GlobalStyles.ExtraBoldText, {color: '#FFC700'}]}>S</Text>
         <Text style={[GlobalStyles.ExtraBoldText]}>MARTCART</Text>
