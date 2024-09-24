@@ -55,7 +55,7 @@ export interface User{
     Userid: string, 
     Password: string,
     Name: string,
-    BirthDate: number,
+    BirthDate: Date,
     Gender: string,
     Phone_Num: string,
     Email: string,

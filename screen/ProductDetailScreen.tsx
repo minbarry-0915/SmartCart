@@ -15,6 +15,7 @@ import { AddCartIcon, UpwardIcon, LocationIcon } from "../assets/icons";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
 import { Product } from "../types";
+import BeaconDistanceTracker from "../components/BeaconDistanceTracker";
 
 interface MyParams {
     productId: number;
@@ -108,6 +109,8 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                         <UpwardIcon width={24} height={24} />
                     </TouchableOpacity>
                 )}
+
+                <BeaconDistanceTracker />
             </LinearGradient>
 
             {/* locationModal */}

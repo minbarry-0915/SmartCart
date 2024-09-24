@@ -7,6 +7,7 @@ import TopNavigator from "../components/TopNavigator";
 import GlobalStyles from "../styles/GlobalStyles";
 import LoginStyles from "../styles/LoginScreenStyles";
 import JoinStyles from "../styles/JoinScreenStyles";
+import usePostUserInfo from "../customHooks/usePostUserInfo";
 //
 function JoinScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   const [id, setId] = useState('');
@@ -24,9 +25,28 @@ function JoinScreen({ navigation }: { navigation: NavigationProp<ParamListBase> 
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isMatchPassword, setIsMatchPassword] = useState<boolean>(false);
 
-  const onJoinButton = () => {
-    //서버에 작성한거 넘겨줘야됨
-    navigation.navigate('Login');
+  const { postUserInfo } = usePostUserInfo();
+  
+  const onJoinButton = async () => {
+    // 사용자 정보를 데이터 객체로 만듭니다
+    const userInfo = {
+      Userid: id,
+      Password: password,
+      Name: name,
+      BirthDate: new Date(birthDate),
+      Gender: gender,
+      Phone_Num: phoneNum,
+      Email: email,
+    };
+  
+    try {
+      await postUserInfo(userInfo);
+    } catch (error) {
+      console.error('Error during user info posting:', error);
+    } finally {
+      // 데이터 전송 후 항상 로그인 화면으로 이동
+      navigation.navigate('Login');
+    }
   };
   const handleSelectedEmailDomain = (selectedItem: { title: string }, index: number) => {
     setEmailDomain(selectedItem.title);
