@@ -1,5 +1,5 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -23,7 +23,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
 
-  const {
+  const { 
     responses,
     loading,
     grandTotal,
@@ -76,8 +76,20 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   
   usePostCartList(responses, setResponses);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+
+  // 제품 추가 시 ScrollView의 맨 끝으로 이동
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  }, [responses]); // responses가 업데이트될 때 스크롤 이동
+  
   return (
-    <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: 'white' }}>
+    <ScrollView 
+  
+    contentContainerStyle={{ flex: 1, backgroundColor: 'white' }}>
       {isLoggedIn ? (
         <View style={{ flex: 1 }}>
           <TopNavigator title="장바구니" navigation={navigation} showBackButton={false} />
@@ -104,7 +116,9 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                   <Loading style={[AnimationStyles.loading, { width: 200, height: 200 }]} />
                 </View>
               ) : (
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView 
+                ref={scrollViewRef}
+                showsVerticalScrollIndicator={false}>
                   {responses.map((cartItem, index) => {
                     const total = calculateTotal(cartItem);
                     return (

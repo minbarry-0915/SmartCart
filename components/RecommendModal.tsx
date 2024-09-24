@@ -68,8 +68,8 @@ function RecommendModal({
 
     const closeRequestHandler = () => {
         animateModal(slideAnim,500, ()=> {
-            toggleRecommendationModal();
-            closeCartModal();
+            toggleRecommendationModal(); //추천모달닫음
+            closeCartModal();//전체 모달 종료
         });
         
     }

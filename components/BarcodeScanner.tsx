@@ -59,8 +59,7 @@ const BarcodeScanner = ({ onScan }: { onScan: (data: string) => void }) => {
           onPress={resetScanner}
           style={ScannerStyles.ScanRequestButton}>
           <Barcode style={AnimationStyles.barcode} />
-          <Text style={ScannerStyles.ScanRequestButtonText}>바코드</Text>
-          <Text style={ScannerStyles.ScanRequestButtonText}>스캔 하기</Text>
+          <Text style={ScannerStyles.ScanRequestButtonText}>BARCODE SCAN</Text>
         </TouchableOpacity>
       )}
     </View>

@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 
 const AnimationStyles = StyleSheet.create({
     barcode:{
-        width: 200,
-        height:200,
+        width: 180,
+        height:180,
     },
     loading:{
         width: 100,

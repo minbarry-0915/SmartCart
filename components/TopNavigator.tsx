@@ -8,15 +8,25 @@ import GlobalStyles from "../styles/GlobalStyles";
 import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";
 
 interface Prop {
+    title: string,
+    showMyPageButton?: boolean,
+    showCartButton?: boolean,
     showBackButton?: boolean,
     showSearchButton?: boolean,
-    title: string,
     showSearchBar?: boolean,
     navigation: NavigationProp<ParamListBase>,
-    mode?: string,
+    mode?: 'white' | 'black',
 }
 
-const TopNavigator = ({ showBackButton = true, showSearchButton = true,title, showSearchBar = false, navigation, mode = "white" }: Prop) => {
+const TopNavigator = ({ 
+    showBackButton = true, 
+    showSearchButton = true,
+    showMyPageButton = true,
+    showCartButton = true,
+    title, 
+    showSearchBar = false, 
+    navigation, 
+    mode = "white" }: Prop) => {
     const [keyword, setKeyword] = useState<string>('');   
 
     const onBackButton = () => {
@@ -83,27 +93,28 @@ const TopNavigator = ({ showBackButton = true, showSearchButton = true,title, sh
         )}
 
         <View style={[TopNavigatorStyles.content, { justifyContent: 'flex-end' }]}>
-            <TouchableOpacity
+            {showMyPageButton && (<TouchableOpacity
                 onPress={onMyPageButton}
                 activeOpacity={0.8}
                 style={{ marginRight: 12 }}>
                 <PersonIcon width={40} height={40} />
-            </TouchableOpacity>
+            </TouchableOpacity>)}
 
-            <TouchableOpacity
+            {showCartButton && (<TouchableOpacity
                 onPress={onCartButton}
                 activeOpacity={0.8}
                 style={{ marginRight: 12 }}>
                 <CartIcon width={40} height={40} />
-            </TouchableOpacity>
-            {showSearchButton ? (
+            </TouchableOpacity>)}
+
+            {showSearchButton && (
                 <TouchableOpacity
                 onPress={onSearchButton}
                 activeOpacity={0.8}
             >
                 <SearchIcon width={40} height={40} />
             </TouchableOpacity>
-            ): (null)}
+            )}
         </View>
     </View>
     );
