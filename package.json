@@ -21,7 +21,6 @@
     "mysql2": "^3.11.0",
     "react": "^18.2.0",
     "react-native": "^0.74.0",
-    "react-native-beacons-manager": "^1.0.7",
     "react-native-ble-manager": "^11.5.5",
     "react-native-ble-plx": "^3.2.1",
     "react-native-camera-kit": "^13.0.0",
