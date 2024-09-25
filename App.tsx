@@ -28,9 +28,11 @@ const requestPermission = async () => {
 
     if (Platform.OS === 'android') {
       PermissionsAndroid.requestMultiple([
+        //BLE 권한 
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        //카메라 권한
         PermissionsAndroid.PERMISSIONS.CAMERA
       ]).then((result) => {
         if (result['android.permission.ACCESS_FINE_LOCATION'] === 'granted' &&
@@ -44,23 +46,6 @@ const requestPermission = async () => {
         }
       });
     }
-    // if (Platform.OS === 'android') {
-    //   const granted = await PermissionsAndroid.request(
-    //     PermissionsAndroid.PERMISSIONS.CAMERA,
-    //     {
-    //       title: 'Camera Permission',
-    //       message: 'This app needs access to your camera',
-    //       buttonNeutral: 'Ask Me Later',
-    //       buttonNegative: 'Cancel',
-    //       buttonPositive: 'OK',
-    //     },
-    //   );
-    //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //     console.log('Camera permission granted');
-    //   } else {
-    //     console.log('Camera permission denied');
-    //   }
-    // }
   } catch (err) {
     console.warn(err);
   }

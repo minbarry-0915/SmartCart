@@ -112,7 +112,7 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
 
                 <BeaconDistanceTracker 
                 beaconId="C3:00:00:1C:62:47"
-                txPower={-40}
+                txPower={4}
                 />
 
             </LinearGradient>
