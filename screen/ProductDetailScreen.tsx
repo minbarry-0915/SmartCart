@@ -110,7 +110,11 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                     </TouchableOpacity>
                 )}
 
-                <BeaconDistanceTracker />
+                <BeaconDistanceTracker 
+                beaconId="C3:00:00:1C:62:47"
+                txPower={-40}
+                />
+
             </LinearGradient>
 
             {/* locationModal */}
