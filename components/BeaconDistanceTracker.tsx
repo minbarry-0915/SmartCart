@@ -25,17 +25,23 @@ const BeaconDistanceTracker = ({ beaconId, txPower }: { beaconId: string; txPowe
                     console.error('스캔 오류:', error);
                     return;
                 }
-                if (device){
-                    console.log(device.id);
-                }
-                // 비콘의 UUID로 필터링
-                if (device && device.id === beaconId) {
-                    console.log(`비콘 발견: ${device.id}`);
-                    const rssi = device.rssi;
-                    if (rssi !== null) {
-                        const distance = calculateDistance(rssi);
-                        console.log(`RSSI: ${rssi}, 계산된 거리: ${distance}`);
-                        setBeaconDistance(distance);
+
+                if (device) {
+                    console.log('발견된 디바이스 MAC 주소:', device.id);
+                    
+                    // 비콘의 UUID로 필터링
+                    // 예시로 여기서는 device.serviceUUIDs를 사용하여 UUID를 확인할 수 있습니다.
+                    // UUID가 일치하는지 확인
+                    if (device.id === beaconId) {
+                        console.log(`비콘 발견: ${device.id}`);
+
+                        // RSSI 값을 직접 사용
+                        const rssi = device.rssi; // 이 값을 사용할 수 있는 방법은 device 객체에 따라 다를 수 있습니다.
+                        if (rssi !== null) {
+                            const distance = calculateDistance(rssi);
+                            console.log(`RSSI: ${rssi}, 계산된 거리: ${distance}`);
+                            setBeaconDistance(distance);
+                        }
                     }
                 }
             });
