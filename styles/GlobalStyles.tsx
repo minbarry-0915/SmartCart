@@ -66,6 +66,7 @@ const GlobalStyles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 12,
         marginTop: 12,
+        elevation: 10,
     },
     gradientWhite: {
         //...StyleSheet.absoluteFillObject

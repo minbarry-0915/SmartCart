@@ -40,6 +40,7 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                     {orderList.map((order, index) =>(
                         <>
                             <OrderItem
+                            key={index}
                             data= {order}
                             navigation={navigation}
                             route={route}

@@ -1,5 +1,5 @@
-import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./StyleSheet";
@@ -7,265 +7,318 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { logout } from "../redux/authSlice";
 import axios from "axios";
+import LinearGradient from "react-native-linear-gradient";
+import TopNavigator from "../components/TopNavigator";
+import GlobalStyles from "../styles/GlobalStyles";
+import UserInfoStyles from "../styles/UserInfoScreenStyles";
+import LoginStyles from "../styles/LoginScreenStyles";
+import useGetUserInfo from "../customHooks/useGetUserInfo";
+import SelectDropDown from "../components/SelectDropDown";
+import { User } from "../types";
+import usePatchUserInfo from "../customHooks/usePatchUserInfo";
 
-
-function UserInfoModifyDetailScreen({navigation}:{navigation:NavigationProp<ParamListBase>}){
-    const {isLoggedIn, userId} = useSelector((state: RootState) => state.auth);
+function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
+    const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
 
-    const [name, setName] = useState<string>('');
-    const [prePW, setPrePW] = useState<string>('');
-    const [newPw, setNewPW] = useState<string>('');
-    const [newPWConfirm, setNewPWConfirm] = useState<string>('');
-    const [correct, setCorrect] = useState<boolean>(false);
-    const [changed,setChanged] = useState<boolean>(false);
-    const [PhoneNum, setPhoneNum] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [initialLoading, setInitialLoading] = useState<boolean>(true);
+    const [userData, setUserData] = useState<User>({
+        Userid: '',
+        Password: '',
+        Name: '',
+        BirthDate: new Date(), // 기본값으로 현재 날짜 사용
+        Gender: '',
+        Phone_Num: '',
+        Email: '',
+    });
+    const [formattedPhoneNum, setFormattedPhoneNum] = useState<string>('');
+    const [formattedBirthDate, setFormattedBirthDate] = useState<string>('');
+    const { userInfo, loading } = useGetUserInfo();
+    const { status, patchUserInfo } = usePatchUserInfo();
+
+    const [newPassword, setNewPassword] = useState<string>('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
+    const [messege, setMessege] = useState<string | null>(null);
+    const [color, setColor] = useState<string>('#0262F1'); // 에러 메세지 색상
+
     const [warningModalVisible, setWarningModalVisible] = useState<boolean>(false);
+    const [changed, setChanged] = useState<boolean>(false);
 
+    const genderOptions = [
+        { title: 'Male' },
+        { title: 'Female' }
+    ];
 
-    const getInfo = async() =>{
-        try{
-            const response = await axios.get(`https://api.example.com/user/${userId}`);
-            const userInfo = response.data;
-
-            setName(userInfo.name);
-            setPrePW(userInfo.pw);
-            setPhoneNum(userInfo.PhoneNum);
-            setEmail(userInfo.Email);
-            setInitialLoading(false)
+    useEffect(() => { //userinfo 가져와서 세팅
+        if (userInfo) {
+            setUserData(userInfo);
+            setChanged(false); // 초기화 시에는 changed를 false로 설정
         }
-        catch(error){
-            console.error('Failed to fetch user info:', error);
-            setInitialLoading(false);
+    }, [userInfo]);
+
+    useEffect(() => {
+        // userData가 변경될 때 changed를 true로 설정
+        console.log('Data Changed Status: ', changed);
+        setChanged(true);
+    }, [userData]);
+
+    useEffect(() => {
+        if (newPassword !== confirmNewPassword) {
+            setColor('#E33434');
+            setMessege('비밀번호가 일치하지 않습니다. 확인해주세요.')
+        } else {
+            setColor('#0262F1')
+            setMessege('비밀번호가 일치합니다.')
+        }
+    }, [newPassword, confirmNewPassword]); // 상태가 바뀔 때마다 color 업데이트
+
+
+    const onCancelButton = () => {
+        if (!changed) {
+            console.log('Data has not changed: ', changed);
+            navigation.goBack();
+        } else {
+            console.log('Data has changed, rendering Modal... :', changed);
+            toggleWarningModal();
         }
     };
 
-    const onCancelButton = () =>{
-        console.log('onCancelButton called, changed:', changed);
-        if(changed === false){
-            navigation.goBack();
+
+    const onSaveButton = async () => {
+        if (newPassword !== confirmNewPassword) {
+            console.log("Password is not match");
+            setMessege('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
+            return;
         }
-        toggleWarningModal();
-    }
 
-    const onSaveButton = async() => {
-        const res = await handleModifiedInfo();
-        if(res === 'success'){
-            navigation.goBack();
+        // 비밀번호가 일치하면 userData를 업데이트
+        if (newPassword) {
+            setUserData({ ...userData, Password: newPassword });
         }
-    }
-
-    const handleModifiedInfo = async() => {
-        try{
-            const response = await axios.post(`https://api.example.com/user/${userId}`);
-
-            if(response.data === 'success')
-                return 'success'
-            else{
-                return 'success'
-                //return 'fail'
+        if (userId) {
+            await patchUserInfo(userId, userData);
+            if (status === 200) {
+                dispatch(logout());
+                navigation.navigate('Login');
+            } else {
+                console.log("Failed to update user info");
             }
 
-        }catch(error){
-            return 'success'
-            //return 'error'
-            console.error('Failed to fetch user info:', error);
         }
-    }
+    };
 
-    const toggleWarningModal = () =>{
-        setWarningModalVisible(!warningModalVisible)
-    }
+    const handleBirthDateChange = (text: string) => {
+        // 숫자만 필터링
+        const numbersOnly = text.replace(/\D/g, '');
 
-    const onExitButton = () =>{
-        toggleWarningModal();
-        navigation.navigate('MyPage')
-    }
-    const onContinueButton = () =>{
-        toggleWarningModal();
-    }
+        // 하이픈 추가
+        let formattedNumber = '';
+        if (numbersOnly.length > 0) {
+            formattedNumber += numbersOnly.substring(0, 4); // 연도
+        }
+        if (numbersOnly.length >= 5) {
+            formattedNumber += '-' + numbersOnly.substring(4, 6); // 월
+        }
+        if (numbersOnly.length >= 7) {
+            formattedNumber += '-' + numbersOnly.substring(6, 8); // 일
+        }
 
-    useEffect(()=>{
-        getInfo();
-    },[])
+        setFormattedBirthDate(formattedNumber);
+        // Date 객체로 변환
+        if (formattedNumber.length === 10) { // YYYY-MM-DD 형식일 때만
+            const [year, month, day] = formattedNumber.split('-').map(Number);
+            setUserData({ ...userData, BirthDate: new Date(year, month - 1, day) }); // month는 0부터 시작
+        }
+    };
 
-    useEffect(() => {
-        if (!initialLoading) {
-            setChanged(true);
-            console.log('Changed state updated:', true);
-        } 
-    }, [name, newPw, PhoneNum, email]);
+    const handlePhoneNumberChange = (text: string) => {
+        // 숫자만 필터링
+        const numbersOnly = text.replace(/\D/g, '');
+
+        // 하이픈 추가
+        let formattedNumber = '';
+        if (numbersOnly.length > 0) {
+            formattedNumber += numbersOnly.substring(0, 3); // 첫 번째 부분 (예: 010)
+        }
+        if (numbersOnly.length >= 4) {
+            formattedNumber += '-' + numbersOnly.substring(3, 7); // 두 번째 부분 (예: 5547)
+        }
+        if (numbersOnly.length >= 8) {
+            formattedNumber += '-' + numbersOnly.substring(7, 11); // 세 번째 부분 (예: 1405)
+        }
+
+        setFormattedPhoneNum(formattedNumber);
+        // phone number를 userData에 업데이트
+        setUserData({ ...userData, Phone_Num: formattedNumber });
+    };
+
+
+    const toggleWarningModal = () => {
+        setWarningModalVisible(!warningModalVisible);
+    };
+
+    const handleSelectedGenderOption = (selectedItem: { title: string }) => {
+        setUserData({ ...userData, Gender: selectedItem.title });
+    };
+
+    const Item = (title: string, children: ReactNode) => (
+        <>
+            <View style={UserInfoStyles.subItem}>
+                <Text style={GlobalStyles.BoldText}>{title}</Text>
+            </View>
+            <View style={[UserInfoStyles.subItem, { alignItems: 'flex-end' }]}>{children}</View>
+        </>
+    );
+
+
+
+    const RenderErrorMessege = () => {
+        return (
+            <>
+                {messege && (
+                    <View style={{ width: '100%', marginTop: 12, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Text style={[GlobalStyles.mediumText, { color: color }]}>
+                            {messege}
+                        </Text>
+                    </View>
+                )}
+            </>
+        );
+    };
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: 'white',
-        }}>
-            {isLoggedIn ? (
-                <View style = {{flex : 1}}>
-                    {/* header */}
-                
-                    {/* body */}
-                    <View style={[styles.BodyContainer,{flexDirection:'column'}]}>
-                        <ScrollView contentContainerStyle={styles.ProductDetailScrollContainer}>
-                            {/* 성명 */}
-                            <View style={styles.ModifyInfoInputContainer}>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>성명</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={name}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200, backgroundColor:'#FFECEC'}]}
-                                        value={name}
-                                        onChangeText={setName}
+        <View style={{ flex: 1 }}>
+            <LinearGradient colors={['#000000', '#666666']} style={{ flex: 1 }}>
+                <TopNavigator title="개인정보관리" navigation={navigation} mode='black' showBackButton={false} />
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={GlobalStyles.scrollContainer}>
+                    <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0 }]}>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('ID',
+                                <TextInput
+                                    editable={false}
+                                    placeholder={userInfo?.Userid}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('PASSWORD',
+                                <TextInput
+                                    editable={false}
+                                    placeholder={userInfo?.Password}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
+                        <View style={[UserInfoStyles.detailScreenItem, { flexDirection: 'column', paddingVertical: 18 }]}>
+                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                {Item('NEW PASSWORD',
+                                    <TextInput
+                                        secureTextEntry={true}
+                                        placeholderTextColor='#696969'
+                                        style={[LoginStyles.textInput]}
+                                        value={newPassword}
+                                        onChangeText={setNewPassword}
                                         textAlign='right'
-                                        />
-                                    </View>
-                                </View>
+                                    />
+                                )}
                             </View>
-                            {/* 비밀번호 */}
-                            <View style={styles.ModifyInfoInputContainer}>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>기존 비밀번호</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={prePW}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200}]}
-                                        value={prePW}
-                                        onChangeText={setPrePW}
+                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                {Item('CONFIRM PASSWORD',
+                                    <TextInput
+                                        secureTextEntry={true}
+                                        placeholderTextColor='#696969'
+                                        style={[LoginStyles.textInput]}
+                                        value={confirmNewPassword}
+                                        onChangeText={setConfirmNewPassword}
                                         textAlign='right'
-                                        readOnly={true}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>신규 비밀번호</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={newPw}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200, backgroundColor:'#FFECEC'}]}
-                                        value={newPw}
-                                        onChangeText={setNewPW}
-                                        textAlign='right'
-                                        />
-                                    </View>
-                                </View>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>신규 비밀번호 확인</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={newPWConfirm}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200, backgroundColor:'#FFECEC'}]}
-                                        value={newPWConfirm}
-                                        onChangeText={setNewPWConfirm}
-                                        textAlign='right'
-                                        />
-                                    </View>
-                                </View>
+                                    />
+                                )}
                             </View>
-                            {/* 전화번호 이메일 */}
-                            <View style={styles.ModifyInfoInputContainer}>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>전화번호</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={PhoneNum}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200, backgroundColor:'#FFECEC'}]}
-                                        value={PhoneNum}
-                                        onChangeText={setPhoneNum}
-                                        textAlign='right'
-                                        keyboardType="numeric"
-                                        />
-                                    </View>
-                                </View>
-                                <View style={styles.ModifyInfoInputContent}>
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>이메일</Text>
-                                    <View>
-                                        <TextInput
-                                        placeholder={email}
-                                        placeholderTextColor={"#696969"}
-                                        style={[styles.MainText,{padding: 4, width:200, backgroundColor:'#FFECEC'}]}
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        textAlign='right'
-                                        keyboardType='email-address'
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.ModifyInfoButtonContainer}>
-                                {/* 취소 */}
-                                <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={[styles.ModifyInfoCancelButton, {marginRight: 8,}]}
-                                onPress={onCancelButton}
-                                >
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>취소</Text>
-                                </TouchableOpacity>
-                                {/* 저장 */}
-                                <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={[styles.ModifyInfoCancelButton,{backgroundColor: '#9AB4F5'}]}
-                                onPress={onSaveButton}
-                                >
-                                    <Text style={[styles.SemiBoldText,{fontSize: 24}]}>저장</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </ScrollView>
-                    
+                            <RenderErrorMessege />
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('NAME',
+                                <TextInput
+                                    placeholder={userData.Name}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    value={userData.Name}
+                                    onChangeText={(text) => setUserData({ ...userData, Name: text })}
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('GENDER',
+                                <SelectDropDown
+                                    data={genderOptions}
+                                    onSelect={handleSelectedGenderOption}
+                                    initData={userData.Gender || "Male"}
+                                />
+                            )}
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('BIRTH DATE',
+                                <TextInput
+                                    placeholder={userData.BirthDate.toISOString().split('T')[0]}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    value={formattedBirthDate} // 포맷된 생일 날짜를 표시
+                                    onChangeText={handleBirthDateChange} // 입력 변경 처리
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('EMAIL',
+                                <TextInput
+                                    keyboardType='email-address'
+                                    placeholder={userData.Email}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    value={userData.Email}
+                                    onChangeText={(text) => setUserData({ ...userData, Email: text })}
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
+                        <View style={UserInfoStyles.detailScreenItem}>
+                            {Item('PHONE NUMBER',
+                                <TextInput
+                                    keyboardType='number-pad'
+                                    placeholder={userData.Phone_Num}
+                                    placeholderTextColor='#696969'
+                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                    value={userData.Phone_Num}
+                                    onChangeText={handlePhoneNumberChange}
+                                    textAlign='right'
+                                />
+                            )}
+                        </View>
                     </View>
 
-                    <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={warningModalVisible}
-                    onRequestClose={toggleWarningModal}
-                    >
+                    <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0, flexDirection: 'row' }]}>
                         <TouchableOpacity
-                        activeOpacity={1}
-                        style={styles.ProductLocationModalContainer}
-                        // onPress={toggleWarningModal}
-                        >
-                            <View style={styles.WarningModalContent}>
-                                <Text style={[styles.MainText,{fontSize: 16}]}>변경된 내용이 저장되지 않았습니다. </Text>
-                                <Text style={[styles.MainText,{fontSize: 16}]}>계속하시겠습니까? </Text>
-                                <View style={{flexDirection:'row'}}>
-                                    <TouchableOpacity
-                                    activeOpacity={0.8}
-                                    style={[styles.WaringModalButton,{marginRight: 8}]}
-                                    onPress={onContinueButton}
-                                    >
-                                        <Text style={[styles.SemiBoldText,{fontSize: 18}]}>계속</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                    activeOpacity={0.8}
-                                    style={[styles.WaringModalButton,{backgroundColor:'#FFB0B0'}]}
-                                    onPress={onExitButton}
-                                    >
-                                        <Text style={[styles.SemiBoldText,{fontSize: 18}]}>종료</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
+                            onPress={onSaveButton}
+                            activeOpacity={0.7}
+                            style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: '#FFE68C', marginRight: 12 }]} >
+                            <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>저장</Text>
                         </TouchableOpacity>
-                    </Modal>
-                </View>
-            ):(
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={styles.MainText}>Login Again</Text>
-                </View>
-            )}
-
-        </SafeAreaView>
-    );    
+                        <TouchableOpacity
+                            onPress={onCancelButton}
+                            activeOpacity={0.7}
+                            style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: 'white' }]} >
+                            <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>취소</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </LinearGradient>
+        </View>
+    );
 }
 
 export default UserInfoModifyDetailScreen;

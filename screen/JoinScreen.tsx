@@ -73,7 +73,6 @@ function JoinScreen({ navigation }: { navigation: NavigationProp<ParamListBase> 
     if (numbersOnly.length >= 8) {
       formattedNumber += '-' + numbersOnly.substring(7, 11); // 마지막 4자리
     }
-
     setPhoneNum(formattedNumber);
   };
 
