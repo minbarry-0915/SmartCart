@@ -132,6 +132,28 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
 });
 
 
+// 제품 정보 검색 API
+app.get('/api/products/:Product_id', async (req, res) => {
+    const { Product_id } = req.params;
+
+    try {
+        // 특정 Product_id에 해당하는 제품 정보 조회
+        const [rows] = await db.query(
+            'SELECT * FROM Product3 WHERE Product_id = ?',
+            [Product_id]
+        );
+
+        if (rows.length > 0) {
+            res.json(rows[0]); // JSON 형태로 제품 정보 반환
+        } else {
+            res.status(404).send('Product not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 
 /*상품 목록 조회 API
