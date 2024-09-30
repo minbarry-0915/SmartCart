@@ -49,3 +49,14 @@ export interface Location {
     Floor_info: string,
     Beacon_id: string,
 }
+
+
+export interface User{
+    Userid: string, 
+    Password: string,
+    Name: string,
+    BirthDate: Date,
+    Gender: string,
+    Phone_Num: string,
+    Email: string,
+}

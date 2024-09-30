@@ -57,8 +57,8 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
             {/* 제품 목록 표시 */}
             {(mode === 'briefMode' ? order.orderItems.slice(0, 3) : order.orderItems).map((product, index) => (
                 <TouchableOpacity
-                    activeOpacity={0.8}
                     key={index}
+                    activeOpacity={0.8}
                     style={[OrderListStyles.orderContent]}
                     onPress={() => onProductInfo(product.product.Product_id.toString())}>
                     <View style={OrderListStyles.orderItem}>
