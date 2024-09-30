@@ -45,8 +45,7 @@ export interface CartItem {
 
 export interface Location {
     Location_id: number,
-    Location_Name: string,
-    Floor_info: string,
+    Location_name: string,
     Beacon_id: string,
 }
 

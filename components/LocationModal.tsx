@@ -12,11 +12,12 @@ function LocationModal({ modalVisible, toggleLocationModal }: { modalVisible: bo
     const [visible, setVisible] = useState(modalVisible);
     const slideAnim = useRef(new Animated.Value(500)).current;
 
-    const { location } = useGetLocation();
+    const { locationInfo } = useGetLocation();
     // 거리 값을 가져올 비콘 ID와 TX Power 설정
-    const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'; // 비콘 UUID
-    const txPower = 0; // 비콘의 TX Power 설정 (예: 0 dBm)
-    const { beaconDistance } = useBeaconDistance(beaconId, txPower, visible); // 커스텀 훅 사용
+    //const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'; // 비콘 UUID
+    // const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
+    const txPower = -60; // 비콘의 TX Power 설정 (예: 0 dBm)
+    const { beaconDistance } = useBeaconDistance(locationInfo?.Beacon_id, txPower, visible); // 커스텀 훅 사용
 
     useEffect(() => {
         if (modalVisible) {
@@ -65,7 +66,7 @@ function LocationModal({ modalVisible, toggleLocationModal }: { modalVisible: bo
                     <View>
                         <Text
                             style={[GlobalStyles.mediumText, { fontSize: 18, flexWrap: 'wrap', textAlign: 'center' }]}>
-                            현재 위치에서 <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#0262F1' }]}>{location}</Text> 구역까지
+                            현재 위치에서 <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#0262F1' }]}>{locationInfo?.Location_name}</Text> 구역까지
                         </Text>
                         <Text
                             style={[GlobalStyles.mediumText, { fontSize: 18, flexWrap: 'wrap', textAlign: 'center' }]}>

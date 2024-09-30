@@ -26,14 +26,16 @@ class KalmanFilter {
     }
 }
 
-const useBeaconDistance = (beaconId: string, txPower: number, modalVisible: boolean) => {
+const useBeaconDistance = (beaconId: string | undefined, txPower: number, modalVisible: boolean) => {
     const [beaconDistance, setBeaconDistance] = useState<number | null>(null);
     const kalmanFilter = new KalmanFilter(); // 칼만 필터 인스턴스
 
-    const beaconTarget: BeaconRegion = {
-        identifier: "test",
-        uuid: beaconId, // 비콘 ID를 props로 받음
-    };
+    const beaconTarget: BeaconRegion | null = beaconId
+        ? {
+            identifier: "beacon",
+            uuid: beaconId, // 비콘 ID를 props로 받음
+        }
+        : null;
 
     const requestPermissions = async () => {
         if (Platform.OS === 'android') {
@@ -60,9 +62,9 @@ const useBeaconDistance = (beaconId: string, txPower: number, modalVisible: bool
         if (rssi != null) {
             const ratio = rssi / txPower;
             if (ratio < 1.0) {
-                return Math.pow(10, (txPower - rssi) / (10 * 2)); // 거리 계산
+                return parseFloat((Math.pow(10, (txPower - rssi) / (10 * 2))).toFixed(2)); // 거리 계산
             } else {
-                return 0.89976 * Math.pow(10, (txPower - rssi) / (10 * 1.5)); // 거리 계산
+                return parseFloat((0.89976 * Math.pow(10, (txPower - rssi) / (10 * 1.5))).toFixed(2)); // 거리 계산
             }
         }
         return null;
@@ -74,22 +76,25 @@ const useBeaconDistance = (beaconId: string, txPower: number, modalVisible: bool
         const startBeaconDetection = async () => {
             await requestPermissions(); // 권한 요청
             beacons.detectIBeacons();
-            await beacons.startRangingBeaconsInRegion(beaconTarget);
+            if (beaconTarget) {
+                await beacons.startRangingBeaconsInRegion(beaconTarget);
+                console.log('Finding Beacons...');
+                listener = (data: any) => {
+                    const beacon = data.beacons.find((b: { uuid: string }) => b.uuid === beaconTarget?.uuid);
+                    if (beacon) {
+                        const rssi = beacon.rssi;
+                        console.log(`RSSI: ${rssi}`); // RSSI 로그
+                        const filteredRssi = kalmanFilter.update(rssi); // RSSI 값을 칼만 필터로 보정
+                        const distance = calculateDistance(filteredRssi); // 보정된 RSSI로 거리 계산
+                        
+                        console.log(`RSSI: ${rssi}, Filtered RSSI: ${filteredRssi}, Distance: ${distance}`); // 로그 추가
+                        setBeaconDistance(distance); // 상태 업데이트
+                    }
+                };
 
-            listener = (data: any) => {
-                const beacon = data.beacons.find((b: { uuid: string }) => b.uuid === beaconTarget.uuid);
-                if (beacon) {
-                    const rssi = beacon.rssi;
-                    console.log(`RSSI: ${rssi}`); // RSSI 로그
-                    const filteredRssi = kalmanFilter.update(rssi); // RSSI 값을 칼만 필터로 보정
-                    const distance = calculateDistance(filteredRssi); // 보정된 RSSI로 거리 계산
-                    console.log(`RSSI: ${rssi}, Filtered RSSI: ${filteredRssi}, Distance: ${distance}`); // 로그 추가
-                    setBeaconDistance(distance); // 상태 업데이트
-                }
-            };
-
-            // 비콘 이벤트 리스너 등록
-            beacons.BeaconsEventEmitter.addListener('beaconsDidRange', listener);
+                // 비콘 이벤트 리스너 등록
+                beacons.BeaconsEventEmitter.addListener('beaconsDidRange', listener);
+            }
         };
 
         if (modalVisible) {
@@ -99,12 +104,14 @@ const useBeaconDistance = (beaconId: string, txPower: number, modalVisible: bool
         return () => {
             // 모달이 닫힐 때 비콘 탐지 중지 및 리스너 제거
             if (listener) {
-                beacons.stopRangingBeaconsInRegion(beaconTarget);
+                if (beaconTarget) {
+                    beacons.stopRangingBeaconsInRegion(beaconTarget);
+                }
                 beacons.BeaconsEventEmitter.removeAllListeners('beaconsDidRange');
                 console.log('Beacon detection stopped');
             }
         };
-    }, [modalVisible]); // 모달 상태가 변경될 때마다 실행
+    }, [modalVisible, beaconId]); // 모달 상태와 beaconId가 변경될 때마다 실행
 
     return { beaconDistance };
 };

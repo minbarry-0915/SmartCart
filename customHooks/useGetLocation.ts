@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Location } from "../types";
 
 function useGetLocation(){
-    const [location, setLocation] = useState<string>('E5-2');
-    const [distance, setDistance] = useState<number>(100);
-    
+    const [locationInfo, setLocationInfo] = useState<Location | null>(null);
+
+    const getLocationInfo = useCallback(async()=>{
+        const jsonResponse = {
+            data:{
+                Location_id : 111,
+                Location_name: '여기다호호호',
+                Beacon_id: 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
+            }
+        }
+
+        setLocationInfo(jsonResponse.data);
+    },[]);
+
+    useEffect(() => {
+        getLocationInfo();
+    },[getLocationInfo]);
+
+
     return {
-        location,
-        distance,
+        locationInfo
     }
 }
 export default useGetLocation;

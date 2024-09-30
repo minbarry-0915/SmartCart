@@ -111,10 +111,6 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                         <UpwardIcon width={24} height={24} />
                     </TouchableOpacity>
                 )}
-                {/* <BeaconDistanceTracker
-            beaconId="1"
-            txPower={-40}
-            /> */}
 
             </LinearGradient>
 

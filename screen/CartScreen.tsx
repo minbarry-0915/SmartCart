@@ -85,6 +85,11 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [responses]); // responses가 업데이트될 때 스크롤 이동
+
+
+  useEffect(()=>{
+
+  },[]);
   
   return (
     <ScrollView 

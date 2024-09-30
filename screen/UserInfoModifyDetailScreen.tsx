@@ -16,6 +16,7 @@ import useGetUserInfo from "../customHooks/useGetUserInfo";
 import SelectDropDown from "../components/SelectDropDown";
 import { User } from "../types";
 import usePatchUserInfo from "../customHooks/usePatchUserInfo";
+import WarningModal from "../components/WarningModal";
 
 function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
@@ -60,6 +61,13 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         console.log('Data Changed Status: ', changed);
         setChanged(true);
     }, [userData]);
+
+    // useEffect(()=>{
+    //     const unsubscribe = navigation.addListener('beforeRemove', (e)=> {
+    //         e.preventDefault();
+    //     })
+    //     return unsubscribe;
+    // },[navigation]);
 
     useEffect(() => {
         if (newPassword !== confirmNewPassword) {
@@ -155,6 +163,10 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
     const toggleWarningModal = () => {
         setWarningModalVisible(!warningModalVisible);
     };
+
+    const onConfirmButton = () => {
+        navigation.navigate('MyPage');
+    }
 
     const handleSelectedGenderOption = (selectedItem: { title: string }) => {
         setUserData({ ...userData, Gender: selectedItem.title });
@@ -264,6 +276,7 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
                         <View style={UserInfoStyles.detailScreenItem}>
                             {Item('BIRTH DATE',
                                 <TextInput
+                                    keyboardType='number-pad'
                                     placeholder={userData.BirthDate.toISOString().split('T')[0]}
                                     placeholderTextColor='#696969'
                                     style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
@@ -317,6 +330,15 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
                     </View>
                 </ScrollView>
             </LinearGradient>
+
+            {warningModalVisible && (
+                <WarningModal
+                modalVisible = {warningModalVisible}
+                toggleWarningModal={toggleWarningModal}
+                navigation={navigation}
+                confirmDestination="MyPage"
+                />
+            )}
         </View>
     );
 }
