@@ -1,7 +1,6 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import styles from "./StyleSheet";
+import {  ScrollView, View } from "react-native";
 import OrderItem from "../components/OrderList";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -26,7 +25,7 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
         }}>
             <LinearGradient
                 colors={['#FFFFFF', '#D9D9D9', '#000000']}
-                style={{flexGrow: 1}}
+                style={{ flexGrow: 1 }}
             >
                 <TopNavigator
                     title="주문목록조회"
@@ -37,16 +36,15 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={GlobalStyles.scrollContainer}>
 
-                    {orderList.map((order, index) =>(
-                        <>
-                            <OrderItem
-                            key={index}
-                            data= {order}
+                    {orderList.map((order, index) => (
+
+                        <OrderItem
+                            key={order.id}
+                            data={order}
                             navigation={navigation}
                             route={route}
                             mode='briefMode'
-                            />
-                        </>
+                        />
                     ))}
 
                 </ScrollView>

@@ -2,11 +2,12 @@
 interface Prop{
     price: number,
     discount: number | undefined
+    quantity: number
 }
 
-function discountCalculate({price, discount}:Prop){
+function discountCalculate({price, discount, quantity = 1}:Prop){
     if(discount){
-        return price - discount;
+        return price * quantity - discount * quantity;
     }else{
         return price
     }

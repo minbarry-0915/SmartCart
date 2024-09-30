@@ -26,7 +26,7 @@ class KalmanFilter {
     }
 }
 
-const useBeaconDistance = (beaconId: string, txPower: number) => {
+const useBeaconDistance = (beaconId: string, txPower: number, modalVisible: boolean) => {
     const [beaconDistance, setBeaconDistance] = useState<number | null>(null);
     const kalmanFilter = new KalmanFilter(); // 칼만 필터 인스턴스
 
@@ -69,12 +69,14 @@ const useBeaconDistance = (beaconId: string, txPower: number) => {
     };
 
     useEffect(() => {
+        let listener: any;
+
         const startBeaconDetection = async () => {
             await requestPermissions(); // 권한 요청
             beacons.detectIBeacons();
             await beacons.startRangingBeaconsInRegion(beaconTarget);
 
-            const listener = (data: any) => {
+            listener = (data: any) => {
                 const beacon = data.beacons.find((b: { uuid: string }) => b.uuid === beaconTarget.uuid);
                 if (beacon) {
                     const rssi = beacon.rssi;
@@ -83,24 +85,26 @@ const useBeaconDistance = (beaconId: string, txPower: number) => {
                     const distance = calculateDistance(filteredRssi); // 보정된 RSSI로 거리 계산
                     console.log(`RSSI: ${rssi}, Filtered RSSI: ${filteredRssi}, Distance: ${distance}`); // 로그 추가
                     setBeaconDistance(distance); // 상태 업데이트
-                } else {
-                    //console.log("비콘을 찾을 수 없습니다.");
                 }
             };
 
             // 비콘 이벤트 리스너 등록
             beacons.BeaconsEventEmitter.addListener('beaconsDidRange', listener);
-
-            // Cleanup on unmount
-            return () => {
-                beacons.stopRangingBeaconsInRegion(beaconTarget);
-                beacons.BeaconsEventEmitter.removeAllListeners('beaconsDidRange');
-                beacons.stop();
-            };
         };
 
-        startBeaconDetection();
-    }, []); // 빈 배열을 넣어 한 번만 실행
+        if (modalVisible) {
+            startBeaconDetection(); // 모달이 열릴 때 비콘 탐지 시작
+        }
+
+        return () => {
+            // 모달이 닫힐 때 비콘 탐지 중지 및 리스너 제거
+            if (listener) {
+                beacons.stopRangingBeaconsInRegion(beaconTarget);
+                beacons.BeaconsEventEmitter.removeAllListeners('beaconsDidRange');
+                console.log('Beacon detection stopped');
+            }
+        };
+    }, [modalVisible]); // 모달 상태가 변경될 때마다 실행
 
     return { beaconDistance };
 };

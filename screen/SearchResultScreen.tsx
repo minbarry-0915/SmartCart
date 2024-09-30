@@ -73,7 +73,7 @@ function SearchResultScreen({ route, navigation }: { route: RouteProp<ParamListB
                         >{formatNumber(product.Price)}원</Text>
                         <Text
                             style={[GlobalStyles.semiBoldText, { fontSize: 20, alignSelf: 'flex-end', color: '#D10000' }]}>
-                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount }))}원
+                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount, quantity: 1 }))}원
                         </Text>
                     </>
 

@@ -13,7 +13,7 @@ import discountCalculate from "../customHooks/discountCalculate";
 interface Prop {
     modalVisible: boolean,
     toggleAddCartModal: () => void,
-    price: number | undefined,
+    price: number,
     discount: number | undefined,
     navigation: NavigationProp<ParamListBase>
 }
@@ -93,15 +93,15 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
         });
     };
 
-    const renderPriceText = (product: Product) => {
+    const renderPriceText = () => {  
         return (
             <>
-                {!isDiscount(product.Discount) ? (
+                {!discount && price ? (
                     <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, }]}>
                         {formatNumber(totalPrice)} 원
                     </Text>
                 ) : (
-                    <>
+                    <View style={{flexDirection: 'column'}}>
                         <Text
                             numberOfLines={1}
                             style={[
@@ -111,9 +111,9 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
                         >{formatNumber(totalPrice)} 원</Text>
                         <Text
                             style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#D10000' }]}>
-                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount }))}원
+                            {formatNumber(discountCalculate({ price: price, discount: discount, quantity: count }))}원
                         </Text>
-                    </>
+                    </View>
 
                 )}
 
@@ -148,9 +148,7 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
                     </TouchableOpacity>
 
                     <View style={LocationModalStyles.item}>
-                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, }]}>
-                            {formatNumber(totalPrice)} 원
-                        </Text>
+                        {renderPriceText()}
                         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <TouchableOpacity
                                 activeOpacity={0.8}

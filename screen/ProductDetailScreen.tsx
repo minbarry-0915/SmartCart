@@ -14,8 +14,6 @@ import CartModal from "../components/CartModal";
 import { AddCartIcon, UpwardIcon, LocationIcon } from "../assets/icons";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
-import { Product } from "../types";
-import BeaconDistanceTracker from "../components/BeaconDistanceTracker";
 
 interface MyParams {
     productId: number;
@@ -26,7 +24,7 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
     const dispatch = useDispatch<AppDispatch>();
 
     const { productId } = route.params as MyParams;
-    
+
     const { product, loading, error } = useGetProductDetail(productId);
 
     const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
@@ -49,6 +47,10 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
         setScrollToTopButtonVisible(offsetY > 100);
     };
 
+    useEffect(() => {
+        console.log('locationmodal: ', locationModalVisible);
+    }, [locationModalVisible])
+
     return (
         <View style={{ flex: 1 }}>
             <LinearGradient colors={['#000000', '#666666']} style={{ flex: 1 }}>
@@ -66,7 +68,7 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                             showsVerticalScrollIndicator={false}
                             scrollEventThrottle={16}
                             contentContainerStyle={[GlobalStyles.scrollContainer, { paddingBottom: 24, marginHorizontal: 126 }]}>
-                            
+
                             <View style={ProductDetailStyles.content}>
                                 {/* 메인이미지 */}
                                 <View style={ProductDetailStyles.mainImageContainer}>
@@ -92,9 +94,9 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                             <View style={[CartStyles.stick, { marginBottom: 24 }]} />
 
                             <View style={[ProductDetailStyles.content, { width: '40%', flexWrap: 'wrap' }]}>
-                            <Text style={[GlobalStyles.regularText, { color: 'white', fontSize: 16 }]}>
-                                {product.Description}
-                            </Text>
+                                <Text style={[GlobalStyles.regularText, { color: 'white', fontSize: 16 }]}>
+                                    {product.Description}
+                                </Text>
                             </View>
                         </ScrollView>
                     ) : (
@@ -109,7 +111,7 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                         <UpwardIcon width={24} height={24} />
                     </TouchableOpacity>
                 )}
-            {/* <BeaconDistanceTracker
+                {/* <BeaconDistanceTracker
             beaconId="1"
             txPower={-40}
             /> */}
@@ -119,7 +121,10 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
             {/* locationModal */}
             <LocationModal modalVisible={locationModalVisible} toggleLocationModal={toggleLocationModal} />
             {/* addCartModal */}
-            <CartModal modalVisible={addCartModalVisible} toggleAddCartModal={toggleAddCartModal} price={product?.Price} navigation={navigation} discount={product?.Discount}/>
+            {product &&
+                <CartModal modalVisible={addCartModalVisible} toggleAddCartModal={toggleAddCartModal} price={product.Price} navigation={navigation} discount={product?.Discount} />
+            }
+
         </View>
     );
 }
