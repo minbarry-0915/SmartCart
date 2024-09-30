@@ -5,7 +5,9 @@ const mysql = require('mysql2/promise'); // mysql2/promise를 사용하여 async
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 
+
 dotenv.config();
+
 
 const PORT = 3001;
 const key = {
@@ -60,17 +62,17 @@ async function verifyApiKey(req, res, next) {
     next();
 }
 
+
 // 로그인 API
 app.post('/api/login', async (req, res) => {
-    const { userid, password } = req.body;
+    const { Userid, password } = req.body;  // Userid로 변경
 
-    if (!userid || !password) {
+    if (!Userid || !password) {
         return res.status(400).send('User ID and password are required.');
     }
 
     try {
-        // 사용자 입력값을 SQL 쿼리에 안전하게 삽입하기 위해 준비된 쿼리 사용
-        const [rows] = await db.query('SELECT * FROM User2 WHERE userid = ? AND password = ?', [userid, password]);
+        const [rows] = await db.query('SELECT * FROM User3 WHERE Userid = ? AND password = ?', [Userid, password]);
 
         if (rows.length > 0) {
             res.send('Login successful!');
@@ -83,20 +85,21 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+
 // 회원가입 API
 app.post('/api/register', async (req, res) => {
-    const { userId, password, phoneNumber, name, email } = req.body;
+    const { Userid, password, phoneNumber, name, email } = req.body;
 
     // 입력 검증
-    if (!userId || !password || !phoneNumber || !name || !email) {
+    if (!Userid || !password || !phoneNumber || !name || !email) {
         return res.status(400).json({ message: '모든 필드를 입력해 주세요.' });
     }
 
     try {
         // 데이터베이스에 데이터 삽입
         const [result] = await db.query(
-            'INSERT INTO User2 (userid, password, Phone_Num, Name, Email) VALUES (?, ?, ?, ?, ?)',
-            [userId, password, phoneNumber, name, email]
+            'INSERT INTO User3 (Userid, password, Phone_num, Name, Email) VALUES (?, ?, ?, ?, ?)',
+            [Userid, password, phoneNumber, name, email]
         );
 
         res.status(201).json({ message: '회원가입 성공!' });
@@ -107,36 +110,8 @@ app.post('/api/register', async (req, res) => {
 });
 
 
-/* 
-(디비연결 test용) 사용자 정보 반환 API
-app.get('/api/users/:apikey/type/:type', async (req, res) => {
-    let { apikey, type } = req.params;
 
-   // API 키 유효성 검증
-    if (!uuidAPIKey.check(apikey, key.uuid)) {
-        return res.status(403).send('API key is not valid.');
-    }
-
-    if (!await checkApiKey(apikey)) {
-        return res.status(403).send('API key is not valid.');
-    }
-
-
-    try {
-        const [rows] = await db.query('SELECT Name FROM User WHERE Gender = "Male"', [type]);
-        
-        if (rows.length > 0) {
-            res.send(rows);
-        } else {
-            res.status(400).send('Type is not correct.');
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-}); */
-
-// 상품 목록 조회 API
+/*상품 목록 조회 API
 app.get('/api/products/:apikey', verifyApiKey, async (req, res) => {
     try {
         // 필요한 제품 정보를 선택합니다. 
@@ -151,10 +126,10 @@ app.get('/api/products/:apikey', verifyApiKey, async (req, res) => {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-});
+}); */
 
 
-// 상품 추가 API
+/* 상품 추가 API
 app.post('/api/products/:apikey/add', async (req, res) => {
     const { apikey } = req.params;
     const { Product_Name, Price, Category } = req.body;
@@ -176,51 +151,7 @@ app.post('/api/products/:apikey/add', async (req, res) => {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-});
+}); */
 
-
-// 매출 정보를 반환하는 API 예시
-app.get('/api/sales/:apikey/type/:year', async (req, res) => {
-    let { apikey, year } = req.params;
-
-    // API 키 유효성 검증
-    if (!uuidAPIKey.check(apikey, key.uuid)) {
-        return res.status(403).send('API key is not valid.');
-    }
-
-    try {
-        const [rows] = await db.query('SELECT Product_Name FROM Product Where ~~수정~~', [year]);
-
-        if (rows.length > 0) {
-            res.send(rows);
-        } else {
-            res.status(400).send('Year is not correct.');
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-
-// 최근 검색기록 조회 API
-app.get('/api/search-history/:apikey/:userId', verifyApiKey, async (req, res) => {
-    const { apikey, userId } = req.params;
-
-    try {
-        // 특정 User_id에 대한 검색 기록 조회
-        const [rows] = await db.query('SELECT DISTINCT Product_Name FROM Search_History2 WHERE User_id = ?', [userId]);
-
-        if (rows.length > 0) {
-            const productNames = rows.map(row => row.Product_Name);
-            res.json(productNames); // 유저별 검색한 제품명 반환
-        } else {
-            res.status(404).send('No search history found for this user.');
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-});
 
 
