@@ -15,11 +15,6 @@ const key = {
     uuid: process.env.UUID
 };
 
-/* console.log(uuidAPIKey.create()); // API key 생성 */
-
-/*app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});*/
 
 
 // MariaDB 연결 설정
@@ -108,6 +103,34 @@ app.post('/api/register', async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 });
+
+
+// 유저별 카트 정보 조회 API
+app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
+    const { apikey, Userid } = req.params;
+
+    try {
+        // Cart2와 Cart_Item, Product3을 조인하여 유저의 카트에 담긴 상품 정보 조회
+        const [rows] = await db.query(
+            `SELECT ci.Product_id, p.Product_name, p.Price, ci.Quantity 
+             FROM Cart_Item ci
+             JOIN Cart2 c ON ci.Cart_id = c.Cart_id
+             JOIN Product3 p ON ci.Product_id = p.Product_id
+             WHERE c.Userid = ?`, 
+            [Userid]
+        );
+
+        if (rows.length > 0) {
+            res.json(rows); // 유저의 카트에 담긴 상품 정보 반환
+        } else {
+            res.status(404).send('Cart is empty for this user.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 
 
