@@ -155,6 +155,70 @@ app.get('/api/products/:Product_id', async (req, res) => {
 });
 
 
+// 카트에 항목 추가 API
+app.post('/api/cart-item', async (req, res) => {
+    const { Product_id, User_id, Quantity } = req.body;
+
+    // 입력 검증
+    if (!Product_id || !User_id || !Quantity) {
+        return res.status(400).json({ message: 'Product_id, User_id, and Quantity are required.' });
+    }
+
+    try {
+        // Cart_Item 테이블에 데이터 삽입
+        const [result] = await db.query(
+            'INSERT INTO Cart_Item (Product_id, User_id, Quantity) VALUES (?, ?, ?)',
+            [Product_id, User_id, Quantity]
+        );
+
+        // 삽입 결과 응답
+        res.status(201).json({ message: 'Cart item added successfully', cartItemId: result.insertId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+// Cart_Item 테이블 업데이트 API
+app.post('/api/cart/update', async (req, res) => {
+    const { Product_id, Userid, Quantity } = req.body;
+
+    if (!Product_id || !Userid || !Quantity) {
+        return res.status(400).json({ message: 'Product_id, Userid, Quantity는 필수입니다.' });
+    }
+
+    try {
+        // 1. Cart2 테이블에 Userid에 해당하는 Cart가 있는지 확인
+        const [cartRows] = await db.query('SELECT Cart_id FROM Cart2 WHERE Userid = ?', [Userid]);
+
+        let Cart_id;
+
+        if (cartRows.length === 0) {
+            // 해당 Userid로 Cart가 없다면 새로운 Cart 생성
+            const [result] = await db.query('INSERT INTO Cart2 (Userid) VALUES (?)', [Userid]);
+            Cart_id = result.insertId; // 새로 생성된 Cart_id 가져오기
+        } else {
+            // Cart가 있으면 Cart_id 가져오기
+            Cart_id = cartRows[0].Cart_id;
+        }
+
+        // 2. Cart_Item 테이블에 Cart_id와 Product_id로 데이터 삽입 (또는 업데이트)
+        await db.query(
+            'INSERT INTO Cart_Item (Cart_id, Product_id, Quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Quantity = ?',
+            [Cart_id, Product_id, Quantity, Quantity]
+        );
+
+        res.status(201).json({ message: '장바구니가 성공적으로 업데이트되었습니다.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
+
+
+
+
 
 /*상품 목록 조회 API
 app.get('/api/products/:apikey', verifyApiKey, async (req, res) => {
