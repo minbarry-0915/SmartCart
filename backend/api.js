@@ -86,12 +86,12 @@ app.post('/api/login', async (req, res) => {
 
 // 회원가입 API
 app.post('/api/register', async (req, res) => {
-    const { Userid, Password, Birthdate, Gender, Phone_num, Email } = req.body;
+    const { Userid, Name, Password, Birthdate, Gender, Phone_num, Email } = req.body;
 
-    // // 입력 검증
-    // if (!Userid || !password || !phoneNumber || !name || !email) {
-    //     return res.status(400).json({ message: '모든 필드를 입력해 주세요.' });
-    // }
+    // 입력 검증
+    if (!Userid || !Name || !Password || !Birthdate || !Gender || !Phone_num || !Email) {
+        return res.status(400).json({ message: '모든 필드를 입력해 주세요.' });
+    }
 
     try {
         // 데이터베이스에 데이터 삽입
@@ -102,10 +102,11 @@ app.post('/api/register', async (req, res) => {
 
         res.status(201).json({ message: '회원가입 성공!' });
     } catch (error) {
-        console.error(error);
+        console.error('Failed to register User:', error);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 });
+
 
 
 // 유저별 카트 정보 조회 API

@@ -17,7 +17,8 @@ function usePostUserInfo() {
 
         try {
             // API 호출
-            const response = await axios.post(`http://192.168.56.1:3001/api/register`, userInfo, {
+            console.log('Posting UserInfo...');
+            const response = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/register`, userInfo, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
