@@ -1,34 +1,36 @@
+import axios from "axios";
 import { User } from "../types";
+import { REACT_NATIVE_BACKEND_IP } from "@env";
 
 function usePostUserInfo() {
-    const postUserInfo = async ({ Userid, Password, Name, BirthDate, Gender, Phone_Num, Email }: User) => {
+    const postUserInfo = async ({ Userid, Password, Name, Birthdate, Gender, Phone_num, Email }: User) => {
 
         const userInfo = {
-            Userid, // 중괄호 제거 // 같은 이름의 변수로 자동으로 속성 생성
+            Userid,
             Password,
-            BirthDate,
+            Name,
+            Birthdate,
             Gender,
-            Phone_Num,
+            Phone_num,
             Email,
         };
 
         try {
-            // 여기서 API 호출을 추가하세요
-            const response = await fetch('YOUR_API_ENDPOINT', {
-                method: 'POST',
+            // API 호출
+            const response = await axios.post(`http://192.168.56.1:3001/api/register`, userInfo, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userInfo),
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            console.log(response.status);
 
-            return await response.json();
+            // 성공적으로 처리된 경우 true 반환
+            return true;
+
         } catch (error) {
             console.error('Error posting user info:', error);
+            return false;  // 실패 시 false 반환
         }
     };
 

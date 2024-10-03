@@ -4,6 +4,7 @@ const uuidAPIKey = require('uuid-apikey');
 const mysql = require('mysql2/promise'); // mysql2/promise를 사용하여 async/await를 지원
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 
 dotenv.config();
@@ -25,6 +26,8 @@ const db = mysql.createPool({
     database: process.env.MYSQL_DATABASE, // 사용할 데이터베이스 이름
     port: process.env.MYSQL_PORT
 });
+
+app.use(cors());
 
 // JSON 요청 본문 파싱을 위한 미들웨어 추가
 app.use(express.json());
@@ -83,18 +86,18 @@ app.post('/api/login', async (req, res) => {
 
 // 회원가입 API
 app.post('/api/register', async (req, res) => {
-    const { Userid, password, phoneNumber, name, email } = req.body;
+    const { Userid, Password, Birthdate, Gender, Phone_num, Email } = req.body;
 
-    // 입력 검증
-    if (!Userid || !password || !phoneNumber || !name || !email) {
-        return res.status(400).json({ message: '모든 필드를 입력해 주세요.' });
-    }
+    // // 입력 검증
+    // if (!Userid || !password || !phoneNumber || !name || !email) {
+    //     return res.status(400).json({ message: '모든 필드를 입력해 주세요.' });
+    // }
 
     try {
         // 데이터베이스에 데이터 삽입
         const [result] = await db.query(
-            'INSERT INTO User3 (Userid, password, Phone_num, Name, Email) VALUES (?, ?, ?, ?, ?)',
-            [Userid, password, phoneNumber, name, email]
+            'INSERT INTO User3 (Userid, Name, Birthdate, Gender, Phone_num, Email, Password) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [Userid, Name, Birthdate, Gender, Phone_num, Email, Password]
         );
 
         res.status(201).json({ message: '회원가입 성공!' });
@@ -112,11 +115,10 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
     try {
         // Cart2와 Cart_Item, Product3을 조인하여 유저의 카트에 담긴 상품 정보 조회
         const [rows] = await db.query(
-            `SELECT ci.Product_id, p.Product_name, p.Price, ci.Quantity 
-             FROM Cart_Item ci
-             JOIN Cart2 c ON ci.Cart_id = c.Cart_id
+            `SELECT ci.Product_id, p.Product_name, p.Price, ci.Quantity FROM Cart_Item ci
+            JOIN Cart2 c ON ci.Cart_id = c.Cart_id
              JOIN Product3 p ON ci.Product_id = p.Product_id
-             WHERE c.Userid = ?`, 
+             WHERE c.Userid = ?`,
             [Userid]
         );
 

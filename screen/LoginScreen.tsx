@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../redux/store";
 import { login } from "../redux/authSlice";
 import GlobalStyles from "../styles/GlobalStyles";
 import LoginStyles from "../styles/LoginScreenStyles";
+import usePostUserVerify from "../customHooks/usePostUserVerify";
 //
 function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) { //navigation의 타입을 정의를 해주어야함 
   //redux
@@ -15,14 +16,22 @@ function LoginScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) 
   //state
   const [id, setId] = useState('');
   const [password, setPW] = useState('');
-  const [isInvalid, setIsInvalid] = useState<boolean>(false);
+  const {loading, error, postUserVerify} = usePostUserVerify();
 
   
-  const onLoginButton = () => {
+  const onLoginButton = async() => {
     //서버요청 작성 필요
-    dispatch(login(id));  //커스텀 훅으로 옮겨야됨
-    //navigation.navigate('CartStack');
-    navigation.navigate('Cart');
+    const result = await postUserVerify({userId: id, password});
+    if (result.status === 200){
+      dispatch(login(id));
+      navigation.navigate('Cart');
+    } 
+    else if(result.status === 401) {
+      console.log(result.error)
+    }
+    else{
+      console.error('Login Failed: ', result.error);
+    }
   };
 
   const onSignUPButton = () => {

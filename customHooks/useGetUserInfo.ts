@@ -36,9 +36,9 @@ function useGetUserInfo() {
                 Userid: userData.userid,
                 Password: userData.password,
                 Name: userData.name,
-                BirthDate: new Date(userData.birthDate), // Date 형식으로 변환
+                Birthdate: new Date(userData.birthDate), // Date 형식으로 변환
                 Gender: userData.gender,
-                Phone_Num: userData.phoneNum,
+                Phone_num: userData.phoneNum,
                 Email: userData.email,
             };
 

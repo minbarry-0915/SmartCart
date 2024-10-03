@@ -54,8 +54,8 @@ export interface User{
     Userid: string, 
     Password: string,
     Name: string,
-    BirthDate: Date,
+    Birthdate: Date,
     Gender: string,
-    Phone_Num: string,
+    Phone_num: string,
     Email: string,
 }
