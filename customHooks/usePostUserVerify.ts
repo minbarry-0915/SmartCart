@@ -24,13 +24,15 @@ function usePostUserVerify() {
 
         try {
             console.log('Trying Login...')
+            console.log(REACT_NATIVE_BACKEND_IP);
             const response = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/login`, {
                 Userid: userId,
                 Password: password
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                timeout: 5000,
             });
             console.log('Login Successful.');
             return true; // 성공 시 상태 반환

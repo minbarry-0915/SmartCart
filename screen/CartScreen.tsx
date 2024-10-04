@@ -14,10 +14,10 @@ import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
 
 import useGetProduct from "../customHooks/useGetProduct";
-import usePostCartList from "../customHooks/usePostCartList";
 import formatNumber from "../customHooks/fomatNumber";
 
 import { CartItem } from "../types";
+import usePostCartList from "../customHooks/useUpdateCartList";
 
 function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
@@ -128,12 +128,12 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                     const total = calculateTotal(cartItem);
                     return (
                       <View key={index} style={CartStyles.listNodeContainer}>
-                        <Text numberOfLines={1} style={[CartStyles.categoryText, { width: '25%' }]}>{cartItem.product.Product_name}</Text>
+                        <Text numberOfLines={1} style={[CartStyles.categoryText, { width: '20%' }]}>{cartItem.product.Product_name}</Text>
                         <View style={{
                           flexDirection: 'row', justifyContent: 'flex-start',
                           alignItems: 'center',
                           paddingHorizontal: 8,
-                          width: '15%'
+                          width: '20%'
                         }}>
                           <TouchableOpacity onPress={() => decreaseCount(cartItem)}>
                             <Feather name='minus-circle' size={25} color='black' />

@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { Product, CartItem } from "../types";
+import { PERSONAL_API_KEY, REACT_NATIVE_BACKEND_IP } from "@env";
+import axios from "axios";
 
 function useGetCartList() {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
-    const dispatch = useDispatch<AppDispatch>();
 
     const [responses, setResponses] = useState<CartItem[]>([]);
     const [grandTotal, setGrandTotal] = useState<number>(0);
@@ -20,61 +21,12 @@ function useGetCartList() {
         try {
             setLoading(true);
             setError(null);
-
+            console.log('Fetching Cart list...');
             // 실제 API 요청 부분 (예시 데이터 사용)
-            const response = {
-                data: [
-                    {
-                        Product_id: 1,
-                        Product_name: "Product 1",
-                        Price: 100,
-                        Discount: 10,
-                        Description: "Description of Product 1",
-                        Category: "Category 1",
-                        quantity: 10,
-                    },
-                    {
-                        Product_id: 2,
-                        Product_name: "Product 2",
-                        Price: 200,
-                        Discount: 20,
-                        Description: "Description of Product 2",
-                        Category: "Category 2",
-                        quantity: 5,
-                    },
-                    {
-                        Product_id: 3,
-                        Product_name: "Product 3",
-                        Price: 300,
-                        Discount: 15,
-                        Description: "Description of Product 3",
-                        Category: "Category 3",
-                        quantity: 3,
-                    },
-                    {
-                        Product_id: 4,
-                        Product_name: "Product 4",
-                        Price: 400,
-                        Discount: 25,
-                        Description: "Description of Product 4",
-                        Category: "Category 4",
-                        quantity: 7,
-                    },
-                    {
-                        Product_id: 5,
-                        Product_name: "Product 5",
-                        Price: 150,
-                        Discount: 5,
-                        Description: "Description of Product 5",
-                        Category: "Category 5",
-                        quantity: 12,
-                    },
-                ],
-                status: 200,
-            };
+            const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/${PERSONAL_API_KEY}/${userId}`)
 
-            if (response.status === 200) {
-                const cartItems: CartItem[] = response.data.map(item => ({
+            if (jsonResponse.status === 200) {
+                const cartItems: CartItem[] = jsonResponse.data.map((item: { Product_id: string; Product_name: string; Price: string; Discount: string; Description: string; Category: string; Quantity: string; }) => ({
                     product: {
                         Product_id: item.Product_id,
                         Product_name: item.Product_name,
@@ -83,7 +35,7 @@ function useGetCartList() {
                         Description: item.Description,
                         Category: item.Category,
                     },
-                    quantity: item.quantity,
+                    quantity: item.Quantity,
                 }));
                 setResponses(cartItems);
             } else {
