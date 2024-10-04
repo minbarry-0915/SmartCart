@@ -128,10 +128,15 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
             [Userid]
         );
 
+        //조회 했는데 cart가 있으면
         if (rows.length > 0) {
             res.json(rows); // 유저의 카트에 담긴 상품 정보 반환
-        } else {
-            res.status(404).send('Cart is empty for this user.');
+        } else { //cart가 없으면 cart 생성            
+            const result = await db.query(
+                `INSERT INTO Cart2 (Userid) VALUES (?)`,[Userid]
+            );
+            const newCartId = result.insertId;
+            res.status(201).json({ messege: `Cannot Find Cart_id, Cart Created Successfully: ${newCartId}`});
         }
     } catch (err) {
         console.error(err);
@@ -139,7 +144,7 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
     }
 });
 
-// 카트 아이템 업데이트 API
+// 카트 아이템 업데이트 API --- 연결 완
 app.post('/api/cart', async (req, res) => {
     const { Userid, items } = req.body;
 
@@ -155,6 +160,7 @@ app.post('/api/cart', async (req, res) => {
 
         if (cartRows.length === 0) {
             // 해당 Userid로 Cart가 없다면 새로운 Cart 생성
+            console.log('Cannot find Cart_id from Userid, Generate new Cart_id...');
             const [result] = await db.query('INSERT INTO Cart2 (Userid) VALUES (?)', [Userid]);
             Cart_id = result.insertId; // 새로 생성된 Cart_id 가져오기
         } else {
@@ -164,6 +170,7 @@ app.post('/api/cart', async (req, res) => {
 
         // 2. 아이템 삽입 (또는 업데이트)
         for (const item of items){
+            console.log('Updating cart items...');
             await db.query(
                 'INSERT INTO Cart_Item (Cart_id, Product_id, Quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Quantity = ?',
                 [Cart_id, item.Product_id, item.Quantity, item.Quantity]
@@ -177,7 +184,49 @@ app.post('/api/cart', async (req, res) => {
     }
 });
 
-//
+// 카트 아이템 삭제 API -- 연결 완
+app.delete('/api/cart', async (req, res) => {
+    const { Userid, Product_id } = req.body;
+
+    // Userid와 Product_id가 제공되었는지 확인
+    if (!Userid || !Product_id) {
+        return res.status(400).json({ message: 'User_id, Product_id are required.' });
+    }
+
+    try {
+        // User에 해당하는 Cart_id 조회
+        const [cartRows] = await db.query('SELECT Cart_id FROM Cart2 WHERE Userid = ?', [Userid]);
+        
+        if (cartRows.length === 0) {
+            return res.status(404).json({ message: 'Cart not found for this user.' });
+        }
+        
+        const Cart_id = cartRows[0].Cart_id;
+
+        // 삭제할 아이템 존재 여부 확인
+        const [itemCheck] = await db.query(
+            'SELECT * FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
+            [Cart_id, Product_id]
+        );
+
+        if (itemCheck.length === 0) {
+            return res.status(404).json({ message: 'Item not found in cart.' });
+        }
+        
+        // Cart_Item 테이블에서 특정 상품 삭제
+        const result = await db.query(
+            'DELETE FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
+            [Cart_id, Product_id]
+        );
+
+        // 성공 메세지 반환
+        res.status(200).json({ message: 'Item deleted from cart.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 
 // 제품 정보 검색 API
 app.get('/api/products/:Product_id', async (req, res) => {

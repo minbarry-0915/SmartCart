@@ -17,11 +17,13 @@ import useGetProduct from "../customHooks/useGetProduct";
 import formatNumber from "../customHooks/fomatNumber";
 
 import { CartItem } from "../types";
-import usePostCartList from "../customHooks/useUpdateCartList";
+import usePostCartList from "../customHooks/usePostCartList";
+import useDeleteCartItem from "../customHooks/useDeleteCartItem";
 
 function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const { 
     responses,
@@ -33,13 +35,27 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
     setResponses,
   } = useGetCartList();
 
-  const deleteNodeButton = (index: number) => {
+  const { deleteCartItem } = useDeleteCartItem();
+
+  const deleteNodeButton = async(index: number, productId: number) => {
+    // 배열 복사
     const newResponses = [...responses];
-    newResponses.splice(index, 1);
-    setResponses(newResponses);
+    newResponses.splice(index, 1); //index부터 1개 삭제
+    // 삭제 서버 요청
+    const isSuccess = await deleteCartItem(productId);
+
+    if(isSuccess){
+      setResponses(newResponses);
+    };
   };
 
-  const deleteAllNodes = () => {
+  const deleteAllNodes = async() => {
+    //매핑해서 모두 삭제
+    const deletePromises = responses.map(item => {
+      deleteCartItem(item.product.Product_id);
+    })
+    // 모든 삭제 요청이 완료될 때까지 대기
+    await Promise.all(deletePromises);
     setResponses([]);
   };
 
@@ -76,7 +92,6 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   
   usePostCartList(responses, setResponses);
 
-  const scrollViewRef = useRef<ScrollView>(null);
   
 
   // 제품 추가 시 ScrollView의 맨 끝으로 이동
@@ -146,7 +161,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                         <Text style={[CartStyles.categoryText, { width: '20%' }]}>{formatNumber(cartItem.product.Price)}</Text>
                         <Text style={[CartStyles.categoryText, { width: '18%' }]}>- {formatNumber(cartItem.product.Discount || 0)}</Text>
                         <Text style={[CartStyles.categoryText, { width: '18%' }]}>{formatNumber(total)}</Text>
-                        <TouchableOpacity onPress={() => deleteNodeButton(index)}>
+                        <TouchableOpacity onPress={() => deleteNodeButton(index, cartItem.product.Product_id)}>
                           <AntDesign name='closecircle' size={25} color='black' />
                         </TouchableOpacity>
                       </View>

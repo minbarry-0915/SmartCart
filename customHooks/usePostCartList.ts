@@ -13,6 +13,11 @@ function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<Rea
    
     // 장바구니 상태가 변경될 때마다 서버에 POST 요청을 보냅니다.
     const postCartList = async () => {
+        if (responses.length === 0) {
+            console.log("No items to update.");
+            return; // 빈 배열인 경우 종료
+        }
+        
         try {
             // 서버에 장바구니 상태를 POST
             console.log("Posting cart list...");
@@ -29,7 +34,7 @@ function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<Rea
                 items: cartItems
             })
 
-            console.log(jsonResponse.data);
+            // console.log(jsonResponse.data);
         } catch (error) {
             console.error("Fail to update cart list:", error);
         } finally {
@@ -37,7 +42,6 @@ function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<Rea
             console.log("Posting cart list done.");
         }
     };
-
 
     useEffect(() => {
         if (isInitialMount.current) {

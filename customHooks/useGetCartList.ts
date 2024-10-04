@@ -38,6 +38,8 @@ function useGetCartList() {
                     quantity: item.Quantity,
                 }));
                 setResponses(cartItems);
+            } else if(jsonResponse.status === 201) {
+                setResponses([]);
             } else {
                 throw new Error("Failed to fetch cart data");
             }
