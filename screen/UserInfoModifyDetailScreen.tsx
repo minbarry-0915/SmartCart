@@ -26,9 +26,9 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         Userid: '',
         Password: '',
         Name: '',
-        BirthDate: new Date(), // 기본값으로 현재 날짜 사용
+        Birthdate: new Date(), // 기본값으로 현재 날짜 사용
         Gender: '',
-        Phone_Num: '',
+        Phone_num: '',
         Email: '',
     });
     const [formattedPhoneNum, setFormattedPhoneNum] = useState<string>('');
@@ -134,7 +134,7 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         // Date 객체로 변환
         if (formattedNumber.length === 10) { // YYYY-MM-DD 형식일 때만
             const [year, month, day] = formattedNumber.split('-').map(Number);
-            setUserData({ ...userData, BirthDate: new Date(year, month - 1, day) }); // month는 0부터 시작
+            setUserData({ ...userData, Birthdate: new Date(year, month - 1, day) }); // month는 0부터 시작
         }
     };
 
@@ -156,7 +156,7 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
 
         setFormattedPhoneNum(formattedNumber);
         // phone number를 userData에 업데이트
-        setUserData({ ...userData, Phone_Num: formattedNumber });
+        setUserData({ ...userData, Phone_num: formattedNumber });
     };
 
 
@@ -277,7 +277,7 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
                             {Item('BIRTH DATE',
                                 <TextInput
                                     keyboardType='number-pad'
-                                    placeholder={userData.BirthDate.toISOString().split('T')[0]}
+                                    placeholder={userData.Birthdate.toISOString().split('T')[0]}
                                     placeholderTextColor='#696969'
                                     style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
                                     value={formattedBirthDate} // 포맷된 생일 날짜를 표시
@@ -303,10 +303,10 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
                             {Item('PHONE NUMBER',
                                 <TextInput
                                     keyboardType='number-pad'
-                                    placeholder={userData.Phone_Num}
+                                    placeholder={userData.Phone_num}
                                     placeholderTextColor='#696969'
                                     style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    value={userData.Phone_Num}
+                                    value={userData.Phone_num}
                                     onChangeText={handlePhoneNumberChange}
                                     textAlign='right'
                                 />
