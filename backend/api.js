@@ -61,21 +61,21 @@ async function verifyApiKey(req, res, next) {
 }
 
 
-// 로그인 API
+// 로그인 API ---- 연결 완
 app.post('/api/login', async (req, res) => {
-    const { Userid, password } = req.body;  // Userid로 변경
+    const { Userid, Password } = req.body;  // Userid로 변경
 
-    if (!Userid || !password) {
+    if (!Userid || !Password) {
         return res.status(400).send('User ID and password are required.');
     }
 
     try {
-        const [rows] = await db.query('SELECT * FROM User3 WHERE Userid = ? AND password = ?', [Userid, password]);
+        const [rows] = await db.query('SELECT * FROM User3 WHERE Userid = ? AND Password = ?', [Userid, Password]);
 
         if (rows.length > 0) {
             res.send('Login successful!');
         } else {
-            res.status(401).send('Invalid user ID or password.');
+            res.status(401).send('Invalid user ID or Password.');
         }
     } catch (err) {
         console.error(err);
@@ -84,7 +84,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// 회원가입 API
+// 회원가입 API ---- 연결 완
 app.post('/api/register', async (req, res) => {
     const { Userid, Name, Password, Birthdate, Gender, Phone_num, Email } = req.body;
 
@@ -118,8 +118,8 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
         const [rows] = await db.query(
             `SELECT ci.Product_id, p.Product_name, p.Price, ci.Quantity FROM Cart_Item ci
             JOIN Cart2 c ON ci.Cart_id = c.Cart_id
-             JOIN Product3 p ON ci.Product_id = p.Product_id
-             WHERE c.Userid = ?`,
+            JOIN Product3 p ON ci.Product_id = p.Product_id
+            WHERE c.Userid = ?`,
             [Userid]
         );
 
