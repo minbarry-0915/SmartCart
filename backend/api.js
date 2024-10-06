@@ -189,12 +189,16 @@ app.delete('/api/cart', async (req, res) => {
 
     // Userid와 Product_id가 제공되었는지 확인
     if (!Userid || !Product_id) {
-        return res.status(400).json({ message: 'User_id, Product_id are required.' });
+        return res.status(400).json({ message: 'User_id and Product_id are required.' });
     }
+
+    // 트랜잭션 수행 시에 충돌을 방지하기 위해 새로운 db연결을 가져옴
+    const connection = await db.getConnection(); // 데이터베이스 연결 가져오기
+    await connection.beginTransaction(); // 트랜잭션 시작
 
     try {
         // User에 해당하는 Cart_id 조회
-        const [cartRows] = await db.query('SELECT Cart_id FROM Cart2 WHERE Userid = ?', [Userid]);
+        const [cartRows] = await connection.query('SELECT Cart_id FROM Cart2 WHERE Userid = ?', [Userid]);
         
         if (cartRows.length === 0) {
             return res.status(404).json({ message: 'Cart not found for this user.' });
@@ -203,7 +207,7 @@ app.delete('/api/cart', async (req, res) => {
         const Cart_id = cartRows[0].Cart_id;
 
         // 삭제할 아이템 존재 여부 확인
-        const [itemCheck] = await db.query(
+        const [itemCheck] = await connection.query(
             'SELECT * FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
             [Cart_id, Product_id]
         );
@@ -214,18 +218,24 @@ app.delete('/api/cart', async (req, res) => {
         
         // Cart_Item 테이블에서 특정 상품 삭제
         console.log('Deleting cart item...');
-        const result = await db.query(
+        await connection.query(
             'DELETE FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
             [Cart_id, Product_id]
         );
+        
         console.log('Deletion Done.');
-        // 성공 메세지 반환
+
+        await connection.commit(); // 트랜잭션 커밋
         res.status(200).json({ message: 'Item deleted from cart.' });
     } catch (err) {
+        await connection.rollback(); // 에러 발생 시 트랜잭션 롤백
         console.error(err);
         res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        connection.release(); // 데이터베이스 연결 해제
     }
 });
+
 
 // 제품 세부정보 조회 API -- 연결 완
 app.get('/api/products/:Product_id', async (req, res) => {
@@ -311,14 +321,19 @@ app.delete('/api/search/history', async (req, res) => {
         return res.status(400).json({ message: 'Userid and Keyword_id are required.' }); 
     }
 
+    const connection = await db.getConnection(); // DB 연결 가져오기
+    await connection.beginTransaction(); // 트랜잭션 시작
+
     try {
         console.log('Deleting Search Keyword: ', Keyword_id);
-        const [result] = await db.query(
-            'DELETE FROM Search_History WHERE Keyword_id = ? AND Userid = ?', [Keyword_id, Userid]
+        const [result] = await connection.query( // connection 사용
+            'DELETE FROM Search_History WHERE Keyword_id = ? AND Userid = ?', 
+            [Keyword_id, Userid]
         );
 
         // result.affectedRows가 0이면 삭제된 항목이 없음
         if (result.affectedRows > 0) {
+            await connection.commit(); // 성공 시 트랜잭션 커밋
             res.status(200).json({ message: 'Item deleted from Search_History.' });
         } else {
             console.log('Cannot find keyword matched to keyword_id');
@@ -326,11 +341,14 @@ app.delete('/api/search/history', async (req, res) => {
         }
     } catch (error) {
         console.error('Failed to delete keyword: ', error);
+        await connection.rollback(); // 에러 발생 시 트랜잭션 롤백
         res.status(500).json({ message: 'Internal Server Error' });
     } finally {
+        connection.release(); // 연결 반환
         console.log('Deletion Done.');
     }
 });
+
 
 
 // 유저 정보 업데이트 API
@@ -339,13 +357,20 @@ app.patch('/api/user/:Userid', async (req, res) => {
     const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
 
     // 업데이트할 필드를 객체로 만들기
-    const updatedFields = {};
-    if (Name) updatedFields.Name = Name;
-    if (Birthdate) updatedFields.Birthdate = Birthdate;
-    if (Gender) updatedFields.Gender = Gender;
-    if (Phone_num) updatedFields.Phone_num = Phone_num;
-    if (Email) updatedFields.Email = Email;
-    if (Password) updatedFields.Password = Password;
+    const updatedFields = {
+        Name : Name,
+        Birthdate : Birthdate,
+        Gender : Gender,
+        Phone_num : Phone_num,
+        Email : Email,
+        Password : Password
+    };
+    // if (Name) updatedFields.Name = Name;
+    // if (Birthdate) updatedFields.Birthdate = Birthdate;
+    // if (Gender) updatedFields.Gender = Gender;
+    // if (Phone_num) updatedFields.Phone_num = Phone_num;
+    // if (Email) updatedFields.Email = Email;
+    // if (Password) updatedFields.Password = Password;
 
     // 업데이트 쿼리 작성
     const query = `UPDATE User3 SET ? WHERE Userid = ?`;
