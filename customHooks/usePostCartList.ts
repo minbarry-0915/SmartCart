@@ -5,6 +5,7 @@ import { PERSONAL_API_KEY, REACT_NATIVE_BACKEND_IP } from "@env";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
+// -- 연결 완 -- 
 function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<React.SetStateAction<CartItem[]>>) {
     const isInitialMount = useRef(true);
     const {userId} = useSelector((state: RootState) => state.auth);

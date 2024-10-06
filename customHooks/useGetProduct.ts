@@ -29,7 +29,7 @@ function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatc
                 setError(null);
     
                 const jsonResponse = {
-                    Product_id: 530244373975,
+                    Product_id: '530244373975',
                     Product_name: "Product as12345678",
                     Price: 150,
                     Discount: 5,

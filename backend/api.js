@@ -296,24 +296,45 @@ app.get('/api/search/history/:User_id', async (req, res) => {
     }
 });
 
-// 검색 기록 업데이트 API
+// 검색 기록 업데이트 API 
 app.post('/api/search/history', async (req, res) => {
-    const { Userid, Keywords } = req.body;
-    if ( !Userid || !Array.isArray(Keywords) || Keywords.length === 0) {
-        return res.status(400).json({ message: 'User_id and Keywords are required.' });
+    const { Userid, Keyword } = req.body;
+    
+    // Userid와 Keyword가 제공되었는지 확인
+    if (!Userid || !Keyword) {
+        return res.status(400).json({ message: 'User_id and Keyword are required.' });
     }
+
+    const connection = await db.getConnection();
+    await connection.beginTransaction(); // 트랜잭션 시작
 
     try {
         console.log('Updating Search Keywords...');
-        
 
-    } catch(err){
+        // 검색 기록 업데이트 (INSERT 쿼리)
+        const result = await connection.query('INSERT INTO Search_History (Keyword_name, Userid) VALUES (?, ?)', [Keyword, Userid]);
+
+        // 삽입 결과에 따라 트랜잭션 커밋
+        if (result[0].affectedRows > 0) {
+            await connection.commit(); // 트랜잭션 커밋
+            res.status(201).json({ message: 'Search keyword updated successfully.' });
+        } else {
+            await connection.rollback(); // 트랜잭션 롤백
+            res.status(500).json({ message: 'Failed to update search history.' });
+        }
+
+    } catch (error) {
         console.error('Failed to update search history: ', error);
+        await connection.rollback(); // 에러 발생 시 롤백
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        connection.release(); // 연결 해제
+        console.log('Update Done.');
     }
-
 });
 
-// 검색 기록 삭제 API 
+
+// 검색 기록 삭제 API -- 연결 완
 app.delete('/api/search/history', async (req, res) => {
     const { Userid, Keyword_id } = req.body;
 

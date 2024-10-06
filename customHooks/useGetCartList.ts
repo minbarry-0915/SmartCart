@@ -5,6 +5,7 @@ import { Product, CartItem } from "../types";
 import { PERSONAL_API_KEY, REACT_NATIVE_BACKEND_IP } from "@env";
 import axios from "axios";
 
+// -- 연결 완 -- 
 function useGetCartList() {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
 

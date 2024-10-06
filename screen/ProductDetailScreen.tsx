@@ -115,7 +115,10 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
             </LinearGradient>
 
             {/* locationModal */}
-            <LocationModal modalVisible={locationModalVisible} toggleLocationModal={toggleLocationModal} />
+            <LocationModal 
+            locationId={product?.Location_id}
+            modalVisible={locationModalVisible} 
+            toggleLocationModal={toggleLocationModal} />
             {/* addCartModal */}
             {product &&
                 <CartModal modalVisible={addCartModalVisible} toggleAddCartModal={toggleAddCartModal} price={product.Price} navigation={navigation} discount={product?.Discount} />

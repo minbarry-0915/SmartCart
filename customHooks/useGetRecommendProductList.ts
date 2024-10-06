@@ -15,7 +15,7 @@ function useGetRecommendProductList() {
             const jsonResponse = {
                 data: [
                     {
-                        Product_id: 1234,
+                        Product_id: '1',
                         Product_name: '코카콜라난sssssssssss난나나나나나나나나나나나나나나ㅏ나나',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -24,7 +24,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 21321,
+                        Product_id: '21321',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -33,7 +33,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -42,7 +42,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -51,7 +51,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -60,7 +60,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -69,7 +69,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',
@@ -78,7 +78,7 @@ function useGetRecommendProductList() {
                         Description: 'Refreshing beverage',
                     },
                     {
-                        Product_id: 657657,
+                        Product_id: '657657',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '마이프로틴',

@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase, useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -11,17 +11,18 @@ import LinearGradient from "react-native-linear-gradient";
 import useGetRecentKeyword from "../customHooks/useGetRecentKeywords";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
-import usePostRecentKeywords from "../customHooks/usePostRecentKeywords";
 import { CancelIcon } from "../assets/icons";
+import useDeleteSearchKeyword from "../customHooks/useDeleteSearchKeyword";
+import usePostSearchKeyword from "../customHooks/usePostRecentKeywords";
 
 function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   //redux
   const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
-
+  //customHooks
   const { keywordArray, loading, error, getRecentKeyword, setKeywordArray } = useGetRecentKeyword();
-
-  usePostRecentKeywords(keywordArray,setKeywordArray);
+  const { deleteSearchKeyword } = useDeleteSearchKeyword();
+  const { postSearchKeyword } = usePostSearchKeyword();
 
   //처음 한번만 실행됨
   useEffect(() => {
@@ -36,18 +37,34 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   }, [navigation]);
 
 
-  const deleteNodeButton = (index: number) => {
-    const newKeywordArray = [...keywordArray];
+  const deleteNodeButton = async (index: number, keywordId: number) => {
+    const result = await deleteSearchKeyword(keywordId);
+    if(result)
+      {const newKeywordArray = [...keywordArray];
     newKeywordArray.splice(index, 1);
-    setKeywordArray(newKeywordArray);
+    setKeywordArray(newKeywordArray);}
   };
 
-  const deleteAllKeyword = () => {
-    setKeywordArray([]);
+  const deleteAllKeyword = async () => {
+    try {
+      // 모든 삭제 요청을 Promise.all로 처리
+      const result = await Promise.all(
+        keywordArray.map(keyword => deleteSearchKeyword(keyword.Keyword_id))
+      );
+
+      // 모든 키워드 삭제가 완료된 후 상태 업데이트
+      if (result)
+        setKeywordArray([]);
+    } catch (error) {
+      console.error('Failed to delete all keywords:', error);
+    }
   };
 
-  const onRecentKeywordNode = (keyword: string) => {
-    navigation.navigate('SearchResult', {resultKeyword: keyword});
+  const onRecentKeywordNode = async (keywordName: string) => {
+    const result = await postSearchKeyword(keywordName);
+    if (result) {
+      navigation.navigate('SearchResult', { resultKeyword: keywordName });
+    }
   };
 
 
@@ -65,7 +82,7 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
             mode="black"
             navigation={navigation}
             showSearchButton={false}
-            showSearchBar={true}  
+            showSearchBar={true}
           />
 
           <ScrollView
@@ -96,12 +113,12 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
                     key={index}
                     activeOpacity={0.8}
                     style={SearchStyles.keywordNode}
-                    onPress={() => onRecentKeywordNode(keyword.Search_keyword)}
+                    onPress={() => onRecentKeywordNode(keyword.Keyword_name)}
                   >
-                    <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Search_keyword}</Text>
+                    <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Keyword_name}</Text>
                     <TouchableOpacity
                       activeOpacity={0.8}
-                      onPress={() => deleteNodeButton(index)}>
+                      onPress={() => deleteNodeButton(index, keyword.Keyword_id)}>
                       <CancelIcon width={20} height={20} />
                     </TouchableOpacity>
                   </TouchableOpacity>

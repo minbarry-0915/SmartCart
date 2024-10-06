@@ -3,6 +3,7 @@ import { User } from "../types";
 import { REACT_NATIVE_BACKEND_IP } from "@env";
 import { useState } from "react";
 
+// -- 연결 완
 function usePostUserInfo() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ function usePostUserInfo() {
             setError(null);
             // API 호출
             console.log('Posting UserInfo...');
-            const response = await axios.post(`http://192.168.0.6:3001/api/register`, userInfo);
+            const response = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/register`, userInfo);
 
             console.log(response);
 

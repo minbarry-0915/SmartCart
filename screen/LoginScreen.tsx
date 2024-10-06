@@ -72,59 +72,61 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
         <RenderLoading />
       ) : (
         <>
-        {/* id */}
-        <View style={LoginStyles.content}>
-          <TextInput
-            placeholder="ID"
-            placeholderTextColor={'#696969'}
-            onChangeText={setId}
-            value={id}
-            style={LoginStyles.textInput}
-          />
+          {/* id */}
+          <View style={LoginStyles.content}>
+            <TextInput
+              autoCapitalize="none"
+              placeholder="ID"
+              placeholderTextColor={'#696969'}
+              onChangeText={setId}
+              value={id}
+              style={LoginStyles.textInput}
+            />
 
-        </View>
-        {/* pw */}
-        <View style={LoginStyles.content}>
-          <TextInput
-            secureTextEntry={true}
-            placeholder="PASSWORD"
-            placeholderTextColor={'#696969'}
-            onChangeText={setPW}
-            value={password}
-            style={LoginStyles.textInput}
-          />
-        </View>
+          </View>
+          {/* pw */}
+          <View style={LoginStyles.content}>
+            <TextInput
+              autoCapitalize="none"
+              secureTextEntry={true}
+              placeholder="PASSWORD"
+              placeholderTextColor={'#696969'}
+              onChangeText={setPW}
+              value={password}
+              style={LoginStyles.textInput}
+            />
+          </View>
 
-        <View style={LoginStyles.content}>
-          <TouchableOpacity
-            onPress={onLoginButton}
-            activeOpacity={0.7}
-            style={GlobalStyles.blackButton}>
-            <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
-              LOGIN
-            </Text>
-          </TouchableOpacity>
-        </View>
+          <View style={LoginStyles.content}>
+            <TouchableOpacity
+              onPress={onLoginButton}
+              activeOpacity={0.7}
+              style={GlobalStyles.blackButton}>
+              <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
+                LOGIN
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* 회원가입/아이디찾기/비밀번호찾기 */}
-        <View style={LoginStyles.optionContainer}>
-          <TouchableOpacity
-            onPress={onSignUPButton}
-            style={LoginStyles.optionContent}>
-            <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>회원가입</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onFindIDButton}
-            style={LoginStyles.optionContent}>
-            <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>아이디찾기</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onFindPWButton}
-            style={LoginStyles.optionContent}>
-            <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>비밀번호찾기</Text>
-          </TouchableOpacity>
-        </View>
-      </>
+          {/* 회원가입/아이디찾기/비밀번호찾기 */}
+          <View style={LoginStyles.optionContainer}>
+            <TouchableOpacity
+              onPress={onSignUPButton}
+              style={LoginStyles.optionContent}>
+              <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>회원가입</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onFindIDButton}
+              style={LoginStyles.optionContent}>
+              <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>아이디찾기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onFindPWButton}
+              style={LoginStyles.optionContent}>
+              <Text style={[GlobalStyles.regularText, { color: '#696969' }]}>비밀번호찾기</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       )}
 
     </KeyboardAvoidingView>

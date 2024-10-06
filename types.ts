@@ -1,19 +1,19 @@
 //클래스 다이어그램 설계와 동일하게 인터페이스 정의
 
 export interface Product {
-    Product_id: number,
+    Product_id: string,
     Product_name: string,
     Price: number,
     Category: string,
     Main_image?: string,
     Discount: number | undefined,
     Description: string,
-    Location_id?: string,
+    Location_id?: number,
 }
 
 export interface Keyword {
-    Search_id: number,
-    Search_keyword: string,
+    Keyword_id: number,
+    Keyword_name: string,
 }
 
 export interface Order {
@@ -45,6 +45,7 @@ export interface CartItem {
 
 export interface Location {
     Location_id: number,
+    Floor_info: string,
     Location_name: string,
     Beacon_id: string,
 }

@@ -7,6 +7,7 @@ interface Prop {
     password: string;
 }
 
+// -- 연결 완 -- 
 function usePostUserVerify() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);

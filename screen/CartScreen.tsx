@@ -37,7 +37,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
   const { deleteCartItem } = useDeleteCartItem();
 
-  const deleteNodeButton = async(index: number, productId: number) => {
+  const deleteNodeButton = async(index: number, productId: string) => {
     // 배열 복사
     const newResponses = [...responses];
     newResponses.splice(index, 1); //index부터 1개 삭제

@@ -17,10 +17,6 @@ function useGetUserInfo() {
             setLoading(true);
             setError(null);
 
-            // 서버에서 사용자 정보 요청
-            // const response = await axios.get(`https://api.example.com/user/${userId}`);
-            // const userData = response.data;
-
             const userData = {
                 userid: 'userId', // 예시로 userId 사용
                 password: 'examplePassword',

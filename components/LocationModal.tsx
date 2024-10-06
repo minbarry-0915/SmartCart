@@ -8,11 +8,21 @@ import useGetLocation from "../customHooks/useGetLocation";
 import { UpwardIcon } from "../assets/icons";
 import useBeaconDistance from "./BeaconDistanceTracker";
 
-function LocationModal({ modalVisible, toggleLocationModal }: { modalVisible: boolean, toggleLocationModal: () => void }) {
+interface Props {
+    locationId: number | undefined,
+    modalVisible: boolean, 
+    toggleLocationModal: () => void,
+}
+
+function LocationModal({locationId, modalVisible, toggleLocationModal}: Props) {
+    //ID 없으면 렌더링 안함
+    if (!locationId)
+        return;
+
     const [visible, setVisible] = useState(modalVisible);
     const slideAnim = useRef(new Animated.Value(500)).current;
 
-    const { locationInfo } = useGetLocation();
+    const { locationInfo } = useGetLocation(locationId);
     // 거리 값을 가져올 비콘 ID와 TX Power 설정
     //const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'; // 비콘 UUID
     // const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'

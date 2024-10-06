@@ -31,7 +31,8 @@ function SearchResultScreen({ route, navigation }: { route: RouteProp<ParamListB
 
     const { loading, error, products } = useGetSearchResults(resultKeyword); // 검색 결과 상품들 가져오기
 
-    const onProductButton = (productId: number) => {
+    const onProductButton = (productId: string) => {
+        // console.log(productId);
         navigation.navigate('ProductDetail', { productId: productId });
     };
 

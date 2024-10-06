@@ -4,11 +4,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useState } from "react";
 
+// -- 연결 완 -- 
 function useDeleteCartItem() {
     const { userId } = useSelector((state: RootState) => state.auth);
     const [loading, setLoading] = useState<boolean>(false);
     
-    const deleteCartItem = async (productId: number) => {
+    const deleteCartItem = async (productId: string) => {
         setLoading(true); // 로딩 시작
         try {
             console.log(`Deleting cart item ${productId} from cart list...`);
@@ -19,7 +20,7 @@ function useDeleteCartItem() {
                 }
             });
 
-            console.log('Deletion Complete.');
+            console.log('Cart Item deletion complete:', productId);
             return true; // 성공 시 true 반환
         } catch (error) {
             console.error("Fail to delete cart item:", error);

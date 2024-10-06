@@ -18,7 +18,7 @@ function useGetSearchResult(keyword: string) {
             const jsonResponse = {
                 data: [
                     {
-                        Product_id: 1234,
+                        Product_id: '1',
                         Product_name: '코카콜라',
                         Price: 1320,
                         Category: '음료',
@@ -27,7 +27,7 @@ function useGetSearchResult(keyword: string) {
                         Description: 'Refreshing soft drink',
                     },
                     {
-                        Product_id: 21321,
+                        Product_id: '21321',
                         Product_name: '마이프로틴',
                         Price: 18000,
                         Category: '단백질',
@@ -36,7 +36,7 @@ function useGetSearchResult(keyword: string) {
                         Description: 'High-quality protein powder',
                     },
                     {
-                        Product_id: 32523523,
+                        Product_id: '32523523',
                         Product_name: '초코바',
                         Price: 2500,
                         Category: '간식',

@@ -1,19 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
 import { Location } from "../types";
+import axios from "axios";
+import { REACT_NATIVE_BACKEND_IP } from "@env";
 
-function useGetLocation(){
+// -- 연결 완
+function useGetLocation(Location_id: number){
     const [locationInfo, setLocationInfo] = useState<Location | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     const getLocationInfo = useCallback(async()=>{
-        const jsonResponse = {
-            data:{
-                Location_id : 111,
-                Location_name: '여기다호호호',
-                Beacon_id: 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
-            }
+        try{
+            setLoading(true);
+            setError(null);
+            console.log('Fetching Location Info...');
+            const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/locations/${Location_id}`);
+            setLocationInfo(jsonResponse.data);
+        }catch(err: any){
+            console.error('Fail to get Location Info: ', err);
+            setError(err);
         }
-
-        setLocationInfo(jsonResponse.data);
     },[]);
 
     useEffect(() => {
