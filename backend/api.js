@@ -296,7 +296,7 @@ app.get('/api/search/history/:User_id', async (req, res) => {
     }
 });
 
-// 검색 기록 업데이트 API 
+// 검색 기록 업데이트 API -- 연결 완
 app.post('/api/search/history', async (req, res) => {
     const { Userid, Keyword } = req.body;
     
@@ -332,7 +332,6 @@ app.post('/api/search/history', async (req, res) => {
         console.log('Update Done.');
     }
 });
-
 
 // 검색 기록 삭제 API -- 연결 완
 app.delete('/api/search/history', async (req, res) => {
@@ -370,88 +369,7 @@ app.delete('/api/search/history', async (req, res) => {
     }
 });
 
-
-
-// 유저 정보 업데이트 API
-app.patch('/api/user/:Userid', async (req, res) => {
-    const { Userid } = req.params;
-    const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
-
-    // 업데이트할 필드를 객체로 만들기
-    const updatedFields = {
-        Name : Name,
-        Birthdate : Birthdate,
-        Gender : Gender,
-        Phone_num : Phone_num,
-        Email : Email,
-        Password : Password
-    };
-    // if (Name) updatedFields.Name = Name;
-    // if (Birthdate) updatedFields.Birthdate = Birthdate;
-    // if (Gender) updatedFields.Gender = Gender;
-    // if (Phone_num) updatedFields.Phone_num = Phone_num;
-    // if (Email) updatedFields.Email = Email;
-    // if (Password) updatedFields.Password = Password;
-
-    // 업데이트 쿼리 작성
-    const query = `UPDATE User3 SET ? WHERE Userid = ?`;
-    
-    try {
-        const [result] = await db.query(query, [updatedFields, Userid]);
-        
-        if (result.affectedRows > 0) {
-            res.status(200).json({ message: 'User information updated successfully.' });
-        } else {
-            res.status(404).send('User not found.');
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-
-
-// 상품 스캔 결과 반환 API
-/* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
-
-let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 --> 위에 get api 쓰면 될거같음
-
-app.post('/api/products/scan', (req, res) => {
-    const { barcode } = req.body;
-
-    if (!barcode) {
-        return res.status(400).json({ error: 'Barcode is required.' });
-    }
-
-    // 기존 장바구니에서 상품 찾기
-    const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
-
-    if (foundItem) {
-        // 제품이 있으면 수량 업데이트
-        foundItem.quantity += 1;
-        return res.status(200).json({ message: 'Quantity updated', cartItems });
-    } else {
-        // 제품이 없으면 새로운 상품 추가
-        const newItem = {
-            product: {
-                Product_id: 530244373975,
-                Product_name: "Product 12345678",
-                Price: 150,
-                Discount: 5,
-                Description: "Description of Product 5",
-                Category: "Category 5",
-            },
-            quantity: 1,
-        };
-
-        cartItems.push(newItem);
-        return res.status(201).json({ message: 'New item added', cartItems });
-    }
-});
-
-
-// 키워드 기반 검색 결과 반환 API
+// 키워드 기반 검색 결과 반환 API -- 진행 중
 /* ex) "코카" || "마" 만 입력해도 결과 반환됨 */
 app.get('/api/search', async (req, res) => {
     const { keyword } = req.query;
@@ -509,7 +427,101 @@ app.get('/api/search', async (req, res) => {
 });
 
 
-// 추천 제품 목록 반환 API
+// 유저 정보 조회 API -- 필요한 것
+app.get('/api/user/:Userid',async (req, res) => {
+
+});
+
+// 유저 정보 업데이트 API -- 연결 중
+app.patch('/api/user/:Userid', async (req, res) => {
+    const { Userid } = req.params;
+    const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
+
+    // 업데이트할 필드를 객체로 만들기
+    const updatedFields = {
+        Name : Name,
+        Birthdate : Birthdate,
+        Gender : Gender,
+        Phone_num : Phone_num,
+        Email : Email,
+        Password : Password
+    };
+    // if (Name) updatedFields.Name = Name;
+    // if (Birthdate) updatedFields.Birthdate = Birthdate;
+    // if (Gender) updatedFields.Gender = Gender;
+    // if (Phone_num) updatedFields.Phone_num = Phone_num;
+    // if (Email) updatedFields.Email = Email;
+    // if (Password) updatedFields.Password = Password;
+
+    // 업데이트 쿼리 작성
+    const query = `UPDATE User3 SET ? WHERE Userid = ?`;
+    
+    try {
+        const [result] = await db.query(query, [updatedFields, Userid]);
+        
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'User information updated successfully.' });
+        } else {
+            res.status(404).send('User not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// 주문 목록 조회 API -- 필요한 것 get
+app.get('/api/orders/orderList', async(req, res) => {
+
+});
+
+// 주문 세부 내용 조회 API -- 필요한 것 get
+app.get('/api/orders/:order_id', async(req, res) => {
+
+});
+
+// 상품 스캔 결과 반환 API -- 진행 중
+/* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
+
+let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 --> 위에 get api 쓰면 될거같음
+
+app.post('/api/products/scan', (req, res) => {
+    const { barcode } = req.body;
+
+    if (!barcode) {
+        return res.status(400).json({ error: 'Barcode is required.' });
+    }
+
+    // 기존 장바구니에서 상품 찾기
+    const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
+
+    if (foundItem) {
+        // 제품이 있으면 수량 업데이트
+        foundItem.quantity += 1;
+        return res.status(200).json({ message: 'Quantity updated', cartItems });
+    } else {
+        // 제품이 없으면 새로운 상품 추가
+        const newItem = {
+            product: {
+                Product_id: 530244373975,
+                Product_name: "Product 12345678",
+                Price: 150,
+                Discount: 5,
+                Description: "Description of Product 5",
+                Category: "Category 5",
+            },
+            quantity: 1,
+        };
+
+        cartItems.push(newItem);
+        return res.status(201).json({ message: 'New item added', cartItems });
+    }
+});
+
+
+
+
+// 추천 제품 목록 반환 API -- 진행 중
 app.get('/api/recommend-products', async (req, res) => {
     try {
         // 더미 데이터 대신 데이터베이스에서 추천 제품을 조회할 수 있습니다.
