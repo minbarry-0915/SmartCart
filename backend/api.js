@@ -332,6 +332,172 @@ app.delete('/api/search/history', async (req, res) => {
     }
 });
 
+
+// 유저 정보 업데이트 API
+app.patch('/api/user/:Userid', async (req, res) => {
+    const { Userid } = req.params;
+    const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
+
+    // 업데이트할 필드를 객체로 만들기
+    const updatedFields = {};
+    if (Name) updatedFields.Name = Name;
+    if (Birthdate) updatedFields.Birthdate = Birthdate;
+    if (Gender) updatedFields.Gender = Gender;
+    if (Phone_num) updatedFields.Phone_num = Phone_num;
+    if (Email) updatedFields.Email = Email;
+    if (Password) updatedFields.Password = Password;
+
+    // 업데이트 쿼리 작성
+    const query = `UPDATE User3 SET ? WHERE Userid = ?`;
+    
+    try {
+        const [result] = await db.query(query, [updatedFields, Userid]);
+        
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'User information updated successfully.' });
+        } else {
+            res.status(404).send('User not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
+// 상품 검색 API
+/* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
+
+let cartItems = []; // 이 배열에 장바구니 아이템들을 저장
+
+app.post('/api/products/scan', (req, res) => {
+    const { barcode } = req.body;
+
+    if (!barcode) {
+        return res.status(400).json({ error: 'Barcode is required.' });
+    }
+
+    // 기존 장바구니에서 상품 찾기
+    const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
+
+    if (foundItem) {
+        // 제품이 있으면 수량 업데이트
+        foundItem.quantity += 1;
+        return res.status(200).json({ message: 'Quantity updated', cartItems });
+    } else {
+        // 제품이 없으면 새로운 상품 추가
+        const newItem = {
+            product: {
+                Product_id: 530244373975,
+                Product_name: "Product 12345678",
+                Price: 150,
+                Discount: 5,
+                Description: "Description of Product 5",
+                Category: "Category 5",
+            },
+            quantity: 1,
+        };
+
+        cartItems.push(newItem);
+        return res.status(201).json({ message: 'New item added', cartItems });
+    }
+});
+
+
+// 키워드 기반 검색 결과 반환 API
+/* ex) "코카" || "마" 만 입력해도 결과 반환됨 */
+app.get('/api/search', async (req, res) => {
+    const { keyword } = req.query;
+
+    try {
+        // 검색 키워드가 없으면 오류 반환
+        if (!keyword) {
+            return res.status(400).json({ error: '검색 키워드가 필요합니다.' });
+        }
+
+        console.log(`Keyword: ${keyword}로 검색 결과를 조회합니다.`);
+
+        // 예시 더미 데이터
+        const searchResults = [
+            {
+                Product_id: 1234,
+                Product_name: '코카콜라',
+                Price: 1320,
+                Category: '음료',
+                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                Discount: 0,
+                Description: 'Refreshing soft drink',
+            },
+            {
+                Product_id: 21321,
+                Product_name: '마이프로틴',
+                Price: 18000,
+                Category: '단백질',
+                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                Discount: 2000,
+                Description: 'High-quality protein powder',
+            },
+            {
+                Product_id: 32523523,
+                Product_name: '초코바',
+                Price: 2500,
+                Category: '간식',
+                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                Discount: 500,
+                Description: 'Delicious chocolate snack',
+            },
+            // 추가 데이터...
+        ];
+
+        // 검색 키워드와 일치하는 결과 필터링 (이 예시에서는 더미 데이터 반환)
+        const filteredResults = searchResults.filter(product =>
+            product.Product_name.includes(keyword)
+        );
+
+        res.json({ data: filteredResults });
+    } catch (err) {
+        console.error('검색 결과 조회 실패:', err);
+        res.status(500).json({ error: '검색 결과를 조회하는 중 오류가 발생했습니다.' });
+    }
+});
+
+
+// 추천 제품 목록 반환 API
+app.get('/api/recommend-products', async (req, res) => {
+    try {
+        // 더미 데이터 대신 데이터베이스에서 추천 제품을 조회할 수 있습니다.
+        const recommendedProducts = [
+            {
+                Product_id: 1234,
+                Product_name: '코카콜라',
+                Price: 1320,
+                Category: '음료',
+                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                Discount: undefined,
+                Description: 'Refreshing beverage',
+            },
+            {
+                Product_id: 21321,
+                Product_name: '마이프로틴',
+                Price: 18000,
+                Category: '단백질',
+                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
+                Discount: undefined,
+                Description: 'High-quality protein powder',
+            },
+            // 추가 데이터...
+        ];
+
+        // 응답으로 추천 제품 목록을 전송
+        res.json({ data: recommendedProducts });
+    } catch (error) {
+        console.error('Failed to fetch recommended products:', error);
+        res.status(500).json({ message: 'Failed to fetch recommended products' });
+    }
+});
+
+
 /*
 // 카트에 항목 추가 API
 app.post('/api/cart-item', async (req, res) => {
