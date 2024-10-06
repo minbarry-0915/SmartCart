@@ -227,7 +227,6 @@ app.delete('/api/cart', async (req, res) => {
     }
 });
 
-
 // 제품 세부정보 조회 API -- 연결 완
 app.get('/api/products/:Product_id', async (req, res) => {
     const { Product_id } = req.params;
@@ -288,14 +287,50 @@ app.get('/api/search/history/:User_id', async (req, res) => {
 });
 
 // 검색 기록 업데이트 API
-app.post('api/search/history', async (req, res) => {
+app.post('/api/search/history', async (req, res) => {
     const { Userid, Keywords } = req.body;
     if ( !Userid || !Array.isArray(Keywords) || Keywords.length === 0) {
         return res.status(400).json({ message: 'User_id and Keywords are required.' });
     }
 
+    try {
+        console.log('Updating Search Keywords...');
+        
 
-})
+    } catch(err){
+
+    }
+
+});
+
+// 검색 기록 삭제 API 
+app.delete('/api/search/history', async (req, res) => {
+    const { Userid, Keyword_id } = req.body;
+
+    if (!Userid || !Keyword_id) {
+        return res.status(400).json({ message: 'Userid and Keyword_id are required.' }); 
+    }
+
+    try {
+        console.log('Deleting Search Keyword: ', Keyword_id);
+        const [result] = await db.query(
+            'DELETE FROM Search_History WHERE Keyword_id = ? AND Userid = ?', [Keyword_id, Userid]
+        );
+
+        // result.affectedRows가 0이면 삭제된 항목이 없음
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Item deleted from Search_History.' });
+        } else {
+            console.log('Cannot find keyword matched to keyword_id');
+            res.status(404).json({ message: 'No matching keyword found to delete.' });
+        }
+    } catch (error) {
+        console.error('Failed to delete keyword: ', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        console.log('Deletion Done.');
+    }
+});
 
 /*
 // 카트에 항목 추가 API
