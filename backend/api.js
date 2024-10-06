@@ -113,7 +113,6 @@ app.post('/api/register', async (req, res) => {
 // });
 
 
-
 //카트 아이템 조회 API --- 연결 완
 app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
     const { apikey, Userid } = req.params;
@@ -176,7 +175,7 @@ app.post('/api/cart', async (req, res) => {
                 [Cart_id, item.Product_id, item.Quantity, item.Quantity]
             );
         }
-        
+        console.log('Update Done.');
         res.status(201).json({ message: '장바구니가 성공적으로 업데이트되었습니다.' });
     } catch (error) {
         console.error(error);
@@ -214,11 +213,12 @@ app.delete('/api/cart', async (req, res) => {
         }
         
         // Cart_Item 테이블에서 특정 상품 삭제
+        console.log('Deleting cart item...');
         const result = await db.query(
             'DELETE FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
             [Cart_id, Product_id]
         );
-
+        console.log('Deletion Done.');
         // 성공 메세지 반환
         res.status(200).json({ message: 'Item deleted from cart.' });
     } catch (err) {
@@ -228,14 +228,14 @@ app.delete('/api/cart', async (req, res) => {
 });
 
 
-// 제품 정보 검색 API
+// 제품 세부정보 조회 API -- 연결 완
 app.get('/api/products/:Product_id', async (req, res) => {
     const { Product_id } = req.params;
 
     try {
         // 특정 Product_id에 해당하는 제품 정보 조회
         const [rows] = await db.query(
-            'SELECT * FROM Product3 WHERE Product_id = ?',
+            `SELECT * FROM Product3 WHERE Product_id = ?`,
             [Product_id]
         );
 
@@ -251,7 +251,17 @@ app.get('/api/products/:Product_id', async (req, res) => {
 });
 
 
+// 검색 기록 조회 API
+app.get('/api/search/keywords/:User_id', async (req, res) => {
+    const {User_id} = req.params;
 
+    try{
+        const [rows] = await db.query()
+    }catch(err){
+
+    }
+
+});
 
 /*
 // 카트에 항목 추가 API
