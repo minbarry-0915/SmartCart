@@ -4,6 +4,7 @@ import { REACT_NATIVE_BACKEND_IP } from "@env";
 import { useState } from "react";
 
 // -- 연결 완
+// -- 회원가입 용
 function usePostUserInfo() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);

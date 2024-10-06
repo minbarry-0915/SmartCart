@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { login } from "../redux/authSlice";
@@ -22,14 +22,15 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
 
 
   const onLoginButton = async () => {
-    //서버요청 작성 필요
-    const isSuccess = await postUserVerify({ userId: id, password });
-    if (isSuccess) {
+    const { status, error } = await postUserVerify({ userId: id, password });
+
+    // 로그인 성공 여부 확인
+    if (status === 200) {
       dispatch(login(id));
       navigation.navigate('Cart');
-    }
-    else {
-      console.error('Login Failed');
+    } else {
+      console.error('Login Failed:', error); // 에러 메시지 출력
+      Alert.alert(`로그인 실패: ${error}`);
     }
   };
 

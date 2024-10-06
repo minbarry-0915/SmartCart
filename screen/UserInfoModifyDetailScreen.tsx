@@ -62,13 +62,6 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         setChanged(true);
     }, [userData]);
 
-    // useEffect(()=>{
-    //     const unsubscribe = navigation.addListener('beforeRemove', (e)=> {
-    //         e.preventDefault();
-    //     })
-    //     return unsubscribe;
-    // },[navigation]);
-
     useEffect(() => {
         if (newPassword !== confirmNewPassword) {
             setColor('#E33434');
@@ -78,7 +71,6 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
             setMessege('비밀번호가 일치합니다.')
         }
     }, [newPassword, confirmNewPassword]); // 상태가 바뀔 때마다 color 업데이트
-
 
     const onCancelButton = () => {
         if (!changed) {

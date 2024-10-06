@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase, RouteProp, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,24 +27,21 @@ function UserInfoModifyScreen({ navigation }: { navigation: NavigationProp<Param
 
     const onVerifyButton = async () => {
         if (userId !== null) {
-            const res = await postUserVerify({ userId, password });
-            if (status === 200)
+            const { status, error } = await postUserVerify({ userId, password });
+    
+            // 로그인 성공 여부에 따라 분기 처리
+            if (status === 200) {
                 navigation.navigate("UserInfoModifyDetail");
-            else if (status === 401) {
-                console.log('비밀번호가 일치하지 않습니다.')
-                setMessege('비밀번호가 일치하지 않습니다.')
-                const newCount = count + 1;
-                setCount(newCount);
-            }
-            else {
-                const newCount = count + 1;
-                setCount(newCount);
-                console.log('잘못된 접근입니다. 다시 시도하세요');
+            } else if (status === 401) {
+                console.log('비밀번호가 일치하지 않습니다.');
+                setMessege('비밀번호가 일치하지 않습니다.');
+                setCount(prevCount => prevCount + 1); // 카운트를 증가시킴
+            } else {
+                setCount(prevCount => prevCount + 1); // 잘못된 접근 시 카운트 증가
+                console.log('잘못된 접근입니다. 다시 시도하세요.');
             }
         }
-    }
-
-
+    };
 
     useEffect(() => {
         setCount(0);
@@ -54,7 +51,7 @@ function UserInfoModifyScreen({ navigation }: { navigation: NavigationProp<Param
         console.log(count);
         if (count == 5) {
             console.log('비밀번호를 5회 틀렸습니다. 마이페이지로 돌아갑니다.');
-            setMessege('비밀번호를 5회 틀렸습니다. 마이페이지로 돌아갑니다.');
+            Alert.alert('비밀번호를 5회 틀렸습니다. 마이페이지로 돌아갑니다.');
             navigation.goBack();
         }
     }, [count])

@@ -11,6 +11,7 @@ interface Prop {
 function usePostUserVerify() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [status, setStatus] = useState<number>();
 
     const postUserVerify = async ({ userId, password }: Prop) => {
         setLoading(true);
@@ -24,7 +25,7 @@ function usePostUserVerify() {
         }
 
         try {
-            console.log('Trying Login...')
+            console.log('Trying Login...');
             console.log(REACT_NATIVE_BACKEND_IP);
             const response = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/login`, {
                 Userid: userId,
@@ -36,13 +37,13 @@ function usePostUserVerify() {
                 timeout: 5000,
             });
             console.log('Login Successful.');
-            return true; // 성공 시 상태 반환
+            setStatus(response.status);
+            return { status: response.status, error: null }; // 성공 시 상태 반환
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || err.message; // 서버 에러 메시지 활용
             setError(errorMessage);
-
             console.error('Login Failed', err);
-            return false;
+            return { status: err.response?.status || 500, error: errorMessage }; // 실패 시 상태와 에러 메시지 반환
         } finally {
             setLoading(false);
         }
@@ -51,6 +52,7 @@ function usePostUserVerify() {
     return {
         loading,
         error,
+        status,
         postUserVerify,
     }
 }
