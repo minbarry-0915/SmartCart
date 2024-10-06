@@ -263,6 +263,7 @@ app.get('/api/search/keywords/:User_id', async (req, res) => {
 
 });
 
+
 // 유저 정보 업데이트 API
 app.patch('/api/user/:Userid', async (req, res) => {
     const { Userid } = req.params;
@@ -295,6 +296,44 @@ app.patch('/api/user/:Userid', async (req, res) => {
 });
 
 
+
+// 상품 검색 API
+/* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
+
+let cartItems = []; // 이 배열에 장바구니 아이템들을 저장
+
+app.post('/api/products/scan', (req, res) => {
+    const { barcode } = req.body;
+
+    if (!barcode) {
+        return res.status(400).json({ error: 'Barcode is required.' });
+    }
+
+    // 기존 장바구니에서 상품 찾기
+    const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
+
+    if (foundItem) {
+        // 제품이 있으면 수량 업데이트
+        foundItem.quantity += 1;
+        return res.status(200).json({ message: 'Quantity updated', cartItems });
+    } else {
+        // 제품이 없으면 새로운 상품 추가
+        const newItem = {
+            product: {
+                Product_id: 530244373975,
+                Product_name: "Product 12345678",
+                Price: 150,
+                Discount: 5,
+                Description: "Description of Product 5",
+                Category: "Category 5",
+            },
+            quantity: 1,
+        };
+
+        cartItems.push(newItem);
+        return res.status(201).json({ message: 'New item added', cartItems });
+    }
+});
 
 
 
