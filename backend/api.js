@@ -250,6 +250,26 @@ app.get('/api/products/:Product_id', async (req, res) => {
     }
 });
 
+// 제품 위치정보 조회 API -- 연결 중
+app.get('/api/locations/:Location_id', async (req, res) => {
+    const { Location_id } = req.params;
+
+    try {
+        const [rows] = await db.query(
+            `SELECT * FROM Location WHERE Location_id = ?`,
+            [Location_id]
+        );
+
+        if (rows.length > 0){
+            res.json(rows[0]);
+        }else{
+            res.status(404).send('Location not found.');
+        }
+    } catch (err){
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+})
 
 // 검색 기록 조회 API
 app.get('/api/search/keywords/:User_id', async (req, res) => {
