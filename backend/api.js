@@ -250,7 +250,7 @@ app.get('/api/products/:Product_id', async (req, res) => {
     }
 });
 
-// 제품 위치정보 조회 API -- 연결 중
+// 제품 위치정보 조회 API -- 연결 완
 app.get('/api/locations/:Location_id', async (req, res) => {
     const { Location_id } = req.params;
 
@@ -272,16 +272,30 @@ app.get('/api/locations/:Location_id', async (req, res) => {
 })
 
 // 검색 기록 조회 API
-app.get('/api/search/keywords/:User_id', async (req, res) => {
+app.get('/api/search/history/:User_id', async (req, res) => {
     const {User_id} = req.params;
 
     try{
-        const [rows] = await db.query()
+        console.log('Getting Search Keywords...');
+        const [rows] = await db.query('SELECT * FROM Search_History WHERE Userid = ?',[User_id]);
+        
+        res.json(rows);
+        console.log('Done.');
     }catch(err){
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
+// 검색 기록 업데이트 API
+app.post('api/search/history', async (req, res) => {
+    const { Userid, Keywords } = req.body;
+    if ( !Userid || !Array.isArray(Keywords) || Keywords.length === 0) {
+        return res.status(400).json({ message: 'User_id and Keywords are required.' });
     }
 
-});
+
+})
 
 /*
 // 카트에 항목 추가 API
