@@ -298,7 +298,7 @@ app.post('/api/search/history', async (req, res) => {
         
 
     } catch(err){
-
+        console.error('Failed to update search history: ', error);
     }
 
 });
@@ -366,10 +366,10 @@ app.patch('/api/user/:Userid', async (req, res) => {
 
 
 
-// 상품 검색 API
+// 상품 스캔 결과 반환 API
 /* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
 
-let cartItems = []; // 이 배열에 장바구니 아이템들을 저장
+let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 --> 위에 get api 쓰면 될거같음
 
 app.post('/api/products/scan', (req, res) => {
     const { barcode } = req.body;
