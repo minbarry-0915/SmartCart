@@ -271,7 +271,7 @@ app.get('/api/locations/:Location_id', async (req, res) => {
     }
 })
 
-// 검색 기록 조회 API
+// 검색 기록 조회 API -- 연결 완
 app.get('/api/search/history/:User_id', async (req, res) => {
     const {User_id} = req.params;
 
