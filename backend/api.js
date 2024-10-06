@@ -263,6 +263,41 @@ app.get('/api/search/keywords/:User_id', async (req, res) => {
 
 });
 
+// 유저 정보 업데이트 API
+app.patch('/api/user/:Userid', async (req, res) => {
+    const { Userid } = req.params;
+    const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
+
+    // 업데이트할 필드를 객체로 만들기
+    const updatedFields = {};
+    if (Name) updatedFields.Name = Name;
+    if (Birthdate) updatedFields.Birthdate = Birthdate;
+    if (Gender) updatedFields.Gender = Gender;
+    if (Phone_num) updatedFields.Phone_num = Phone_num;
+    if (Email) updatedFields.Email = Email;
+    if (Password) updatedFields.Password = Password;
+
+    // 업데이트 쿼리 작성
+    const query = `UPDATE User3 SET ? WHERE Userid = ?`;
+    
+    try {
+        const [result] = await db.query(query, [updatedFields, Userid]);
+        
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'User information updated successfully.' });
+        } else {
+            res.status(404).send('User not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
+
+
 /*
 // 카트에 항목 추가 API
 app.post('/api/cart-item', async (req, res) => {
