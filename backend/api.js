@@ -438,25 +438,19 @@ app.patch('/api/user/:Userid', async (req, res) => {
     const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
 
     // 업데이트할 필드를 객체로 만들기
-    const updatedFields = {
-        Name : Name,
-        Birthdate : Birthdate,
-        Gender : Gender,
-        Phone_num : Phone_num,
-        Email : Email,
-        Password : Password
-    };
-    // if (Name) updatedFields.Name = Name;
-    // if (Birthdate) updatedFields.Birthdate = Birthdate;
-    // if (Gender) updatedFields.Gender = Gender;
-    // if (Phone_num) updatedFields.Phone_num = Phone_num;
-    // if (Email) updatedFields.Email = Email;
-    // if (Password) updatedFields.Password = Password;
+    const updatedFields = {};
+    if (Name) updatedFields.Name = Name;
+    if (Birthdate) updatedFields.Birthdate = Birthdate;
+    if (Gender) updatedFields.Gender = Gender;
+    if (Phone_num) updatedFields.Phone_num = Phone_num;
+    if (Email) updatedFields.Email = Email;
+    if (Password) updatedFields.Password = Password;
 
     // 업데이트 쿼리 작성
     const query = `UPDATE User3 SET ? WHERE Userid = ?`;
     
     try {
+        console.log('Patching userinfo: ', Userid);
         const [result] = await db.query(query, [updatedFields, Userid]);
         
         if (result.affectedRows > 0) {
@@ -465,8 +459,10 @@ app.patch('/api/user/:Userid', async (req, res) => {
             res.status(404).send('User not found.');
         }
     } catch (err) {
-        console.error(err);
+        console.error('Failed to patch userinfo',err);
         res.status(500).send('Internal Server Error');
+    } finally {
+        console.log('Patch done.');
     }
 });
 
@@ -480,43 +476,42 @@ app.get('/api/orders/:order_id', async(req, res) => {
 
 });
 
-// 상품 스캔 결과 반환 API -- 진행 중
+// 상품 스캔 결과 반환 API -- 프론트 처리 예정
 /* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
 
-let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 --> 위에 get api 쓰면 될거같음
+// let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 
+// app.post('/api/products/scan', (req, res) => {
+//     const { barcode } = req.body;
 
-app.post('/api/products/scan', (req, res) => {
-    const { barcode } = req.body;
+//     if (!barcode) {
+//         return res.status(400).json({ error: 'Barcode is required.' });
+//     }
 
-    if (!barcode) {
-        return res.status(400).json({ error: 'Barcode is required.' });
-    }
+//     // 기존 장바구니에서 상품 찾기
+//     const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
 
-    // 기존 장바구니에서 상품 찾기
-    const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
+//     if (foundItem) {
+//         // 제품이 있으면 수량 업데이트
+//         foundItem.quantity += 1;
+//         return res.status(200).json({ message: 'Quantity updated', cartItems });
+//     } else {
+//         // 제품이 없으면 새로운 상품 추가
+//         const newItem = {
+//             product: {
+//                 Product_id: 530244373975,
+//                 Product_name: "Product 12345678",
+//                 Price: 150,
+//                 Discount: 5,
+//                 Description: "Description of Product 5",
+//                 Category: "Category 5",
+//             },
+//             quantity: 1,
+//         };
 
-    if (foundItem) {
-        // 제품이 있으면 수량 업데이트
-        foundItem.quantity += 1;
-        return res.status(200).json({ message: 'Quantity updated', cartItems });
-    } else {
-        // 제품이 없으면 새로운 상품 추가
-        const newItem = {
-            product: {
-                Product_id: 530244373975,
-                Product_name: "Product 12345678",
-                Price: 150,
-                Discount: 5,
-                Description: "Description of Product 5",
-                Category: "Category 5",
-            },
-            quantity: 1,
-        };
-
-        cartItems.push(newItem);
-        return res.status(201).json({ message: 'New item added', cartItems });
-    }
-});
+//         cartItems.push(newItem);
+//         return res.status(201).json({ message: 'New item added', cartItems });
+//     }
+// });
 
 
 
