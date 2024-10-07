@@ -427,9 +427,37 @@ app.get('/api/search', async (req, res) => {
 });
 
 
-// 유저 정보 조회 API -- 필요한 것
-app.get('/api/user/:Userid',async (req, res) => {
+// 유저 정보 조회 API
+app.get('/api/user/:Userid', async (req, res) => {
+    const { Userid } = req.params; // 요청에서 Userid 추출
 
+    try {
+        // 데이터베이스에서 유저 정보 조회
+        const [rows] = await db.query(
+            'SELECT Userid, Password, Name, Birthdate, Gender, Phone_num, Email FROM User3 WHERE Userid = ?',
+            [Userid]
+        );
+
+        // 유저 정보가 존재하는지 확인
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // 유저 정보 반환
+        const user = rows[0];
+        res.json({
+            Userid: user.Userid,
+            Password: user.Password,
+            Name: user.Name,
+            Birthdate: user.Birthdate,
+            Gender: user.Gender,
+            Phone_num: user.Phone_num,
+            Email: user.Email
+        });
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        res.status(500).json({ message: 'Failed to fetch user information' });
+    }
 });
 
 // 유저 정보 업데이트 API -- 연결 중
