@@ -1,55 +1,62 @@
 import { useState, useCallback } from 'react';
 import { Product, CartItem } from '../types';
+import axios from 'axios';
+import { REACT_NATIVE_BACKEND_IP } from '@env';
 
+//장바구니 바코드 스캔 처리용 custom hook
+// -- 연결 중 -- 
 function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatch<React.SetStateAction<CartItem[]>>) {
     const [barcodeData, setBarcodeData] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [product, setProduct] = useState<Product>();
 
     const handleBarcodeScan = useCallback(async (data: string) => {
-        console.log(`Scanned: ${data}`);
+        console.log(`Barcode Scanned: ${data}`);
         setBarcodeData(data);
-    
+        
+        //기존 장바구니 목록에서 검색
         const foundItem = initialResponses.find(item => item.product.Product_id.toString() === data);
     
         if (foundItem) {
             // 제품이 있으면 수량 업데이트
+            console.log('Product already in the cart list.');
             setResponses(prevResponses => {
                 const updatedResponses = prevResponses.map(item => 
                     item.product.Product_id.toString() === data 
                     ? { ...item, quantity: item.quantity + 1 } // 수량 증가
                     : item
                 );
-                console.log('Updated responses after found item:', updatedResponses); // 로그 추가
+                // console.log('Updated responses after found item:', updatedResponses); // 로그 추가
                 return updatedResponses;
             });
         } else {
             try {
                 setLoading(true);
                 setError(null);
-    
-                const jsonResponse = {
-                    Product_id: '530244373975',
-                    Product_name: "Product as12345678",
-                    Price: 150,
-                    Discount: 5,
-                    Description: "Description of Product 5",
-                    Category: "Category 5",
-                    quantity: 12,
-                };
-                const newItem: CartItem = {
-                    product: jsonResponse,
-                    quantity: 1,
-                };
-    
-                setResponses(prevResponses => {
-                    const updatedResponses = [...prevResponses, newItem];
-                    console.log('Updated responses after adding new item:', updatedResponses); // 로그 추가
-                    return updatedResponses;
-                });
+                console.log('Cannot find product in cart list, getting data from server...');
+                const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/products/${barcodeData}`);
+
+                setProduct(jsonResponse.data);
+                if(product){
+                    const newItem: CartItem = {
+                        product: product,
+                        quantity: 1,
+                    };
+        
+                    setResponses(prevResponses => {
+                        const updatedResponses = [...prevResponses, newItem];
+                        console.log('Updated responses after adding new item:', updatedResponses); // 로그 추가
+                        return updatedResponses;
+                    });
+                }else{
+                    throw new Error(`Product undefined.`);
+                }
             } catch (error: any) {
                 setError(error);
+                console.error('Failed to get product info.',error);
             } finally {
+                console.log('Done.');
                 setLoading(false);
             }
         }

@@ -92,8 +92,6 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   
   usePostCartList(responses, setResponses);
 
-  
-
   // 제품 추가 시 ScrollView의 맨 끝으로 이동
   useEffect(() => {
     if (scrollViewRef.current) {
