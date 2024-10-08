@@ -18,7 +18,7 @@ function useGetOrderList() {
                         orderItems: [ // 변경: orderItems로
                             {
                                 product: {
-                                    Product_id: 1,
+                                    Product_id: '1',
                                     Product_name: "Smartphone",
                                     Price: 4845484,
                                     Category: "Electronics",
@@ -30,7 +30,7 @@ function useGetOrderList() {
                             },
                             {
                                 product: {
-                                    Product_id: 2,
+                                    Product_id: '2',
                                     Product_name: "Blender",
                                     Price: 4861315,
                                     Category: "Home Appliance",
@@ -54,7 +54,7 @@ function useGetOrderList() {
                         orderItems: [
                             {
                                 product: {
-                                    Product_id: 3,
+                                    Product_id: '3',
                                     Product_name: "TypeScript Handbook",
                                     Price: 2999,
                                     Category: "Books",
@@ -66,7 +66,7 @@ function useGetOrderList() {
                             },
                             {
                                 product: {
-                                    Product_id: 4,
+                                    Product_id: '4',
                                     Product_name: "T-shirt",
                                     Price: 1999,
                                     Category: "Clothing",
