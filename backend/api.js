@@ -427,9 +427,37 @@ app.get('/api/search', async (req, res) => {
 });
 
 
-// 유저 정보 조회 API -- 필요한 것
-app.get('/api/user/:Userid',async (req, res) => {
+// 유저 정보 조회 API
+app.get('/api/user/:Userid', async (req, res) => {
+    const { Userid } = req.params; // 요청에서 Userid 추출
 
+    try {
+        // 데이터베이스에서 유저 정보 조회
+        const [rows] = await db.query(
+            'SELECT Userid, Password, Name, Birthdate, Gender, Phone_num, Email FROM User3 WHERE Userid = ?',
+            [Userid]
+        );
+
+        // 유저 정보가 존재하는지 확인
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // 유저 정보 반환
+        const user = rows[0];
+        res.json({
+            Userid: user.Userid,
+            Password: user.Password,
+            Name: user.Name,
+            Birthdate: user.Birthdate,
+            Gender: user.Gender,
+            Phone_num: user.Phone_num,
+            Email: user.Email
+        });
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        res.status(500).json({ message: 'Failed to fetch user information' });
+    }
 });
 
 // 유저 정보 업데이트 API -- 연결 중
@@ -466,9 +494,90 @@ app.patch('/api/user/:Userid', async (req, res) => {
     }
 });
 
-// 주문 목록 조회 API -- 필요한 것 get
-app.get('/api/orders/orderList', async(req, res) => {
+// 주문 목록 조회 API
+app.get('/api/orders/orderList', async (req, res) => {
+    try {
+        const orders = [
+            {
+                id: "order12345",
+                orderDate: "2024-05-28",
+                orderItems: [
+                    {
+                        product: {
+                            Product_id: 1,
+                            Product_name: "Smartphone",
+                            Price: 4845484,
+                            Category: "Electronics",
+                            Main_image: "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
+                            Discount: undefined,
+                            Description: "Latest smartphone",
+                        },
+                        quantity: 1,
+                    },
+                    {
+                        product: {
+                            Product_id: 2,
+                            Product_name: "Blender",
+                            Price: 4861315,
+                            Category: "Home Appliance",
+                            Main_image: "https://example.com/images/blender.jpg",
+                            Discount: undefined,
+                            Description: "High-quality blender",
+                        },
+                        quantity: 1,
+                    }
+                ],
+                tag: true,
+                totalProductPrice: 1000000,
+                totalDiscountPrice: 100,
+                paymentCard: '신한카드',
+                paymentCardNum: '4221555845457878',
+                totalPaymentPrice: 999900,
+            },
+            {
+                id: "order12346",
+                orderDate: "2024-05-27T11:23:45.678Z",
+                orderItems: [
+                    {
+                        product: {
+                            Product_id: 3,
+                            Product_name: "TypeScript Handbook",
+                            Price: 2999,
+                            Category: "Books",
+                            Main_image: "https://example.com/images/typescript_handbook.jpg",
+                            Discount: undefined,
+                            Description: "Learn TypeScript",
+                        },
+                        quantity: 1,
+                    },
+                    {
+                        product: {
+                            Product_id: 4,
+                            Product_name: "T-shirt",
+                            Price: 1999,
+                            Category: "Clothing",
+                            Main_image: "https://example.com/images/tshirt.jpg",
+                            Discount: undefined,
+                            Description: "Comfortable t-shirt",
+                        },
+                        quantity: 5,
+                    }
+                ],
+                tag: false,
+                totalProductPrice: 1000000,
+                totalDiscountPrice: 100,
+                paymentCard: '신한카드',
+                paymentCardNum: '4221555845457878',
+                totalPaymentPrice: 999900,
+            }
+        ];
 
+        // 주문 목록 반환
+        res.status(200).json({ orders });
+    } catch (error) {
+        console.error('Failed to fetch order list: ', error);
+        res.status(500).json({ message: 'Failed to fetch order list' });
+    }
 });
 
 // 주문 세부 내용 조회 API -- 필요한 것 get
