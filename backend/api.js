@@ -127,7 +127,7 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
             [Userid]
         );
 
-        //조회 했는데 cart가 있으면
+        //조회 했는데 cart가 있으면 
         if (rows.length > 0) {
             res.json(rows); // 유저의 카트에 담긴 상품 정보 반환
         } else { //cart가 없으면 cart 생성            

@@ -49,7 +49,7 @@ function WarningModal({ modalVisible, toggleWarningModal, navigation, confirmDes
                         <TouchableOpacity
                             onPress={toggleWarningModal}
                             activeOpacity={0.7}
-                            style={[GlobalStyles.blackButton, { width: '48%', backgroundColor: 'white' }]} >
+                            style={[GlobalStyles.blackButton, { width: '48%', backgroundColor: 'white', borderWidth: 1,}]} >
                             <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>아니오</Text>
                         </TouchableOpacity>
                     </View>

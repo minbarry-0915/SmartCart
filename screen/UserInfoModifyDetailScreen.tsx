@@ -17,6 +17,7 @@ import SelectDropDown from "../components/SelectDropDown";
 import { User } from "../types";
 import usePatchUserInfo from "../customHooks/usePatchUserInfo";
 import WarningModal from "../components/WarningModal";
+import Loading from "../components/animations/loading";
 
 function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
@@ -33,8 +34,8 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
     });
     const [formattedPhoneNum, setFormattedPhoneNum] = useState<string>('');
     const [formattedBirthDate, setFormattedBirthDate] = useState<string>('');
-    const { userInfo, loading } = useGetUserInfo();
-    const { status, patchUserInfo } = usePatchUserInfo();
+    const { userInfo } = useGetUserInfo();
+    const { loading, patchUserInfo } = usePatchUserInfo();
 
     const [newPassword, setNewPassword] = useState<string>('');
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
@@ -52,15 +53,16 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
     useEffect(() => { //userinfo 가져와서 세팅
         if (userInfo) {
             setUserData(userInfo);
-            setChanged(false); // 초기화 시에는 changed를 false로 설정
         }
     }, [userInfo]);
 
-    useEffect(() => {
-        // userData가 변경될 때 changed를 true로 설정
-        console.log('Data Changed Status: ', changed);
-        setChanged(true);
-    }, [userData]);
+    useEffect(()=>{
+        if (userInfo !== userData){
+            setChanged(true);
+            console.log('Data changed:', changed);
+        }
+    },[userData]);
+
 
     useEffect(() => {
         if (newPassword !== confirmNewPassword) {
@@ -95,14 +97,13 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
             setUserData({ ...userData, Password: newPassword });
         }
         if (userId) {
-            await patchUserInfo(userId, userData);
-            if (status === 200) {
+            const isSuccess = await patchUserInfo(userData);
+            if (isSuccess) {
                 dispatch(logout());
                 navigation.navigate('Login');
             } else {
                 console.log("Failed to update user info");
             }
-
         }
     };
 
@@ -156,10 +157,6 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         setWarningModalVisible(!warningModalVisible);
     };
 
-    const onConfirmButton = () => {
-        navigation.navigate('MyPage');
-    }
-
     const handleSelectedGenderOption = (selectedItem: { title: string }) => {
         setUserData({ ...userData, Gender: selectedItem.title });
     };
@@ -194,141 +191,150 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
             <LinearGradient colors={['#000000', '#666666']} style={{ flex: 1 }}>
                 <TopNavigator title="개인정보관리" navigation={navigation} mode='black' showBackButton={false} />
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={GlobalStyles.scrollContainer}>
-                    <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0 }]}>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('ID',
-                                <TextInput
-                                    editable={false}
-                                    placeholder={userInfo?.Userid}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('PASSWORD',
-                                <TextInput
-                                    editable={false}
-                                    placeholder={userInfo?.Password}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                        <View style={[UserInfoStyles.detailScreenItem, { flexDirection: 'column', paddingVertical: 18 }]}>
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                                {Item('NEW PASSWORD',
-                                    <TextInput
-                                        secureTextEntry={true}
-                                        placeholderTextColor='#696969'
-                                        style={[LoginStyles.textInput]}
-                                        value={newPassword}
-                                        onChangeText={setNewPassword}
-                                        textAlign='right'
-                                    />
-                                )}
+                    {loading ? (
+                        <Loading style={{ width: 200, height: 200 }} />
+                    ) : (
+                        <>
+                            <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0 }]}>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('ID',
+                                        <TextInput
+                                            editable={false}
+                                            placeholder={userInfo?.Userid}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('PASSWORD',
+                                        <TextInput
+                                            editable={false}
+                                            placeholder={userInfo?.Password}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
+                                <View style={[UserInfoStyles.detailScreenItem, { flexDirection: 'column', paddingVertical: 18 }]}>
+                                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                        {Item('NEW PASSWORD',
+                                            <TextInput
+                                                secureTextEntry={true}
+                                                placeholderTextColor='#696969'
+                                                style={[LoginStyles.textInput]}
+                                                value={newPassword}
+                                                onChangeText={setNewPassword}
+                                                textAlign='right'
+                                            />
+                                        )}
+                                    </View>
+                                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        {Item('CONFIRM PASSWORD',
+                                            <TextInput
+                                                secureTextEntry={true}
+                                                placeholderTextColor='#696969'
+                                                style={[LoginStyles.textInput]}
+                                                value={confirmNewPassword}
+                                                onChangeText={setConfirmNewPassword}
+                                                textAlign='right'
+                                            />
+                                        )}
+                                    </View>
+                                    <RenderErrorMessege />
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('NAME',
+                                        <TextInput
+                                            placeholder={userData.Name}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            value={userData.Name}
+                                            onChangeText={(text) => setUserData({ ...userData, Name: text })}
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('GENDER',
+                                        <SelectDropDown
+                                            data={genderOptions}
+                                            onSelect={handleSelectedGenderOption}
+                                            initData={userData.Gender || "Male"}
+                                        />
+                                    )}
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('BIRTH DATE',
+                                        <TextInput
+                                            keyboardType='number-pad'
+                                            placeholder={userData.Birthdate.toISOString().split('T')[0]}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            value={formattedBirthDate} // 포맷된 생일 날짜를 표시
+                                            onChangeText={handleBirthDateChange} // 입력 변경 처리
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('EMAIL',
+                                        <TextInput
+                                            keyboardType='email-address'
+                                            placeholder={userData.Email}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            value={userData.Email}
+                                            onChangeText={(text) => setUserData({ ...userData, Email: text })}
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
+                                <View style={UserInfoStyles.detailScreenItem}>
+                                    {Item('PHONE NUMBER',
+                                        <TextInput
+                                            keyboardType='number-pad'
+                                            placeholder={userData.Phone_num}
+                                            placeholderTextColor='#696969'
+                                            style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
+                                            value={userData.Phone_num}
+                                            onChangeText={handlePhoneNumberChange}
+                                            textAlign='right'
+                                        />
+                                    )}
+                                </View>
                             </View>
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                {Item('CONFIRM PASSWORD',
-                                    <TextInput
-                                        secureTextEntry={true}
-                                        placeholderTextColor='#696969'
-                                        style={[LoginStyles.textInput]}
-                                        value={confirmNewPassword}
-                                        onChangeText={setConfirmNewPassword}
-                                        textAlign='right'
-                                    />
-                                )}
-                            </View>
-                            <RenderErrorMessege />
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('NAME',
-                                <TextInput
-                                    placeholder={userData.Name}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    value={userData.Name}
-                                    onChangeText={(text) => setUserData({ ...userData, Name: text })}
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('GENDER',
-                                <SelectDropDown
-                                    data={genderOptions}
-                                    onSelect={handleSelectedGenderOption}
-                                    initData={userData.Gender || "Male"}
-                                />
-                            )}
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('BIRTH DATE',
-                                <TextInput
-                                    keyboardType='number-pad'
-                                    placeholder={userData.Birthdate.toISOString().split('T')[0]}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    value={formattedBirthDate} // 포맷된 생일 날짜를 표시
-                                    onChangeText={handleBirthDateChange} // 입력 변경 처리
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('EMAIL',
-                                <TextInput
-                                    keyboardType='email-address'
-                                    placeholder={userData.Email}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    value={userData.Email}
-                                    onChangeText={(text) => setUserData({ ...userData, Email: text })}
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                        <View style={UserInfoStyles.detailScreenItem}>
-                            {Item('PHONE NUMBER',
-                                <TextInput
-                                    keyboardType='number-pad'
-                                    placeholder={userData.Phone_num}
-                                    placeholderTextColor='#696969'
-                                    style={[LoginStyles.textInput, { borderBottomWidth: 0 }]}
-                                    value={userData.Phone_num}
-                                    onChangeText={handlePhoneNumberChange}
-                                    textAlign='right'
-                                />
-                            )}
-                        </View>
-                    </View>
 
-                    <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0, flexDirection: 'row' }]}>
-                        <TouchableOpacity
-                            onPress={onSaveButton}
-                            activeOpacity={0.7}
-                            style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: '#FFE68C', marginRight: 12 }]} >
-                            <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>저장</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={onCancelButton}
-                            activeOpacity={0.7}
-                            style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: 'white' }]} >
-                            <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>취소</Text>
-                        </TouchableOpacity>
-                    </View>
+                            <View style={[UserInfoStyles.content, { backgroundColor: 'rgba(0,0,0,0)', elevation: 0, flexDirection: 'row' }]}>
+                                <TouchableOpacity
+                                    onPress={onSaveButton}
+                                    activeOpacity={0.7}
+                                    style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: '#FFE68C', marginRight: 12 }]} >
+                                    <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>저장</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={onCancelButton}
+                                    activeOpacity={0.7}
+                                    style={[GlobalStyles.blackButton, { width: '30%', backgroundColor: 'white' }]} >
+                                    <Text style={[GlobalStyles.BoldText, { color: 'black' }]}>취소</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </>
+                    )}
+
+
+
                 </ScrollView>
             </LinearGradient>
 
             {warningModalVisible && (
                 <WarningModal
-                modalVisible = {warningModalVisible}
-                toggleWarningModal={toggleWarningModal}
-                navigation={navigation}
-                confirmDestination="MyPage"
+                    modalVisible={warningModalVisible}
+                    toggleWarningModal={toggleWarningModal}
+                    navigation={navigation}
+                    confirmDestination="MyPage"
                 />
             )}
         </View>

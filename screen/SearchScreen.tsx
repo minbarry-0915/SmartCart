@@ -38,25 +38,42 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
 
 
   const deleteNodeButton = async (index: number, keywordId: number) => {
-    const result = await deleteSearchKeyword(keywordId);
-    if(result)
-      {const newKeywordArray = [...keywordArray];
+    // 현재 keywordArray를 복사하고 해당 인덱스의 항목을 삭제
+    const newKeywordArray = [...keywordArray];
     newKeywordArray.splice(index, 1);
-    setKeywordArray(newKeywordArray);}
+    setKeywordArray(newKeywordArray); // UI 상태를 먼저 업데이트
+
+    // API 요청을 보냅니다.
+    const result = await deleteSearchKeyword(keywordId);
+    if (!result) {
+      // 만약 요청이 실패하면 이전 상태로 복구
+      const revertedKeywordArray = [...newKeywordArray];
+      revertedKeywordArray.splice(index, 0, keywordArray[index]); // 삭제한 항목을 다시 추가
+      setKeywordArray(revertedKeywordArray); // UI 상태를 복구
+    }
   };
 
+
   const deleteAllKeyword = async () => {
+    // UI 상태를 먼저 업데이트하여 모든 키워드를 삭제한 것으로 설정
+    const previousKeywords = [...keywordArray]; // 현재 키워드를 저장하여 오류 시 복구 가능
+    setKeywordArray([]); // UI에서 모든 키워드를 즉시 제거
+
     try {
       // 모든 삭제 요청을 Promise.all로 처리
       const result = await Promise.all(
-        keywordArray.map(keyword => deleteSearchKeyword(keyword.Keyword_id))
+        previousKeywords.map(keyword => deleteSearchKeyword(keyword.Keyword_id))
       );
 
-      // 모든 키워드 삭제가 완료된 후 상태 업데이트
-      if (result)
-        setKeywordArray([]);
+      // 결과를 체크하여 모든 삭제가 성공했는지 확인
+      if (!result.every(res => res)) {
+        // 일부 삭제가 실패한 경우, 이전 상태로 복구
+        setKeywordArray(previousKeywords);
+      }
     } catch (error) {
       console.error('Failed to delete all keywords:', error);
+      // 예외 발생 시 이전 상태로 복구
+      setKeywordArray(previousKeywords);
     }
   };
 

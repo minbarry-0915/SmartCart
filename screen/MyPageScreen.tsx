@@ -46,7 +46,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
     const {loading, error, products} = useGetRecommendProductList();
 
     //버튼 핸들러
-    const onProductInfo = (id: number) => {
+    const onProductInfo = (id: string) => {
         console.log(id);
         navigation.navigate('ProductDetail', { productId: id });
     }

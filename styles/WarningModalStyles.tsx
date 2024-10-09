@@ -4,7 +4,8 @@ const WarningModalStyles = StyleSheet.create({
     content:{
         width: '30%',
         backgroundColor: 'white',
-        padding: 24,
+        paddingHorizontal: 36,
+        paddingVertical: 36,
         justifyContent: 'center',
         alignItems:'center',
         borderRadius: 20,

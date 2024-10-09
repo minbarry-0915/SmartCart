@@ -9,33 +9,37 @@ import { RootState } from '../redux/store';
 const usePatchUserInfo = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [status, setStatus] = useState<number | null>(null);
     const { userId } = useSelector((state: RootState) => state.auth);
 
-    const patchUserInfo = async (userId: string, userData: Partial<User>) => {
+    const patchUserInfo = async (userData: Partial<User>) => {
         try {
             setLoading(true);
+            setError(null);
             console.log('Patching User Info...');
             const jsonResponse = await axios.patch(`http://${REACT_NATIVE_BACKEND_IP}/api/user/${userId}`, {
                 Name: userData.Name,
-                Birthdate: userData.Birthdate,
+                Birthdate: userData.Birthdate?.toISOString().split('T')[0],
                 Gender: userData.Gender,
                 Phone_num: userData.Phone_num,
                 Email: userData.Email,
                 Password: userData.Password,
             })
-            setStatus(jsonResponse.status);
-        } catch (error: any) {
-            setError(error);
-            console.error('Failed to update user info:', error);
-            setStatus(error?.messege?.status);
+            //console.log(jsonResponse);
+            console.log('Patch User Info Successfully');
+            return true;
+        } catch (err: any) {
+            console.error('Failed to patch userinfo: ',err);
+            return false;
         } finally {
             console.log('Update Done.');
             setLoading(false);
         }
     };
 
-    return { patchUserInfo, status };
+    return { 
+        patchUserInfo, 
+        loading
+    };
 };
 
 export default usePatchUserInfo;

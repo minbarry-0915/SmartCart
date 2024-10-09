@@ -6,14 +6,12 @@ import { REACT_NATIVE_BACKEND_IP } from '@env';
 //장바구니 바코드 스캔 처리용 custom hook
 // -- 연결 중 -- 
 function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatch<React.SetStateAction<CartItem[]>>) {
-    const [barcodeData, setBarcodeData] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [product, setProduct] = useState<Product>();
 
     const handleBarcodeScan = useCallback(async (data: string) => {
         console.log(`Barcode Scanned: ${data}`);
-        setBarcodeData(data);
         
         //기존 장바구니 목록에서 검색
         const foundItem = initialResponses.find(item => item.product.Product_id.toString() === data);
@@ -35,23 +33,22 @@ function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatc
                 setLoading(true);
                 setError(null);
                 console.log('Cannot find product in cart list, getting data from server...');
-                const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/products/${barcodeData}`);
+                console.log(REACT_NATIVE_BACKEND_IP);
+                const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/products/${data}`);
+                console.log(jsonResponse.data);
 
-                setProduct(jsonResponse.data);
-                if(product){
-                    const newItem: CartItem = {
-                        product: product,
-                        quantity: 1,
-                    };
-        
-                    setResponses(prevResponses => {
-                        const updatedResponses = [...prevResponses, newItem];
-                        console.log('Updated responses after adding new item:', updatedResponses); // 로그 추가
-                        return updatedResponses;
-                    });
-                }else{
-                    throw new Error(`Product undefined.`);
-                }
+                const newProduct = jsonResponse.data;
+
+                const newItem: CartItem = {
+                    product: newProduct,  // 바로 jsonResponse.data 사용
+                    quantity: 1,
+                };
+    
+                setResponses(prevResponses => {
+                    const updatedResponses = [...prevResponses, newItem];
+                    console.log('Updated responses after adding new item:', updatedResponses);
+                    return updatedResponses;
+                });
             } catch (error: any) {
                 setError(error);
                 console.error('Failed to get product info.',error);
@@ -64,8 +61,7 @@ function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatc
     
 
     return {
-        handleBarcodeScan,
-        barcodeData,
+        handleBarcodeScan
     };
 }
 

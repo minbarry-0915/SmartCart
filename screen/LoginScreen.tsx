@@ -19,7 +19,7 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
   const [id, setId] = useState('');
   const [password, setPW] = useState('');
   const { loading, error, postUserVerify } = usePostUserVerify();
-
+  const [errorMessege, setErrorMessege] = useState('');
 
   const onLoginButton = async () => {
     const { status, error } = await postUserVerify({ userId: id, password });
@@ -28,9 +28,9 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
     if (status === 200) {
       dispatch(login(id));
       navigation.navigate('Cart');
-    } else {
+    } else if (status == 401) {
       console.error('Login Failed:', error); // 에러 메시지 출력
-      Alert.alert(`로그인 실패: ${error}`);
+      setErrorMessege('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -39,11 +39,11 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
   };
 
   const onFindIDButton = () => {
-
+    navigation.navigate('FindId')
   };
 
   const onFindPWButton = () => {
-
+    navigation.navigate('FindPassword')
   };
 
   // useEffect(() => {
@@ -52,6 +52,16 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
   useEffect(() => {
     console.log('loading:', loading);
   }, [loading]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setId('');
+      setPW('');
+      setErrorMessege('');
+    });
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거합니다.
+    return unsubscribe;
+}, [navigation]);
 
   const RenderLoading = () => {
     return (
@@ -97,7 +107,11 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
               style={LoginStyles.textInput}
             />
           </View>
-
+          {errorMessege && (
+            <View style={LoginStyles.content}>
+              <Text style={[GlobalStyles.mediumText,{color: '#E33434'}]}>{errorMessege}</Text>
+            </View>
+          )}
           <View style={LoginStyles.content}>
             <TouchableOpacity
               onPress={onLoginButton}

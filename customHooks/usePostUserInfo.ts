@@ -27,7 +27,7 @@ function usePostUserInfo() {
             console.log('Posting UserInfo...');
             const response = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/register`, userInfo);
 
-            console.log(response);
+            //console.log(response);
 
             // 성공적으로 처리된 경우 true 반환
             return true;

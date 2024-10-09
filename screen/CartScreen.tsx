@@ -25,7 +25,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   const dispatch = useDispatch<AppDispatch>();
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const { 
+  const {
     responses,
     loading,
     grandTotal,
@@ -37,26 +37,53 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
   const { deleteCartItem } = useDeleteCartItem();
 
-  const deleteNodeButton = async(index: number, productId: string) => {
-    // 배열 복사
+  const deleteNodeButton = (index: number, productId: string) => {
+    // 배열 복사 및 UI 업데이트
     const newResponses = [...responses];
-    newResponses.splice(index, 1); //index부터 1개 삭제
-    // 삭제 서버 요청
-    const isSuccess = await deleteCartItem(productId);
+    newResponses.splice(index, 1); // index부터 1개 삭제
+    setResponses(newResponses); // 먼저 UI에서 삭제 처리
 
-    if(isSuccess){
-      setResponses(newResponses);
-    };
+    // 서버 요청 따로 처리
+    deleteCartItem(productId).then((isSuccess) => {
+      if (!isSuccess) {
+        // 서버 요청 실패 시, UI 복구
+        setResponses([...responses]); // 삭제된 항목 복구
+      }
+    }).catch((error) => {
+      console.error("Failed to delete item:", error);
+      setResponses([...responses]); // 에러 발생 시 복구
+    });
   };
 
-  const deleteAllNodes = async() => {
-    //매핑해서 모두 삭제
-    const deletePromises = responses.map(item => {
-      deleteCartItem(item.product.Product_id);
-    })
-    // 모든 삭제 요청이 완료될 때까지 대기
-    await Promise.all(deletePromises);
+  const deleteAllNodes = () => {
+    // 현재 응답을 저장해 둠 (나중에 복구를 위해)
+    const previousResponses = [...responses];
+
+    // 먼저 UI 업데이트 (응답 목록을 비움)
     setResponses([]);
+
+    // 매핑해서 모든 삭제 요청 처리
+    const deletePromises = responses.map(item => {
+      return deleteCartItem(item.product.Product_id)
+        .catch(error => {
+          console.error(`Failed to delete item with Product_id: ${item.product.Product_id}`, error);
+          return false; // 실패한 요청 처리
+        });
+    });
+
+    // 모든 삭제 요청이 완료될 때까지 기다림
+    Promise.all(deletePromises).then(results => {
+      const failedDeletions = results.some(result => result === false);
+
+      if (failedDeletions) {
+        // 일부 삭제 실패 시 이전 상태로 복구
+        setResponses(previousResponses);
+      }
+    }).catch(error => {
+      console.error("Error during bulk delete:", error);
+      // 에러 발생 시 이전 상태로 복구
+      setResponses(previousResponses);
+    });
   };
 
   //상품별 총 합계 계산 
@@ -89,7 +116,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   };
 
   const { handleBarcodeScan } = useGetProduct(responses, setResponses);
-  
+
   usePostCartList(responses, setResponses);
 
   // 제품 추가 시 ScrollView의 맨 끝으로 이동
@@ -100,14 +127,14 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
   }, [responses]); // responses가 업데이트될 때 스크롤 이동
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
-  },[]);
-  
+  }, []);
+
   return (
-    <ScrollView 
-  
-    contentContainerStyle={{ flex: 1, backgroundColor: 'white' }}>
+    <ScrollView
+
+      contentContainerStyle={{ flex: 1, backgroundColor: 'white' }}>
       {isLoggedIn ? (
         <View style={{ flex: 1 }}>
           <TopNavigator title="장바구니" navigation={navigation} showBackButton={false} />
@@ -134,9 +161,9 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                   <Loading style={[AnimationStyles.loading, { width: 200, height: 200 }]} />
                 </View>
               ) : (
-                <ScrollView 
-                ref={scrollViewRef}
-                showsVerticalScrollIndicator={false}>
+                <ScrollView
+                  ref={scrollViewRef}
+                  showsVerticalScrollIndicator={false}>
                   {responses.map((cartItem, index) => {
                     const total = calculateTotal(cartItem);
                     return (
@@ -168,7 +195,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
                 </ScrollView>
               )}
             </View>
-            
+
             <View style={{
               flex: 4,
               justifyContent: 'space-between'

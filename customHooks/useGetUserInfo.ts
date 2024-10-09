@@ -18,8 +18,9 @@ function useGetUserInfo() {
         try {
             setLoading(true);
             setError(null);
-            console.log('Fetching user info...');
-            const jsonResponse = await axios.get(`http://$${REACT_NATIVE_BACKEND_IP}/api/user/${userId}`);
+            console.log('Fetching user info...', userId);
+            console.log(REACT_NATIVE_BACKEND_IP);
+            const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/user/${userId}`);
 
             // const userData = {
             //     Userid: 'userId', // 예시로 userId 사용
