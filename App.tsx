@@ -17,8 +17,11 @@ import {
   OrderListDetailScreen,
   LoginScreen,
   UserInfoModifyScreen,
-  UserInfoModifyDetailScreen
+  UserInfoModifyDetailScreen,
+  FindIdScreen,
+  FindPasswordScreen
 } from './screen/index';
+import { REACT_NATIVE_BACKEND_IP } from '@env';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +57,7 @@ const requestPermission = async () => {
 function App() {
   useEffect(() => {
     requestPermission();
+    console.log('BACKEND SERVER IP:', REACT_NATIVE_BACKEND_IP);
   }, []);
 
   //화면들을 담는 컨테이너 
@@ -62,6 +66,12 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="FindId" component={FindIdScreen} options={{
+            headerShown: false, animation: 'slide_from_right'
+          }} />
+          <Stack.Screen name="FindPassword" component={FindPasswordScreen} options={{
+            headerShown: false, animation: 'none'
+          }} />
           <Stack.Screen name="Join" component={JoinScreen} options={{ headerShown: false, animation: 'fade' }} />
           <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false, animation: 'none' }} />
           <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false, animation: 'none' }} />

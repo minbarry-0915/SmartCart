@@ -11,3 +11,5 @@ export { default as OrderListDetailScreen } from './OrderListDetailScreen';
 export { default as LoginScreen } from './LoginScreen';
 export { default as UserInfoModifyScreen } from './UserInfoModifyScreen';
 export { default as UserInfoModifyDetailScreen } from './UserInfoModifyDetailScreen';
+export { default as FindIdScreen } from './FindIdScreen';
+export { default as FindPasswordScreen } from './FindPasswordScreen';
