@@ -512,7 +512,7 @@ app.post('/api/verify_code/id', async (req, res) => {
     }
 });
 
-// 비밀번호 찾기 API
+// 비밀번호 찾기 API -- 연결완 
 app.get('/api/request_verification/password/:Userid', async (req, res) => {
     const { Userid } = req.params;
 
@@ -563,7 +563,7 @@ app.get('/api/request_verification/password/:Userid', async (req, res) => {
     }
 })
 
-// 인증 코드 확인 및 비밀번호 반환 API
+// 인증 코드 확인 및 비밀번호 반환 API -- 연결완 
 app.post('/api/verify_code/password', async (req, res) => {
     const { Userid, Code } = req.body;
 
