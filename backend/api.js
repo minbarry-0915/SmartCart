@@ -133,10 +133,10 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
             res.json(rows); // 유저의 카트에 담긴 상품 정보 반환
         } else { //cart가 없으면 cart 생성            
             const result = await db.query(
-                `INSERT INTO Cart2 (Userid) VALUES (?)`,[Userid]
+                `INSERT INTO Cart2 (Userid) VALUES (?)`, [Userid]
             );
             const newCartId = result.insertId;
-            res.status(201).json({ messege: `Cannot Find Cart_id, Cart Created Successfully: ${newCartId}`});
+            res.status(201).json({ messege: `Cannot Find Cart_id, Cart Created Successfully: ${newCartId}` });
         }
     } catch (err) {
         console.error(err);
@@ -148,7 +148,7 @@ app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
 app.post('/api/cart', async (req, res) => {
     const { Userid, items } = req.body;
 
-    if ( !Userid || !Array.isArray(items) || items.length === 0) {
+    if (!Userid || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ message: 'User_id and items are required.' });
     }
 
@@ -169,7 +169,7 @@ app.post('/api/cart', async (req, res) => {
         }
 
         // 2. 아이템 삽입 (또는 업데이트)
-        for (const item of items){
+        for (const item of items) {
             console.log('Updating cart items...');
             await db.query(
                 'INSERT INTO Cart_Item (Cart_id, Product_id, Quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Quantity = ?',
@@ -200,11 +200,11 @@ app.delete('/api/cart', async (req, res) => {
     try {
         // User에 해당하는 Cart_id 조회
         const [cartRows] = await connection.query('SELECT Cart_id FROM Cart2 WHERE Userid = ?', [Userid]);
-        
+
         if (cartRows.length === 0) {
             return res.status(404).json({ message: 'Cart not found for this user.' });
         }
-        
+
         const Cart_id = cartRows[0].Cart_id;
 
         // 삭제할 아이템 존재 여부 확인
@@ -216,14 +216,14 @@ app.delete('/api/cart', async (req, res) => {
         if (itemCheck.length === 0) {
             return res.status(404).json({ message: 'Item not found in cart.' });
         }
-        
+
         // Cart_Item 테이블에서 특정 상품 삭제
         console.log('Deleting cart item...');
         await connection.query(
             'DELETE FROM Cart_Item WHERE Cart_id = ? AND Product_id = ?',
             [Cart_id, Product_id]
         );
-        
+
         console.log('Deletion Done.');
 
         await connection.commit(); // 트랜잭션 커밋
@@ -270,12 +270,12 @@ app.get('/api/locations/:Location_id', async (req, res) => {
             [Location_id]
         );
 
-        if (rows.length > 0){
+        if (rows.length > 0) {
             res.json(rows[0]);
-        }else{
+        } else {
             res.status(404).send('Location not found.');
         }
-    } catch (err){
+    } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
@@ -283,15 +283,15 @@ app.get('/api/locations/:Location_id', async (req, res) => {
 
 // 검색 기록 조회 API -- 연결 완
 app.get('/api/search/history/:User_id', async (req, res) => {
-    const {User_id} = req.params;
+    const { User_id } = req.params;
 
-    try{
+    try {
         console.log('Getting Search Keywords...');
-        const [rows] = await db.query('SELECT * FROM Search_History WHERE Userid = ?',[User_id]);
-        
+        const [rows] = await db.query('SELECT * FROM Search_History WHERE Userid = ?', [User_id]);
+
         res.json(rows);
         console.log('Done.');
-    }catch(err){
+    } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
@@ -300,7 +300,7 @@ app.get('/api/search/history/:User_id', async (req, res) => {
 // 검색 기록 업데이트 API -- 연결 완
 app.post('/api/search/history', async (req, res) => {
     const { Userid, Keyword } = req.body;
-    
+
     // Userid와 Keyword가 제공되었는지 확인
     if (!Userid || !Keyword) {
         return res.status(400).json({ message: 'User_id and Keyword are required.' });
@@ -339,7 +339,7 @@ app.delete('/api/search/history', async (req, res) => {
     const { Userid, Keyword_id } = req.body;
 
     if (!Userid || !Keyword_id) {
-        return res.status(400).json({ message: 'Userid and Keyword_id are required.' }); 
+        return res.status(400).json({ message: 'Userid and Keyword_id are required.' });
     }
 
     const connection = await db.getConnection(); // DB 연결 가져오기
@@ -348,7 +348,7 @@ app.delete('/api/search/history', async (req, res) => {
     try {
         console.log('Deleting Search Keyword: ', Keyword_id);
         const [result] = await connection.query( // connection 사용
-            'DELETE FROM Search_History WHERE Keyword_id = ? AND Userid = ?', 
+            'DELETE FROM Search_History WHERE Keyword_id = ? AND Userid = ?',
             [Keyword_id, Userid]
         );
 
@@ -482,7 +482,7 @@ app.get('/api/request_verification/:Email', async (req, res) => {
 });
 
 // 인증 코드 확인 및 아이디 반환 API
-app.post('/api/verify_code', async (req, res) => {
+app.post('/api/verify_code/id', async (req, res) => {
     const { Email, Code } = req.body;
 
     try {
@@ -513,7 +513,86 @@ app.post('/api/verify_code', async (req, res) => {
 });
 
 // 비밀번호 찾기 API
+app.get('/api/verificataion_requset/:Userid', async (req, res) => {
+    const Userid = req.params;
 
+    try {
+        const [rows] = await db.query('SELECT Email FROM User3 WHERE Userid = ?', [Userid]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        const user = rows[0];
+        // 인증 코드 생성
+        const verificationCode = crypto.randomBytes(3).toString('hex'); // 6자리 인증 코드 생성
+
+        // 인증 객체에 코드와 만료 시간 저장 (10분 유효)
+        verificationCodes[Userid] = { code: verificationCode, expires: Date.now() + 600000 };
+        // 이메일 전송을 위한 nodemailer 설정
+        const transporter = nodemailer.createTransport({
+            pool: true,
+            maxConnections: 1,
+            service: 'naver',
+            host: 'smtp.naver.com',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.SMTP_USER, // 발신자 이메일 주소
+            to: user.Email, // 사용자가 입력한 이메일 주소
+            subject: 'SMART CART 인증 관련 메일입니다.',
+            html: `<h1>10분 안에 하단의 인증번호를 입력해주세요</h1><p>인증번호: ${verificationCode}</p>`, // 인증 코드 포함
+        };
+
+        // 이메일 전송
+        await transporter.sendMail(mailOptions);
+        res.json({ ok: true, message: '메일 전송에 성공하였습니다.', authNum: verificationCode });
+    } catch (err) {
+        console.error('메일 전송 오류:', err);
+        res.status(500).json({ ok: false, message: '메일 전송에 실패하였습니다.' });
+    }
+})
+
+// 인증 코드 확인 및 비밀번호 반환 API
+app.post('/api/verify_code/password', async (req, res) => {
+    const {Userid, Code } = req.body;
+
+    try {
+        const savedCode = verificationCodes[Userid]; // email로 가지고 있던 코드 조회
+        if (!savedCode || savedCode.expires < Date.now()) {
+            return res.status(400).json({ message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
+        }
+
+        if (savedCode.code !== Code) {
+            return res.status(400).json({ message: '잘못된 인증 코드입니다.' });
+        }
+
+        const [rows] = await db.query('SELECT Password FROM User3 WHERE Userid = ?', [Userid]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 인증 완료 후 인증 코드 삭제 (메모리 관리)
+        delete verificationCodes[Userid];
+
+        const user = rows[0];
+        res.status(200).json({ userId: user.Password });
+    } catch (err) {
+        console.error('데이터베이스 오류:', err);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
 
 // 유저 정보 조회 API -- 연결 완
 app.get('/api/user/:Userid', async (req, res) => {
@@ -564,18 +643,18 @@ app.patch('/api/user/:Userid', async (req, res) => {
 
     // 업데이트 쿼리 작성
     const query = `UPDATE User3 SET ? WHERE Userid = ?`;
-    
+
     try {
         console.log('Patching userinfo: ', Userid);
         const [result] = await db.query(query, [updatedFields, Userid]);
-        
+
         if (result.affectedRows > 0) {
             res.status(200).json({ message: 'User information updated successfully.' });
         } else {
             res.status(404).send('User not found.');
         }
     } catch (err) {
-        console.error('Failed to patch userinfo',err);
+        console.error('Failed to patch userinfo', err);
         res.status(500).send('Internal Server Error');
     } finally {
         console.log('Patch done.');
