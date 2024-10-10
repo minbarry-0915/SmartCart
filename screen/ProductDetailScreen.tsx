@@ -49,7 +49,11 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
 
     useEffect(() => {
         console.log('locationmodal: ', locationModalVisible);
-    }, [locationModalVisible])
+    }, [locationModalVisible]);
+
+    useEffect(() => {
+        console.log(product?.Location_id);
+    },[product]);
 
     return (
         <View style={{ flex: 1 }}>
@@ -75,9 +79,9 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
                                     <Image source={{ uri: product.Main_image }} style={ProductDetailStyles.mainImage} />
                                 </View>
                                 {/* 브랜드 */}
-                                <Text style={[GlobalStyles.semiBoldText, { color: 'white', fontSize: 24, marginBottom: 24 }]}>{product.Category}</Text>
+                                <Text style={[GlobalStyles.semiBoldText, { color: 'white', fontSize: 24, marginBottom: 24 }]}>{product.Product_name}</Text>
                                 {/* 상품명 */}
-                                <Text style={[GlobalStyles.mediumText, { color: 'white', marginBottom: 24 }]}>{product.Product_name}</Text>
+                                <Text style={[GlobalStyles.mediumText, { color: 'white', marginBottom: 24 }]}>{product.Category}</Text>
 
                                 <View style={{ flexDirection: 'row', marginBottom: 24 }}>
                                     {/* 상품위치보기버튼 */}

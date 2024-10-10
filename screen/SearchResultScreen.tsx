@@ -29,7 +29,7 @@ function SearchResultScreen({ route, navigation }: { route: RouteProp<ParamListB
     const { resultKeyword } = route.params as MyParams;
     const [scrollToTopButtonVisible, setScrollToTopButtonVisible] = useState<boolean>(false);
 
-    const { loading, error, products } = useGetSearchResults(resultKeyword); // 검색 결과 상품들 가져오기
+    const { loading, error, products = []} = useGetSearchResults(resultKeyword); // 검색 결과 상품들 가져오기
 
     const onProductButton = (productId: string) => {
         // console.log(productId);
@@ -111,7 +111,7 @@ function SearchResultScreen({ route, navigation }: { route: RouteProp<ParamListB
                                 <Text style={[GlobalStyles.semiBoldText, { color: 'white', fontSize: 24, marginBottom: 24 }]}>
                                     {products.length} 건의 검색 결과가 있습니다.
                                 </Text>
-                                {products.map((product) => (
+                                {Array.isArray(products) && products.map((product) => (
                                     <TouchableOpacity
                                         activeOpacity={0.8}
                                         key={product.Product_id} // Product_id 사용

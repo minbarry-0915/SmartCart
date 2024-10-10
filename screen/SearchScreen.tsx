@@ -24,18 +24,19 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   const { deleteSearchKeyword } = useDeleteSearchKeyword();
   const { postSearchKeyword } = usePostSearchKeyword();
 
-  //처음 한번만 실행됨
   useEffect(() => {
     console.log("loginStatus:", isLoggedIn);
     const unsubscribe = navigation.addListener('focus', () => {
       // 페이지가 돌아올 때마다 실행되는 코드
+      console.log("Focus event triggered"); // Focus 이벤트가 호출되었음을 확인
       getRecentKeyword(); // 최근 키워드 가져오기
     });
 
-    // cleanup 함수로 listener를 제거합니다.
-    return unsubscribe;
-  }, [navigation]);
-
+    // 클린업 함수: 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      unsubscribe(); // 리스너를 제거하여 중복 등록 방지
+    };
+  }, [navigation]); // 'navigation'만 의존성으로 추가
 
   const deleteNodeButton = async (index: number, keywordId: number) => {
     // 현재 keywordArray를 복사하고 해당 인덱스의 항목을 삭제
@@ -78,10 +79,14 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   };
 
   const onRecentKeywordNode = async (keywordName: string) => {
-    const result = await postSearchKeyword(keywordName);
-    if (result) {
-      navigation.navigate('SearchResult', { resultKeyword: keywordName });
-    }
+    console.log('Button event occured');
+    navigation.navigate('SearchResult', { resultKeyword: keywordName });
+      
+    const result = await postSearchKeyword(keywordName).catch((error) => {
+      console.error('Error posting search keyword:', error);
+      return null;
+    });
+    console.log('After API call'); // API 호출 후 로그
   };
 
 
@@ -135,7 +140,10 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
                     <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Keyword_name}</Text>
                     <TouchableOpacity
                       activeOpacity={0.8}
-                      onPress={() => deleteNodeButton(index, keyword.Keyword_id)}>
+                      onPress={(e) => {
+                        e.stopPropagation(); // 내부 클릭이 외부 클릭 이벤트를 발생시키지 않도록 함
+                        deleteNodeButton(index, keyword.Keyword_id);
+                      }}>
                       <CancelIcon width={20} height={20} />
                     </TouchableOpacity>
                   </TouchableOpacity>

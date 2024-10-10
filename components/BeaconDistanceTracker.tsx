@@ -74,27 +74,34 @@ const useBeaconDistance = (beaconId: string | undefined, txPower: number, modalV
         let listener: any;
 
         const startBeaconDetection = async () => {
-            await requestPermissions(); // 권한 요청
-            beacons.detectIBeacons();
-            if (beaconTarget) {
-                await beacons.startRangingBeaconsInRegion(beaconTarget);
-                console.log('Finding Beacons...');
-                listener = (data: any) => {
-                    const beacon = data.beacons.find((b: { uuid: string }) => b.uuid === beaconTarget?.uuid);
-                    if (beacon) {
-                        const rssi = beacon.rssi;
-                        console.log(`RSSI: ${rssi}`); // RSSI 로그
-                        const filteredRssi = kalmanFilter.update(rssi); // RSSI 값을 칼만 필터로 보정
-                        const distance = calculateDistance(filteredRssi); // 보정된 RSSI로 거리 계산
-                        
-                        console.log(`RSSI: ${rssi}, Filtered RSSI: ${filteredRssi}, Distance: ${distance}`); // 로그 추가
-                        setBeaconDistance(distance); // 상태 업데이트
-                    }
-                };
-
-                // 비콘 이벤트 리스너 등록
-                beacons.BeaconsEventEmitter.addListener('beaconsDidRange', listener);
+            try{
+                await requestPermissions(); // 권한 요청
+                
+                beacons.detectIBeacons();
+                
+                if (beaconTarget) {
+                    await beacons.startRangingBeaconsInRegion(beaconTarget);
+                    console.log('Finding Beacons...');
+                    listener = (data: any) => {
+                        const beacon = data.beacons.find((b: { uuid: string }) => b.uuid === beaconTarget?.uuid);
+                        if (beacon) {
+                            const rssi = beacon.rssi;
+                            console.log(`RSSI: ${rssi}`); // RSSI 로그
+                            const filteredRssi = kalmanFilter.update(rssi); // RSSI 값을 칼만 필터로 보정
+                            const distance = calculateDistance(filteredRssi); // 보정된 RSSI로 거리 계산
+                            
+                            console.log(`RSSI: ${rssi}, Filtered RSSI: ${filteredRssi}, Distance: ${distance}`); // 로그 추가
+                            setBeaconDistance(distance); // 상태 업데이트
+                        }
+                    };
+    
+                    // 비콘 이벤트 리스너 등록
+                    beacons.BeaconsEventEmitter.addListener('beaconsDidRange', listener);
+                }
+            } catch(err){
+                console.error(err);
             }
+            
         };
 
         if (modalVisible) {

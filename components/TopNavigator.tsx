@@ -112,7 +112,7 @@ const TopNavigator = ({
 
             <View style={[TopNavigatorStyles.content, { justifyContent: 'flex-end' }]}>
                 {showMyPageButton && (<TouchableOpacity
-                    onPress={onMyPageButton}
+                    onPress={()=>{onMyPageButton}}
                     activeOpacity={0.8}
                     style={{ marginRight: 12 }}>
                     <PersonIcon width={40} height={40} />

@@ -30,6 +30,9 @@ function LocationModal({locationId, modalVisible, toggleLocationModal}: Props) {
     const { beaconDistance } = useBeaconDistance(locationInfo?.Beacon_id, txPower, visible); // 커스텀 훅 사용
 
     useEffect(() => {
+        console.log('Location Info:', locationInfo);
+    })
+    useEffect(() => {
         if (modalVisible) {
             setVisible(true);
             Animated.timing(slideAnim, {
