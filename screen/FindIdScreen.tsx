@@ -1,5 +1,5 @@
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 import TopNavigator from "../components/TopNavigator";
@@ -7,6 +7,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 import UserInfoStyles from "../styles/UserInfoScreenStyles";
 import LoginStyles from "../styles/LoginScreenStyles";
 import useGetRequestVerification from "../customHooks/useGetRequestVerification";
+import Loading from "../components/animations/loading";
 
 interface Props {
     navigation: NavigationProp<ParamListBase>
@@ -14,30 +15,109 @@ interface Props {
 
 function FindIdScreen({ navigation }: Props) {
     const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
-    
-    const { getRequestVerification, loading, error, responseData } = useGetRequestVerification();
+    const [code, setCode] = useState('');
+    const [isSecondStep, setIsSecondStep] = useState(false); // 두 번째 단계 상태 추가
+    const { getRequestVerification, loading, message, setMessage, error, responseData } = useGetRequestVerification();
+
     const onVerifyButton = async () => {
-        if (checkEmailType()) {
-            console.log('correct email type');
-            await getRequestVerification(email);
-            console.log(responseData);
-        } else {
-            console.log('wrong email type');
-            setMessage('잘못된 이메일 형식입니다.');
+        const result = await getRequestVerification(email);
+        if (result && result.ok) {
+            // 인증 요청이 성공하면 두 번째 단계로 변경
+            setIsSecondStep(true);
         }
+        console.log(result);
     };
 
-    const checkEmailType = () => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 이메일 정규 표현식
-        return emailPattern.test(email);
+    const onCodeVerifyButton = async () => {
+        // 여기에 코드 인증 로직 추가
     };
 
+    const renderInitialContent = () => {
+        return (
+            <>
+                <View style={UserInfoStyles.content}>
+                    <View style={UserInfoStyles.item}>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
+                            본인확인을 위해 이메일을 입력해주세요
+                        </Text>
+                    </View>
+                    <View style={UserInfoStyles.item}>
+                        <TextInput
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            placeholder="EMAIL"
+                            value={email}
+                            onChangeText={setEmail}
+                            onFocus={() => { setMessage(''); }} // 다시 입력 시 초기화
+                            style={LoginStyles.textInput}
+                        />
+                    </View>
+
+                    {message && (
+                        <View style={UserInfoStyles.item}>
+                            <Text style={[GlobalStyles.mediumText, { color: '#E33434' }]}>{message}</Text>
+                        </View>
+                    )}
+                </View>
+                <View style={[UserInfoStyles.content, { elevation: 0, backgroundColor: 'rgba(0,0,0,0)' }]}>
+                    <TouchableOpacity
+                        onPress={onVerifyButton}
+                        activeOpacity={0.7}
+                        style={[GlobalStyles.blackButton, { width: '30%' }]} 
+                    >
+                        <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
+                            확인
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </>
+        )
+    }
+
+    const renderSecondContent = () => {
+        return (
+            <>
+                <View style={UserInfoStyles.content}>
+                    <View style={UserInfoStyles.item}>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
+                            이메일로 전송된 인증코드 6자리를 입력해주세요
+                        </Text>
+                    </View>
+                    <View style={UserInfoStyles.item}>
+                        <TextInput
+                            autoCapitalize="none"
+                            keyboardType='default'
+                            placeholder="XXXXXX"
+                            value={code}
+                            onChangeText={setCode}
+                            onFocus={() => { setMessage(''); }} // 다시 입력 시 초기화
+                            style={LoginStyles.textInput}
+                        />
+                    </View>
+
+                    {message && (
+                        <View style={UserInfoStyles.item}>
+                            <Text style={[GlobalStyles.mediumText, { color: '#E33434' }]}>{message}</Text>
+                        </View>
+                    )}
+                </View>
+                <View style={[UserInfoStyles.content, { elevation: 0, backgroundColor: 'rgba(0,0,0,0)' }]}>
+                    <TouchableOpacity
+                        onPress={onCodeVerifyButton}
+                        activeOpacity={0.7}
+                        style={[GlobalStyles.blackButton, { width: '30%' }]} 
+                    >
+                        <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
+                            인증
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </>
+        )
+    }
 
     return (
-        <View
-            style={{ flex: 1 }}
-        >
+        <View style={{ flex: 1 }}>
             <LinearGradient
                 colors={['#FFFFFF', '#D9D9D9', '#000000']}
                 style={{ flex: 1 }}
@@ -51,44 +131,16 @@ function FindIdScreen({ navigation }: Props) {
                 />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={GlobalStyles.scrollContainer}>
-                    <View style={UserInfoStyles.content}>
-                        <View style={UserInfoStyles.item}>
-                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
-                                본인확인을 위해 이메일을 입력해주세요
-                            </Text>
-                        </View>
-                        <View style={UserInfoStyles.item}>
-                            <TextInput
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                placeholder="EMAIL"
-                                value={email}
-                                onChangeText={setEmail}
-                                onFocus={() => { setMessage(''); }} // 다시 입력 시 초기화
-                                style={LoginStyles.textInput}
-                            />
-                        </View>
-
-                        {message && (
-                            <View style={UserInfoStyles.item}>
-                                <Text style={[GlobalStyles.mediumText, { color: '#E33434' }]}>{message}</Text>
-                            </View>
-                        )}
-                    </View>
-                    <View style={[UserInfoStyles.content, { elevation: 0, backgroundColor: 'rgba(0,0,0,0)' }]}>
-                        <TouchableOpacity
-                            onPress={onVerifyButton}
-                            activeOpacity={0.7}
-                            style={[GlobalStyles.blackButton, { width: '30%' }]}>
-                            <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
-                                확인
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    contentContainerStyle={GlobalStyles.scrollContainer}
+                >
+                    {loading ? (
+                        <Loading style={{ width: 200, height: 200 }} />
+                    ) : (
+                        isSecondStep ? renderSecondContent() : renderInitialContent()
+                    )}
                 </ScrollView>
             </LinearGradient>
-        </View >
+        </View>
     );
 }
 
