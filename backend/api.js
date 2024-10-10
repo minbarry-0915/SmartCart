@@ -513,7 +513,7 @@ app.post('/api/verify_code/id', async (req, res) => {
 });
 
 // 비밀번호 찾기 API
-app.get('/api/verificataion_requset/:Userid', async (req, res) => {
+app.get('/api/request_verification/:Userid', async (req, res) => {
     const Userid = req.params;
 
     try {
