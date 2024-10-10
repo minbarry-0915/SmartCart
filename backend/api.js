@@ -429,7 +429,7 @@ app.get('/api/search', async (req, res) => {
 
 let verificationCodes = {};
 
-// 아이디 찾기 API
+// 아이디 찾기 API -- 연결 완
 app.get('/api/request_verification/id/:Email', async (req, res) => {
     const { Email } = req.params;
 
@@ -481,7 +481,7 @@ app.get('/api/request_verification/id/:Email', async (req, res) => {
     }
 });
 
-// 인증 코드 확인 및 아이디 반환 API
+// 인증 코드 확인 및 아이디 반환 API -- 연결 완
 app.post('/api/verify_code/id', async (req, res) => {
     const { Email, Code } = req.body;
 
@@ -565,10 +565,11 @@ app.get('/api/request_verification/password/:Userid', async (req, res) => {
 
 // 인증 코드 확인 및 비밀번호 반환 API
 app.post('/api/verify_code/password', async (req, res) => {
-    const {Userid, Code } = req.body;
+    const { Userid, Code } = req.body;
 
     try {
-        const savedCode = verificationCodes[Userid]; // email로 가지고 있던 코드 조회
+        const savedCode = verificationCodes[Userid]; 
+        
         if (!savedCode || savedCode.expires < Date.now()) {
             return res.status(400).json({ ok: false, message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
         }
