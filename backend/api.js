@@ -514,7 +514,7 @@ app.post('/api/verify_code/id', async (req, res) => {
 
 // 비밀번호 찾기 API
 app.get('/api/request_verification/password/:Userid', async (req, res) => {
-    const Userid = req.params;
+    const { Userid } = req.params;
 
     try {
         const [rows] = await db.query('SELECT Email FROM User3 WHERE Userid = ?', [Userid]);
