@@ -438,7 +438,7 @@ app.get('/api/request_verification/id/:Email', async (req, res) => {
         const [rows] = await db.query('SELECT Userid, Email FROM User3 WHERE Email = ?', [Email]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: '이메일을 찾을 수 없습니다.' });
+            return res.status(404).json({ok: false, message: '이메일을 찾을 수 없습니다.' });
         }
 
         // 인증 코드 생성
@@ -488,27 +488,27 @@ app.post('/api/verify_code/id', async (req, res) => {
     try {
         const savedCode = verificationCodes[Email]; // email로 가지고 있던 코드 조회
         if (!savedCode || savedCode.expires < Date.now()) {
-            return res.status(400).json({ message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
+            return res.status(400).json({ ok: false, message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
         }
 
         if (savedCode.code !== Code) {
-            return res.status(400).json({ message: '잘못된 인증 코드입니다.' });
+            return res.status(400).json({ok: false, message: '잘못된 인증 코드입니다.' });
         }
 
         const [rows] = await db.query('SELECT Userid FROM User3 WHERE Email = ?', [Email]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return res.status(404).json({ ok: false, message: '사용자를 찾을 수 없습니다.' });
         }
 
         // 인증 완료 후 인증 코드 삭제 (메모리 관리)
         delete verificationCodes[Email];
 
         const user = rows[0];
-        res.status(200).json({ userId: user.Userid });
+        res.status(200).json({ ok: true, userId: user.Userid });
     } catch (err) {
         console.error('데이터베이스 오류:', err);
-        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+        res.status(500).json({ ok: false, message: '서버 오류가 발생했습니다.' });
     }
 });
 
@@ -520,7 +520,7 @@ app.get('/api/request_verification/password/:Userid', async (req, res) => {
         const [rows] = await db.query('SELECT Email FROM User3 WHERE Userid = ?', [Userid]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return res.status(404).json({ ok: false, message: '사용자를 찾을 수 없습니다.' });
         }
 
         const user = rows[0];
@@ -570,27 +570,27 @@ app.post('/api/verify_code/password', async (req, res) => {
     try {
         const savedCode = verificationCodes[Userid]; // email로 가지고 있던 코드 조회
         if (!savedCode || savedCode.expires < Date.now()) {
-            return res.status(400).json({ message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
+            return res.status(400).json({ ok: false, message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
         }
 
         if (savedCode.code !== Code) {
-            return res.status(400).json({ message: '잘못된 인증 코드입니다.' });
+            return res.status(400).json({ ok: false, message: '잘못된 인증 코드입니다.' });
         }
 
         const [rows] = await db.query('SELECT Password FROM User3 WHERE Userid = ?', [Userid]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return res.status(404).json({ ok: false, message: '사용자를 찾을 수 없습니다.' });
         }
 
         // 인증 완료 후 인증 코드 삭제 (메모리 관리)
         delete verificationCodes[Userid];
 
         const user = rows[0];
-        res.status(200).json({ password: user.Password });
+        res.status(200).json({ok: true, password: user.Password });
     } catch (err) {
         console.error('데이터베이스 오류:', err);
-        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+        res.status(500).json({ ok: false, message: '서버 오류가 발생했습니다.' });
     }
 });
 

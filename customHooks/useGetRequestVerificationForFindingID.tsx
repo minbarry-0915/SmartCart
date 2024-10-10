@@ -2,7 +2,7 @@ import { REACT_NATIVE_BACKEND_IP } from "@env";
 import axios from "axios";
 import { useState } from "react";
 
-function useGetRequestVerification() {
+function useGetRequestVerificationForFindingID() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [responseData, setResponseData] = useState<any>(null); // 서버 응답 데이터를 저장할 상태
@@ -49,4 +49,4 @@ function useGetRequestVerification() {
     return { getRequestVerification, loading, error, message, setMessage, responseData }; // 훅을 사용하는 컴포넌트에서 필요한 값을 반환
 }
 
-export default useGetRequestVerification;
+export default useGetRequestVerificationForFindingID;

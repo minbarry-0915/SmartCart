@@ -6,8 +6,9 @@ import TopNavigator from "../components/TopNavigator";
 import GlobalStyles from "../styles/GlobalStyles";
 import UserInfoStyles from "../styles/UserInfoScreenStyles";
 import LoginStyles from "../styles/LoginScreenStyles";
-import useGetRequestVerification from "../customHooks/useGetRequestVerification";
 import Loading from "../components/animations/loading";
+import useGetRequestVerificationForFindingID from "../customHooks/useGetRequestVerificationForFindingID";
+import useVerifyCodeForFindingId from "../customHooks/useVerifyCodeForFindingId";
 
 interface Props {
     navigation: NavigationProp<ParamListBase>
@@ -17,8 +18,10 @@ function FindIdScreen({ navigation }: Props) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [isSecondStep, setIsSecondStep] = useState(false); // 두 번째 단계 상태 추가
-    const { getRequestVerification, loading, message, setMessage, error, responseData } = useGetRequestVerification();
-
+    const [showResult, setShowResult] = useState(false);
+    const [id, setId] = useState('');
+    const { getRequestVerification, loading, message, setMessage, error, responseData } = useGetRequestVerificationForFindingID();
+    const { postVerifyCode, loading: isLoadingVerifyCode } = useVerifyCodeForFindingId();
     const onVerifyButton = async () => {
         const result = await getRequestVerification(email);
         if (result && result.ok) {
@@ -30,7 +33,17 @@ function FindIdScreen({ navigation }: Props) {
 
     const onCodeVerifyButton = async () => {
         // 여기에 코드 인증 로직 추가
+        const result = await postVerifyCode(email, code);
+        if (result && result.ok){
+            setId(result.userId);
+            setShowResult(true);
+        }
+        console.log(result);
     };
+
+    const onLoginButton = () => {
+        navigation.navigate('Login');
+    }
 
     const renderInitialContent = () => {
         return (
@@ -109,6 +122,36 @@ function FindIdScreen({ navigation }: Props) {
                     >
                         <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
                             인증
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </>
+        )
+    }
+
+    const renderFinalContent = () => {
+        return (
+            <>
+                <View style={UserInfoStyles.content}>
+                    <View style={UserInfoStyles.item}>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
+                            ID는 다음과 같습니다.
+                        </Text>
+                        <View style={UserInfoStyles.item}>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
+                            {id}
+                        </Text>
+                    </View>
+                    </View>
+                </View>
+                <View style={[UserInfoStyles.content, { elevation: 0, backgroundColor: 'rgba(0,0,0,0)' }]}>
+                    <TouchableOpacity
+                        onPress={onLoginButton}
+                        activeOpacity={0.7}
+                        style={[GlobalStyles.blackButton, { width: '30%' }]} 
+                    >
+                        <Text style={[GlobalStyles.BoldText, { color: 'white' }]}>
+                            로그인하기
                         </Text>
                     </TouchableOpacity>
                 </View>
