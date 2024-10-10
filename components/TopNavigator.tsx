@@ -50,15 +50,9 @@ const TopNavigator = ({
     }
 
     const onSearchResultButton = async () => {
-        try {
-            const result = await postSearchKeyword(keyword);
-            if (result) {
-                navigation.navigate('SearchResult', { resultKeyword: keyword });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
+        const result = await postSearchKeyword(keyword);
+        navigation.navigate('SearchResult', { resultKeyword: keyword });
+    };
 
     useEffect(()=>{
         const unsubscribe = navigation.addListener('focus',()=>{
@@ -112,7 +106,7 @@ const TopNavigator = ({
 
             <View style={[TopNavigatorStyles.content, { justifyContent: 'flex-end' }]}>
                 {showMyPageButton && (<TouchableOpacity
-                    onPress={()=>{onMyPageButton}}
+                    onPress={onMyPageButton}
                     activeOpacity={0.8}
                     style={{ marginRight: 12 }}>
                     <PersonIcon width={40} height={40} />

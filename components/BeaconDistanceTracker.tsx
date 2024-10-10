@@ -33,7 +33,7 @@ const useBeaconDistance = (beaconId: string | undefined, txPower: number, modalV
     const beaconTarget: BeaconRegion | null = beaconId
         ? {
             identifier: "beacon",
-            uuid: beaconId, // 비콘 ID를 props로 받음
+            uuid: beaconId, // 비콘 ID를 props로 받음 : UUID 형태여야됨
         }
         : null;
 

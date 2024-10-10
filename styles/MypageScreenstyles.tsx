@@ -27,7 +27,8 @@ const MyPageStyles = StyleSheet.create({
         marginRight: 8,
     },
     productImageContainer:{
-        flex: 1,
+        width: '100%',
+        height: 180,
         justifyContent: 'center',
         alignItems: 'center',
         resizeMode: 'cover',

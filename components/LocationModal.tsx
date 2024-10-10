@@ -25,13 +25,11 @@ function LocationModal({locationId, modalVisible, toggleLocationModal}: Props) {
     const { locationInfo } = useGetLocation(locationId);
     // 거리 값을 가져올 비콘 ID와 TX Power 설정
     //const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'; // 비콘 UUID
+    // c3 00000 1c6247
     // const beaconId = 'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
     const txPower = -60; // 비콘의 TX Power 설정 (예: 0 dBm)
     const { beaconDistance } = useBeaconDistance(locationInfo?.Beacon_id, txPower, visible); // 커스텀 훅 사용
 
-    useEffect(() => {
-        console.log('Location Info:', locationInfo);
-    })
     useEffect(() => {
         if (modalVisible) {
             setVisible(true);

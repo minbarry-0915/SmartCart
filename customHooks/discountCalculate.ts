@@ -2,7 +2,7 @@
 interface Prop{
     price: number,
     discount: number | undefined
-    quantity: number
+    quantity: number 
 }
 
 function discountCalculate({price, discount, quantity = 1}:Prop){

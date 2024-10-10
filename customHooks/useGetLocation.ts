@@ -19,8 +19,11 @@ function useGetLocation(Location_id: number){
         }catch(err: any){
             console.error('Fail to get Location Info: ', err);
             setError(err);
+        }finally{
+            setLoading(false);
+            console.log('Done.');
         }
-    },[]);
+    },[Location_id]);
 
     useEffect(() => {
         getLocationInfo();

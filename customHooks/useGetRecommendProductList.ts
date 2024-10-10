@@ -20,7 +20,7 @@ function useGetRecommendProductList() {
                         Price: 1320,
                         Category: '마이프로틴',
                         Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                        Discount: undefined,
+                        Discount: 1000,
                         Description: 'Refreshing beverage',
                     },
                     {

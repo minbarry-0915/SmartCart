@@ -16,6 +16,7 @@ import LogOutIcon from '../assets/icons/logout.svg';
 import formatNumber from "../customHooks/fomatNumber";
 import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
 import { Product } from "../types";
+import discountCalculate from "../customHooks/discountCalculate";
 
 interface User {
     id: string,
@@ -91,6 +92,34 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
         setIsLogOutPressed(false);
     }, []);
 
+    const renderPriceText = (product: Product) => {  
+        return (
+            <>
+                {!product.Discount && product.Price ? (
+                    <Text style={[GlobalStyles.semiBoldText, { fontSize: 14, }]}>
+                        {formatNumber(product.Price)} 원
+                    </Text>
+                ) : (
+                    <View style={{flexDirection: 'column'}}>
+                        <Text
+                            numberOfLines={1}
+                            style={[
+                                GlobalStyles.semiBoldText,
+                                { fontSize: 14, textDecorationLine: 'line-through', marginRight: 8 },
+                            ]}
+                        >{formatNumber(product.Price)} 원</Text>
+                        <Text
+                            style={[GlobalStyles.semiBoldText, { fontSize: 14, color: '#D10000' }]}>
+                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount, quantity: 1}))}원
+                        </Text>
+                    </View>
+
+                )}
+
+            </>
+        )
+    }
+
     return (
         <View style={{flex: 1,}}>
             {isLoggedIn ? (
@@ -132,7 +161,10 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                                             <Text
                                                 numberOfLines={1}
                                                 style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
-                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text>
+                                            
+                                            {/* <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text> */}
+
+                                            {renderPriceText(item)}
                                         </TouchableOpacity>
                                         {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
                                         {index !== products.length - 1 && (

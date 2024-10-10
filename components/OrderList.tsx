@@ -31,7 +31,7 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
     };
 
     const onProductInfo = (id: string) => {
-        navigation.navigate('ProductDetail', { pNum: id });
+        navigation.navigate('ProductDetail', { productId: id });
     };
 
     if (!order) {
@@ -42,7 +42,7 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
         <View style={OrderListStyles.orderContainer}>
             {/* OrderDate */}
             <View style={OrderListStyles.orderContent}>
-                <Text style={[GlobalStyles.semiBoldText, { fontSize: 24 }]}>{order.orderDate}</Text>
+                <Text style={[GlobalStyles.semiBoldText, { fontSize: 24 }]}>{order.orderDate.toString().split('T')[0]}</Text>
             </View>
 
             {/* 구매 타입 */}
