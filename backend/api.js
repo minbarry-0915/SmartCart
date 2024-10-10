@@ -587,7 +587,7 @@ app.post('/api/verify_code/password', async (req, res) => {
         delete verificationCodes[Userid];
 
         const user = rows[0];
-        res.status(200).json({ userId: user.Password });
+        res.status(200).json({ password: user.Password });
     } catch (err) {
         console.error('데이터베이스 오류:', err);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
