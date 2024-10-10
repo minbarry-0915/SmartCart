@@ -728,6 +728,39 @@ app.get('/api/orders/:userid', async (req, res) => {
 });
 
 
+// 검색 기능 API
+/* 주어진 키워드로 제품 검색, 검색어를 Search_History 테이블에 저장 */
+app.get('/api/search/:keyword/:userid', async (req, res) => {
+    const { keyword, userid } = req.params;
+
+    try {
+        // 제품 검색 쿼리
+        const [products] = await db.query(`
+            SELECT 
+                p.Product_id as Product_id,
+                p.Product_name as Product_name,
+                p.Price,
+                p.Category,
+                p.Main_image,
+                p.Discount,
+                p.Description
+            FROM Product3 p
+            WHERE p.Product_name LIKE ? OR p.Description LIKE ?
+        `, [`%${keyword}%`, `%${keyword}%`]);
+
+        // 검색어를 Search_History 테이블에 추가
+        await db.query(`
+            INSERT INTO Search_History (Keyword_name, Userid)
+            VALUES (?, ?)
+        `, [keyword, userid]);
+
+        // 응답 포맷
+        res.json({ data: products });
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        res.status(500).json({ error: 'Failed to fetch search results' });
+    }
+});
 
 
 // 상품 스캔 결과 반환 API -- 프론트 처리 예정
