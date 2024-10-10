@@ -370,63 +370,6 @@ app.delete('/api/search/history', async (req, res) => {
     }
 });
 
-// 키워드 기반 검색 결과 반환 API -- 진행 중
-/* ex) "코카" || "마" 만 입력해도 결과 반환됨 */
-app.get('/api/search', async (req, res) => {
-    const { keyword } = req.query;
-
-    try {
-        // 검색 키워드가 없으면 오류 반환
-        if (!keyword) {
-            return res.status(400).json({ error: '검색 키워드가 필요합니다.' });
-        }
-
-        console.log(`Keyword: ${keyword}로 검색 결과를 조회합니다.`);
-
-        // 예시 더미 데이터
-        const searchResults = [
-            {
-                Product_id: 1234,
-                Product_name: '코카콜라',
-                Price: 1320,
-                Category: '음료',
-                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                Discount: 0,
-                Description: 'Refreshing soft drink',
-            },
-            {
-                Product_id: 21321,
-                Product_name: '마이프로틴',
-                Price: 18000,
-                Category: '단백질',
-                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                Discount: 2000,
-                Description: 'High-quality protein powder',
-            },
-            {
-                Product_id: 32523523,
-                Product_name: '초코바',
-                Price: 2500,
-                Category: '간식',
-                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                Discount: 500,
-                Description: 'Delicious chocolate snack',
-            },
-            // 추가 데이터...
-        ];
-
-        // 검색 키워드와 일치하는 결과 필터링 (이 예시에서는 더미 데이터 반환)
-        const filteredResults = searchResults.filter(product =>
-            product.Product_name.includes(keyword)
-        );
-
-        res.json({ data: filteredResults });
-    } catch (err) {
-        console.error('검색 결과 조회 실패:', err);
-        res.status(500).json({ error: '검색 결과를 조회하는 중 오류가 발생했습니다.' });
-    }
-});
-
 let verificationCodes = {};
 
 // 아이디 찾기 API -- 연결 완
@@ -756,7 +699,7 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
         `, [keyword, userid]);
 
         // 응답 포맷
-        res.json({ data: products });
+        res.json(products);
     } catch (error) {
         console.error('Error fetching search results:', error);
         res.status(500).json({ error: 'Failed to fetch search results' });
