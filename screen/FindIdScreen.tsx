@@ -7,8 +7,10 @@ import GlobalStyles from "../styles/GlobalStyles";
 import UserInfoStyles from "../styles/UserInfoScreenStyles";
 import LoginStyles from "../styles/LoginScreenStyles";
 import Loading from "../components/animations/loading";
-import useGetRequestVerificationForFindingID from "../customHooks/useGetRequestVerificationForFindingID";
-import useVerifyCodeForFindingId from "../customHooks/useVerifyCodeForFindingId";
+
+import useGetRequestVerification from "../customHooks/useGetRequestVerification";
+import useVerifyCode from "../customHooks/useVerifyCode";
+
 
 interface Props {
     navigation: NavigationProp<ParamListBase>
@@ -20,10 +22,11 @@ function FindIdScreen({ navigation }: Props) {
     const [isSecondStep, setIsSecondStep] = useState(false); // 두 번째 단계 상태 추가
     const [showResult, setShowResult] = useState(false);
     const [id, setId] = useState('');
-    const { getRequestVerification, loading, message, setMessage, error, responseData } = useGetRequestVerificationForFindingID();
-    const { postVerifyCode, loading: isLoadingVerifyCode } = useVerifyCodeForFindingId();
+    const { getRequestVerificationForId, loading, message, setMessage, error, responseData } = useGetRequestVerification();
+
+    const { postVerifyCodeForId, loading: isLoadingVerifyCode } = useVerifyCode();
     const onVerifyButton = async () => {
-        const result = await getRequestVerification(email);
+        const result = await getRequestVerificationForId(email);
         if (result && result.ok) {
             // 인증 요청이 성공하면 두 번째 단계로 변경
             setIsSecondStep(true);
@@ -33,7 +36,7 @@ function FindIdScreen({ navigation }: Props) {
 
     const onCodeVerifyButton = async () => {
         // 여기에 코드 인증 로직 추가
-        const result = await postVerifyCode(email, code);
+        const result = await postVerifyCodeForId(email, code);
         if (result && result.ok){
             setId(result.userId);
             setShowResult(true);
@@ -137,8 +140,8 @@ function FindIdScreen({ navigation }: Props) {
                         <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
                             ID는 다음과 같습니다.
                         </Text>
-                        <View style={UserInfoStyles.item}>
-                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 20 }]}>
+                        <View style={[UserInfoStyles.item, {paddingHorizontal: 0, paddingTop: 36, paddingBottom: 0,alignItems: 'center'}]}>
+                        <Text style={[GlobalStyles.BoldText, { fontSize: 24 }]}>
                             {id}
                         </Text>
                     </View>
@@ -178,9 +181,16 @@ function FindIdScreen({ navigation }: Props) {
                 >
                     {loading ? (
                         <Loading style={{ width: 200, height: 200 }} />
+                    ) : isLoadingVerifyCode ? (
+                        <Loading style={{ width: 200, height: 200 }} />
+                    ): showResult ? (
+                        renderFinalContent()
+                    ) : isSecondStep ? (
+                        renderSecondContent()
                     ) : (
-                        isSecondStep ? renderSecondContent() : renderInitialContent()
-                    )}
+                        renderInitialContent()
+                    ) 
+                }
                 </ScrollView>
             </LinearGradient>
         </View>
