@@ -430,7 +430,7 @@ app.get('/api/search', async (req, res) => {
 let verificationCodes = {};
 
 // 아이디 찾기 API
-app.get('/api/request_verification/:Email', async (req, res) => {
+app.get('/api/request_verification/id/:Email', async (req, res) => {
     const { Email } = req.params;
 
     try {
@@ -513,7 +513,7 @@ app.post('/api/verify_code/id', async (req, res) => {
 });
 
 // 비밀번호 찾기 API
-app.get('/api/request_verification/:Userid', async (req, res) => {
+app.get('/api/request_verification/password/:Userid', async (req, res) => {
     const Userid = req.params;
 
     try {
