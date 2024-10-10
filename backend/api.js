@@ -474,10 +474,10 @@ app.get('/api/request_verification/:Email', async (req, res) => {
 
         // 이메일 전송
         await transporter.sendMail(mailOptions);
-        res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: verificationCode });
+        res.json({ ok: true, message: '메일 전송에 성공하였습니다.', authNum: verificationCode });
     } catch (err) {
         console.error('메일 전송 오류:', err);
-        res.status(500).json({ ok: false, msg: '메일 전송에 실패하였습니다.' });
+        res.status(500).json({ ok: false, message: '메일 전송에 실패하였습니다.' });
     }
 });
 
@@ -511,6 +511,9 @@ app.post('/api/verify_code', async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 });
+
+// 비밀번호 찾기 API
+
 
 // 유저 정보 조회 API -- 연결 완
 app.get('/api/user/:Userid', async (req, res) => {
