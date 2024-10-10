@@ -5,7 +5,8 @@ const mysql = require('mysql2/promise'); // mysql2/promise를 사용하여 async
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 dotenv.config();
 
@@ -426,8 +427,92 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
+let verificationCodes = {};
 
-// 유저 정보 조회 API
+// 아이디 찾기 API
+app.get('/api/request_verification/:Email', async (req, res) => {
+    const { Email } = req.params;
+
+    try {
+        // 이메일 조회
+        const [rows] = await db.query('SELECT Userid, Email FROM User3 WHERE Email = ?', [Email]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: '이메일을 찾을 수 없습니다.' });
+        }
+
+        // 인증 코드 생성
+        const verificationCode = crypto.randomBytes(3).toString('hex'); // 6자리 인증 코드 생성
+
+        // 인증 객체에 코드와 만료 시간 저장 (10분 유효)
+        verificationCodes[Email] = { code: verificationCode, expires: Date.now() + 600000 };
+
+        // 이메일 전송을 위한 nodemailer 설정
+        const transporter = nodemailer.createTransport({
+            pool: true,
+            maxConnections: 1,
+            service: 'naver',
+            host: 'smtp.naver.com',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.SMTP_USER, // 발신자 이메일 주소
+            to: Email, // 사용자가 입력한 이메일 주소
+            subject: 'SMART CART 인증 관련 메일입니다.',
+            html: `<h1>10분 안에 하단의 인증번호를 입력해주세요</h1><p>인증번호: ${verificationCode}</p>`, // 인증 코드 포함
+        };
+
+        // 이메일 전송
+        await transporter.sendMail(mailOptions);
+        res.json({ ok: true, msg: '메일 전송에 성공하였습니다.', authNum: verificationCode });
+    } catch (err) {
+        console.error('메일 전송 오류:', err);
+        res.status(500).json({ ok: false, msg: '메일 전송에 실패하였습니다.' });
+    }
+});
+
+// 인증 코드 확인 및 아이디 반환 API
+app.post('/api/verify_code', async (req, res) => {
+    const { Email, Code } = req.body;
+
+    try {
+        const savedCode = verificationCodes[Email]; // email로 가지고 있던 코드 조회
+        if (!savedCode || savedCode.expires < Date.now()) {
+            return res.status(400).json({ message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
+        }
+
+        if (savedCode.code !== Code) {
+            return res.status(400).json({ message: '잘못된 인증 코드입니다.' });
+        }
+
+        const [rows] = await db.query('SELECT Userid FROM User3 WHERE Email = ?', [Email]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 인증 완료 후 인증 코드 삭제 (메모리 관리)
+        delete verificationCodes[Email];
+
+        const user = rows[0];
+        res.status(200).json({ userId: user.Userid });
+    } catch (err) {
+        console.error('데이터베이스 오류:', err);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
+
+// 유저 정보 조회 API -- 연결 완
 app.get('/api/user/:Userid', async (req, res) => {
     const { Userid } = req.params; // 요청에서 Userid 추출
 
@@ -460,7 +545,7 @@ app.get('/api/user/:Userid', async (req, res) => {
     }
 });
 
-// 유저 정보 업데이트 API -- 연결 중
+// 유저 정보 업데이트 API -- 연결 완
 app.patch('/api/user/:Userid', async (req, res) => {
     const { Userid } = req.params;
     const { Name, Birthdate, Gender, Phone_num, Email, Password } = req.body;
@@ -580,10 +665,8 @@ app.get('/api/orders/orderList', async (req, res) => {
     }
 });
 
-// 주문 세부 내용 조회 API -- 필요한 것 get
-app.get('/api/orders/:order_id', async(req, res) => {
 
-});
+
 
 // 상품 스캔 결과 반환 API -- 프론트 처리 예정
 /* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
