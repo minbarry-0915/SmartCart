@@ -662,93 +662,106 @@ app.patch('/api/user/:Userid', async (req, res) => {
     }
 });
 
-// 주문 목록 조회 API
-app.get('/api/orders/orderList', async (req, res) => {
-    try {
-        const orders = [
-            {
-                id: "order12345",
-                orderDate: "2024-05-28",
-                orderItems: [
-                    {
-                        product: {
-                            Product_id: 1,
-                            Product_name: "Smartphone",
-                            Price: 4845484,
-                            Category: "Electronics",
-                            Main_image: "https://static.thcdn.com/images/large/webp//productimg/1600/1600/13687585-1625000373316641.jpg",
-                            Discount: undefined,
-                            Description: "Latest smartphone",
-                        },
-                        quantity: 1,
-                    },
-                    {
-                        product: {
-                            Product_id: 2,
-                            Product_name: "Blender",
-                            Price: 4861315,
-                            Category: "Home Appliance",
-                            Main_image: "https://example.com/images/blender.jpg",
-                            Discount: undefined,
-                            Description: "High-quality blender",
-                        },
-                        quantity: 1,
-                    }
-                ],
-                tag: true,
-                totalProductPrice: 1000000,
-                totalDiscountPrice: 100,
-                paymentCard: '신한카드',
-                paymentCardNum: '4221555845457878',
-                totalPaymentPrice: 999900,
-            },
-            {
-                id: "order12346",
-                orderDate: "2024-05-27T11:23:45.678Z",
-                orderItems: [
-                    {
-                        product: {
-                            Product_id: 3,
-                            Product_name: "TypeScript Handbook",
-                            Price: 2999,
-                            Category: "Books",
-                            Main_image: "https://example.com/images/typescript_handbook.jpg",
-                            Discount: undefined,
-                            Description: "Learn TypeScript",
-                        },
-                        quantity: 1,
-                    },
-                    {
-                        product: {
-                            Product_id: 4,
-                            Product_name: "T-shirt",
-                            Price: 1999,
-                            Category: "Clothing",
-                            Main_image: "https://example.com/images/tshirt.jpg",
-                            Discount: undefined,
-                            Description: "Comfortable t-shirt",
-                        },
-                        quantity: 5,
-                    }
-                ],
-                tag: false,
-                totalProductPrice: 1000000,
-                totalDiscountPrice: 100,
-                paymentCard: '신한카드',
-                paymentCardNum: '4221555845457878',
-                totalPaymentPrice: 999900,
-            }
-        ];
 
-        // 주문 목록 반환
-        res.status(200).json({ orders });
+// 주문 목록 조회 API
+app.get('/api/orders/:userid', async (req, res) => {
+    const { userid } = req.params;
+    
+    try {
+        const [orders] = await db.query(`
+            SELECT 
+                o.Order_id as id,
+                o.Order_date as orderDate,
+                o.Tag as tag,
+                o.Total_product_price as totalProductPrice,
+                o.Total_discount_price as totalDiscountPrice,
+                o.Total_payment_price as totalPaymentPrice,
+                o.Payment_card as paymentCard,
+                o.Payment_card_num as paymentCardNum
+            FROM Orders o
+            WHERE o.Userid = ?
+        `, [userid]);
+
+        if (orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found for this user.' });
+        }
+
+        const orderList = [];
+        
+        for (const order of orders) {
+            const [orderItems] = await db.query(`
+                SELECT 
+                    oi.Quantity as quantity,
+                    p.Product_id as Product_id,
+                    p.Product_name as Product_name,
+                    p.Price,
+                    p.Discount,
+                    p.Category,
+                    p.Main_image,
+                    p.Description
+                FROM Order_Item oi
+                JOIN Product3 p ON oi.Product_id = p.Product_id
+                WHERE oi.Order_id = ?
+            `, [order.id]);
+
+            orderList.push({
+                ...order,
+                orderItems: orderItems.map(item => ({
+                    product: {
+                        Product_id: item.Product_id,
+                        Product_name: item.Product_name,
+                        Price: item.Price,
+                        Discount: item.Discount,
+                        Category: item.Category,
+                        Main_image: item.Main_image,
+                        Description: item.Description
+                    },
+                    quantity: item.quantity
+                }))
+            });
+        }
+
+        return res.json({ orders: orderList });
     } catch (error) {
-        console.error('Failed to fetch order list: ', error);
-        res.status(500).json({ message: 'Failed to fetch order list' });
+        console.error('Error fetching order list:', error);
+        res.status(500).json({ error: 'Failed to fetch order list' });
     }
 });
 
 
+// 검색 기능 API
+/* 주어진 키워드로 제품 검색, 검색어를 Search_History 테이블에 저장 */
+app.get('/api/search/:keyword/:userid', async (req, res) => {
+    const { keyword, userid } = req.params;
+
+    try {
+        // 제품 검색 쿼리
+        const [products] = await db.query(`
+            SELECT 
+                p.Product_id as Product_id,
+                p.Product_name as Product_name,
+                p.Price,
+                p.Category,
+                p.Main_image,
+                p.Discount,
+                p.Description
+            FROM Product3 p
+            WHERE p.Product_name LIKE ? OR p.Description LIKE ?
+        `, [`%${keyword}%`, `%${keyword}%`]);
+
+        // 검색어를 Search_History 테이블에 추가
+        await db.query(`
+            INSERT INTO Search_History (Keyword_name, Userid)
+            VALUES (?, ?)
+        `, [keyword, userid]);
+
+        // 응답 포맷
+        res.json({ data: products });
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        res.status(500).json({ error: 'Failed to fetch search results' });
+    }
+});
 
 
 // 상품 스캔 결과 반환 API -- 프론트 처리 예정
