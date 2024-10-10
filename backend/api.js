@@ -663,7 +663,7 @@ app.patch('/api/user/:Userid', async (req, res) => {
 });
 
 
-// 주문 목록 조회 API
+// 주문 목록 조회 API -- 연결 완
 app.get('/api/orders/:userid', async (req, res) => {
     const { userid } = req.params;
     

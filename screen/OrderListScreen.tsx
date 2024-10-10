@@ -8,6 +8,7 @@ import TopNavigator from "../components/TopNavigator";
 import LinearGradient from "react-native-linear-gradient";
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetOrderList from "../customHooks/useGetOrderList";
+import Loading from "../components/animations/loading";
 
 function OrderListScreen({ navigation, route }: { navigation: NavigationProp<ParamListBase>, route: RouteProp<ParamListBase> }) {
     //redux
@@ -35,17 +36,21 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={GlobalStyles.scrollContainer}>
+                        {loading ? (
+                            <Loading style={{width: 200, height: 200}}/>
+                        ) : (
+                            orderList.map((order, index) => (
 
-                    {orderList.map((order, index) => (
-
-                        <OrderItem
-                            key={order.id}
-                            data={order}
-                            navigation={navigation}
-                            route={route}
-                            mode='briefMode'
-                        />
-                    ))}
+                                <OrderItem
+                                    key={order.id}
+                                    data={order}
+                                    navigation={navigation}
+                                    route={route}
+                                    mode='briefMode'
+                                />
+                            ))
+                        )}
+                    
 
                 </ScrollView>
             </LinearGradient>

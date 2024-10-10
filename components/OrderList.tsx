@@ -64,7 +64,10 @@ function OrderItem({ data, navigation, route, mode = 'briefMode' }: OrderListPro
                     <View style={OrderListStyles.orderItem}>
                         {/* 상품이미지 */}
                         <View style={OrderListStyles.imageContainer}>
-                            <Image source={{ uri: product.product.Main_image }} style={styles.OrderProductImage} />
+                            {product.product.Main_image && (
+                                <Image source={{ uri: product.product.Main_image }} style={styles.OrderProductImage} />
+                            )}
+
                         </View>
 
                         {/* 상품명 */}
