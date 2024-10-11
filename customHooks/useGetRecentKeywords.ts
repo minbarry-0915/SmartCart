@@ -29,7 +29,7 @@ function useGetRecentKeyword() {
             setLoading(false);
             console.log('Successfully fetched recent keywords');
         }
-    }, []);
+    }, [userId]);
 
     return {
         keywordArray,

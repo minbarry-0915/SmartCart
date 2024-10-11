@@ -54,7 +54,6 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
     }
   };
 
-
   const deleteAllKeyword = async () => {
     // UI 상태를 먼저 업데이트하여 모든 키워드를 삭제한 것으로 설정
     const previousKeywords = [...keywordArray]; // 현재 키워드를 저장하여 오류 시 복구 가능

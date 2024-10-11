@@ -238,6 +238,55 @@ app.delete('/api/cart', async (req, res) => {
     }
 });
 
+app.post('/api/cart/addProduct', async (req, res) => {
+    const { Userid, Product_id, Quantity } = req.body;
+
+    // 필수 매개변수가 없을 때 에러 처리
+    if (!Userid || !Product_id || !Quantity)
+        return res.status(400).json({ message: 'Missing argument.' });
+
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+        // 해당 Userid로 Cart_id 찾기
+        const [cartRows] = await connection.query("SELECT Cart_id FROM Cart2 WHERE User_id = ?", [Userid]);
+
+        let Cart_id;
+
+        if (cartRows.length === 0) {
+            // 해당 Userid로 Cart가 없으면 새로운 Cart 생성
+            console.log('Cannot find Cart_id from Userid, Generating new Cart_id...');
+            const [result] = await connection.query('INSERT INTO Cart2 (User_id) VALUES (?)', [Userid]);
+            Cart_id = result.insertId; // 새로 생성된 Cart_id 가져오기
+        } else {
+            // Cart가 있으면 Cart_id 가져오기
+            Cart_id = cartRows[0].Cart_id;
+        }
+
+        // Cart_Item에 제품 추가 또는 기존 제품의 수량 증가
+        await connection.query(
+            "INSERT INTO Cart_Item (Cart_id, Product_id, Quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Quantity = Quantity + ?",
+            [Cart_id, Product_id, Quantity, Quantity]
+        );
+
+        // 트랜잭션 커밋
+        await connection.commit();
+
+        console.log('Update Done.');
+        res.status(200).json({ message: 'Product added/updated in cart successfully.' });
+
+    } catch (error) {
+        // 에러 발생 시 트랜잭션 롤백
+        await connection.rollback();
+        console.error('Error adding product to cart: ', error);
+        res.status(500).json({ message: 'Failed to add product to cart.' });
+    } finally {
+        // 연결 해제
+        connection.release();
+    }
+});
+
 
 // 제품 세부정보 조회 API -- 연결 완
 app.get('/api/products/:Product_id', async (req, res) => {
@@ -382,7 +431,7 @@ app.get('/api/request_verification/id/:Email', async (req, res) => {
         const [rows] = await db.query('SELECT Userid, Email FROM User3 WHERE Email = ?', [Email]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ok: false, message: '이메일을 찾을 수 없습니다.' });
+            return res.status(404).json({ ok: false, message: '이메일을 찾을 수 없습니다.' });
         }
 
         // 인증 코드 생성
@@ -436,7 +485,7 @@ app.post('/api/verify_code/id', async (req, res) => {
         }
 
         if (savedCode.code !== Code) {
-            return res.status(400).json({ok: false, message: '잘못된 인증 코드입니다.' });
+            return res.status(400).json({ ok: false, message: '잘못된 인증 코드입니다.' });
         }
 
         const [rows] = await db.query('SELECT Userid FROM User3 WHERE Email = ?', [Email]);
@@ -512,8 +561,8 @@ app.post('/api/verify_code/password', async (req, res) => {
     const { Userid, Code } = req.body;
 
     try {
-        const savedCode = verificationCodes[Userid]; 
-        
+        const savedCode = verificationCodes[Userid];
+
         if (!savedCode || savedCode.expires < Date.now()) {
             return res.status(400).json({ ok: false, message: '인증 코드가 유효하지 않거나 만료되었습니다.' });
         }
@@ -532,7 +581,7 @@ app.post('/api/verify_code/password', async (req, res) => {
         delete verificationCodes[Userid];
 
         const user = rows[0];
-        res.status(200).json({ok: true, password: user.Password });
+        res.status(200).json({ ok: true, password: user.Password });
     } catch (err) {
         console.error('데이터베이스 오류:', err);
         res.status(500).json({ ok: false, message: '서버 오류가 발생했습니다.' });
@@ -610,7 +659,7 @@ app.patch('/api/user/:Userid', async (req, res) => {
 // 주문 목록 조회 API -- 연결 완
 app.get('/api/orders/:userid', async (req, res) => {
     const { userid } = req.params;
-    
+
     try {
         const [orders] = await db.query(`
             SELECT 
@@ -631,7 +680,7 @@ app.get('/api/orders/:userid', async (req, res) => {
         }
 
         const orderList = [];
-        
+
         for (const order of orders) {
             const [orderItems] = await db.query(`
                 SELECT 
@@ -799,7 +848,7 @@ app.post('/recommend', (req, res) => {
 
         // Python 스크립트 결과를 응답으로 반환
         console.log(`Python Output: ${stdout}`);
-        const recommendationResult = JSON.parse(stdout); 
+        const recommendationResult = JSON.parse(stdout);
         res.json(recommendationResult);
     });
 });

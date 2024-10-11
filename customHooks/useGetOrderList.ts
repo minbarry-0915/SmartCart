@@ -30,7 +30,7 @@ function useGetOrderList() {
             console.log('Fetch Done.');
             setLoading(false);
         }
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         getOrderList();
