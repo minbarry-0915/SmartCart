@@ -250,14 +250,14 @@ app.post('/api/cart/addProduct', async (req, res) => {
 
     try {
         // 해당 Userid로 Cart_id 찾기
-        const [cartRows] = await connection.query("SELECT Cart_id FROM Cart2 WHERE User_id = ?", [Userid]);
+        const [cartRows] = await connection.query("SELECT Cart_id FROM Cart2 WHERE Userid = ?", [Userid]);
 
         let Cart_id;
 
         if (cartRows.length === 0) {
             // 해당 Userid로 Cart가 없으면 새로운 Cart 생성
             console.log('Cannot find Cart_id from Userid, Generating new Cart_id...');
-            const [result] = await connection.query('INSERT INTO Cart2 (User_id) VALUES (?)', [Userid]);
+            const [result] = await connection.query('INSERT INTO Cart2 (Userid) VALUES (?)', [Userid]);
             Cart_id = result.insertId; // 새로 생성된 Cart_id 가져오기
         } else {
             // Cart가 있으면 Cart_id 가져오기
