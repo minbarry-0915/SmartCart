@@ -32,6 +32,7 @@ const TopNavigator = ({
     const [keyword, setKeyword] = useState<string>('');
     const { userId } = useSelector((state: RootState) => state.auth);
     const { postSearchKeyword } = usePostSearchKeyword();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onBackButton = () => {
         navigation.goBack();
@@ -50,16 +51,19 @@ const TopNavigator = ({
     }
 
     const onSearchResultButton = async () => {
-        const result = await postSearchKeyword(keyword);
+        if (isSubmitting) return; // 중복 클릭 방지
+        setIsSubmitting(true);
         navigation.navigate('SearchResult', { resultKeyword: keyword });
+        const result = await postSearchKeyword(keyword);
+        setIsSubmitting(false); // API 완료 후 다시 활성화
     };
 
-    useEffect(()=>{
-        const unsubscribe = navigation.addListener('focus',()=>{
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
             setKeyword('');
         })
         return unsubscribe;
-    },[navigation]);
+    }, [navigation]);
 
     // 아이콘을 선택하기 위한 조건문
     const BackIcon = mode === "black" ? BackWhiteIcon : BackBlackIcon;

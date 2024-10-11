@@ -1,5 +1,5 @@
 import { NavigationProp, ParamListBase, useFocusEffect } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +23,7 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   const { keywordArray, loading, error, getRecentKeyword, setKeywordArray } = useGetRecentKeyword();
   const { deleteSearchKeyword } = useDeleteSearchKeyword();
   const { postSearchKeyword } = usePostSearchKeyword();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     console.log("loginStatus:", isLoggedIn);
@@ -78,14 +79,15 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   };
 
   const onRecentKeywordNode = async (keywordName: string) => {
-    console.log('Button event occured');
+    if (isSubmitting) return; // 중복 클릭 방지
+    setIsSubmitting(true);
     navigation.navigate('SearchResult', { resultKeyword: keywordName });
 
     const result = await postSearchKeyword(keywordName).catch((error) => {
       console.error('Error posting search keyword:', error);
       return null;
     });
-    console.log('After API call'); // API 호출 후 로그
+    setIsSubmitting(false); // API 완료 후 다시 활성화
   };
 
 
@@ -137,6 +139,7 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
                     <TouchableOpacity
                       activeOpacity={1}
                       onPress={() => onRecentKeywordNode(keyword.Keyword_name)}
+                      disabled={isSubmitting}
                     >
                       <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Keyword_name}</Text>
                     </TouchableOpacity>
