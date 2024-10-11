@@ -85,7 +85,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-
 // 회원가입 API ---- 연결 완
 app.post('/api/register', async (req, res) => {
     const { Userid, Name, Password, Birthdate, Gender, Phone_num, Email } = req.body;
@@ -113,7 +112,6 @@ app.post('/api/register', async (req, res) => {
 // app.get('/api/login', (req, res) => {
 //     res.send('This route only supports POST requests');
 // });
-
 
 //카트 아이템 조회 API --- 연결 완
 app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
@@ -743,12 +741,6 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
             WHERE p.Product_name LIKE ? OR p.Description LIKE ?
         `, [`%${keyword}%`, `%${keyword}%`]);
 
-        // 검색어를 Search_History 테이블에 추가
-        await db.query(`
-            INSERT INTO Search_History (Keyword_name, Userid)
-            VALUES (?, ?)
-        `, [keyword, userid]);
-
         // 응답 포맷
         res.json(products);
     } catch (error) {
@@ -756,45 +748,6 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch search results' });
     }
 });
-
-
-// 상품 스캔 결과 반환 API -- 프론트 처리 예정
-/* 바코드 스캔에 따라 상품 정보 업데이트하거나 새로운 상품을 추가 */
-
-// let cartItems = []; // 이 배열에 장바구니 아이템들을 저장 
-// app.post('/api/products/scan', (req, res) => {
-//     const { barcode } = req.body;
-
-//     if (!barcode) {
-//         return res.status(400).json({ error: 'Barcode is required.' });
-//     }
-
-//     // 기존 장바구니에서 상품 찾기
-//     const foundItem = cartItems.find(item => item.product.Product_id.toString() === barcode);
-
-//     if (foundItem) {
-//         // 제품이 있으면 수량 업데이트
-//         foundItem.quantity += 1;
-//         return res.status(200).json({ message: 'Quantity updated', cartItems });
-//     } else {
-//         // 제품이 없으면 새로운 상품 추가
-//         const newItem = {
-//             product: {
-//                 Product_id: 530244373975,
-//                 Product_name: "Product 12345678",
-//                 Price: 150,
-//                 Discount: 5,
-//                 Description: "Description of Product 5",
-//                 Category: "Category 5",
-//             },
-//             quantity: 1,
-//         };
-
-//         cartItems.push(newItem);
-//         return res.status(201).json({ message: 'New item added', cartItems });
-//     }
-// });
-
 
 
 /*
