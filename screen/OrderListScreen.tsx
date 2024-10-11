@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import {  ScrollView, View } from "react-native";
+import {  ScrollView, Text, View } from "react-native";
 import OrderItem from "../components/OrderList";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -9,11 +9,13 @@ import LinearGradient from "react-native-linear-gradient";
 import GlobalStyles from "../styles/GlobalStyles";
 import useGetOrderList from "../customHooks/useGetOrderList";
 import Loading from "../components/animations/loading";
+import SearchResultScreen from "./SearchResultScreen";
+import SearchStyles from "../styles/SearchScreenStyles";
 
 function OrderListScreen({ navigation, route }: { navigation: NavigationProp<ParamListBase>, route: RouteProp<ParamListBase> }) {
     //redux
     const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
-    const { loading, orderList } = useGetOrderList();
+    const { loading, error, orderList=[] } = useGetOrderList();
 
     useEffect(() => {
         console.log('loginStatus:', isLoggedIn);
@@ -38,7 +40,7 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                     contentContainerStyle={GlobalStyles.scrollContainer}>
                         {loading ? (
                             <Loading style={{width: 200, height: 200}}/>
-                        ) : (
+                        ) : orderList.length !== 0 ? (
                             orderList.map((order, index) => (
 
                                 <OrderItem
@@ -49,6 +51,10 @@ function OrderListScreen({ navigation, route }: { navigation: NavigationProp<Par
                                     mode='briefMode'
                                 />
                             ))
+                        ):(
+                            <View style={[SearchStyles.content,{alignItems: 'center'}]}>
+                                <Text style={[GlobalStyles.semiBoldText, { color: 'black', fontSize: 24, marginBottom: 24 }]}>{error}</Text>
+                            </View>
                         )}
                     
 
