@@ -9,12 +9,13 @@ from dotenv import load_dotenv
 # .env 파일의 환경 변수 로드
 load_dotenv()
 
+
 # 환경 변수 사용
-DB_HOST = os.getenv('DB_HOST')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_PORT = os.getenv('DB_PORT')
-DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('MYSQL_HOST')
+DB_USER = os.getenv('MYSQL_USERNAME')
+DB_PASSWORD = os.getenv('MYSQL_PASSWORD')
+DB_PORT = os.getenv('MYSQL_PORT')
+DB_NAME = os.getenv('MYSQL_DATABASE')
 
 # MariaDB 연결 설정
 conn = pymysql.connect(
