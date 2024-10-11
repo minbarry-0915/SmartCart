@@ -627,7 +627,7 @@ app.get('/api/orders/:userid', async (req, res) => {
         `, [userid]);
 
         if (orders.length === 0) {
-            return res.status(404).json({ message: 'No orders found for this user.' });
+            return res.status(404).json({ message: '주문내역이 존재하지 않습니다.' });
         }
 
         const orderList = [];
@@ -668,7 +668,7 @@ app.get('/api/orders/:userid', async (req, res) => {
         return res.json({ orders: orderList });
     } catch (error) {
         console.error('Error fetching order list:', error);
-        res.status(500).json({ error: 'Failed to fetch order list' });
+        res.status(500).json({ message: '네트워크 에러' });
     }
 });
 
