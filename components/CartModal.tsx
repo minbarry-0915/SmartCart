@@ -9,22 +9,26 @@ import RecommendModal from "./RecommendModal";
 import isDiscount from "../customHooks/isDiscount";
 import { Product } from "../types";
 import discountCalculate from "../customHooks/discountCalculate";
+import useAddProduct from "../customHooks/useAddProduct";
+import Loading from "./animations/loading";
 
 interface Prop {
     modalVisible: boolean,
     toggleAddCartModal: () => void,
+    productId: string,
     price: number,
     discount: number | undefined,
     navigation: NavigationProp<ParamListBase>
 }
 
-function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigation }: Prop) {
+function CartModal({ modalVisible, toggleAddCartModal, price, productId, discount, navigation }: Prop) {
     const [visible, setVisible] = useState(modalVisible);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [count, setCount] = useState<number>(1);
 
     const [initVisible, setInitVisible] = useState<boolean>(true);
     const [resultVisible, setResultVisible] = useState<boolean>(false);
+    const { loading, addProduct } = useAddProduct();
 
     const slideAnim = useRef(new Animated.Value(500)).current;
     const resSlideAnim = useRef(new Animated.Value(500)).current;
@@ -85,15 +89,18 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
     const decreaseCount = () => count > 1 && setCount(count - 1);
 
     // 장바구니 담기 핸들러
-    const addCartHandler = () => {
-        animateModal(slideAnim, 500, () => {
-            setInitVisible(false);
-            setResultVisible(true);
-            //animateModal(resSlideAnim, 500);
-        });
+    const addCartHandler = async () => {
+        const result = await addProduct(productId, count);
+        if (result) {
+            animateModal(slideAnim, 500, () => {
+                setInitVisible(false);
+                setResultVisible(true);
+                //animateModal(resSlideAnim, 500);
+            });
+        }
     };
 
-    const renderPriceText = () => {  
+    const renderPriceText = () => {
         return (
             <>
                 {!discount && price ? (
@@ -101,7 +108,7 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
                         {formatNumber(totalPrice)} 원
                     </Text>
                 ) : (
-                    <View style={{flexDirection: 'column'}}>
+                    <View style={{ flexDirection: 'column' }}>
                         <Text
                             numberOfLines={1}
                             style={[
@@ -117,6 +124,54 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
 
                 )}
 
+            </>
+        )
+    }
+
+    const renderAddCartModal = () => {
+        return (
+            <>
+                <TouchableOpacity
+                    onPress={toggleAddCartModal}
+                    activeOpacity={0.7}
+                    style={{ marginBottom: 24, }}
+                >
+                    <UpwardIcon width={24} height={24} style={{ transform: [{ rotate: '180deg' }] }} />
+                </TouchableOpacity>
+
+                <View style={LocationModalStyles.item}>
+                    {renderPriceText()}
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPressIn={decreaseCount}
+                        >
+                            <MinusIcon width={40} height={40} />
+                        </TouchableOpacity>
+                        <Text
+                            style={[GlobalStyles.mediumText, { fontSize: 24, width: 32, textAlign: 'center' }]}
+                        >
+                            {formatNumber(count)}
+                        </Text>
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPressIn={increaseCount}
+                        >
+                            <PlusIcon width={40} height={40} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={[LocationModalStyles.item, { justifyContent: 'flex-end' }]}>
+                    <TouchableOpacity
+                        onPress={addCartHandler}
+                        activeOpacity={0.8}
+                        style={LocationModalStyles.button}
+                    >
+                        <Text style={GlobalStyles.semiBoldText}>
+                            장바구니 담기
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </>
         )
     }
@@ -139,47 +194,12 @@ function CartModal({ modalVisible, toggleAddCartModal, price, discount, navigati
                         transform: [{ translateY: slideAnim }]
                     }
                 ]}>
-                    <TouchableOpacity
-                        onPress={toggleAddCartModal}
-                        activeOpacity={0.7}
-                        style={{ marginBottom: 24, }}
-                    >
-                        <UpwardIcon width={24} height={24} style={{ transform: [{ rotate: '180deg' }] }} />
-                    </TouchableOpacity>
-
-                    <View style={LocationModalStyles.item}>
-                        {renderPriceText()}
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <TouchableOpacity
-                                activeOpacity={0.8}
-                                onPressIn={decreaseCount}
-                            >
-                                <MinusIcon width={40} height={40} />
-                            </TouchableOpacity>
-                            <Text
-                                style={[GlobalStyles.mediumText, { fontSize: 24, width: 32, textAlign: 'center' }]}
-                            >
-                                {formatNumber(count)}
-                            </Text>
-                            <TouchableOpacity
-                                activeOpacity={0.8}
-                                onPressIn={increaseCount}
-                            >
-                                <PlusIcon width={40} height={40} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={[LocationModalStyles.item, { justifyContent: 'flex-end' }]}>
-                        <TouchableOpacity
-                            onPress={addCartHandler}
-                            activeOpacity={0.8}
-                            style={LocationModalStyles.button}
-                        >
-                            <Text style={GlobalStyles.semiBoldText}>
-                                장바구니 담기
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    {loading ? (
+                        <Loading style={{width: 150, height: 150}}/>
+                    ) : (
+                        renderAddCartModal()
+                    )}
+                    
                 </Animated.View>)}
 
                 {resultVisible && (

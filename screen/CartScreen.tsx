@@ -33,10 +33,11 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
     grandCount,
     grandPrice,
     setResponses,
+    getCartList
   } = useGetCartList();
 
   const { deleteCartItem } = useDeleteCartItem();
-
+  
   const deleteNodeButton = (index: number, productId: string) => {
     // 배열 복사 및 UI 업데이트
     const newResponses = [...responses];
@@ -126,10 +127,15 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
     }
   }, [responses]); // responses가 업데이트될 때 스크롤 이동
 
-
+  // 화면 돌아올때 마다 가져올 수 있게
   useEffect(() => {
-
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getCartList();
+    })
+    return () => {
+      unsubscribe();
+    }
+  }, [navigation]);
 
   return (
     <ScrollView

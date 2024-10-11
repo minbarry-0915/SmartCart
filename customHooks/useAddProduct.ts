@@ -14,7 +14,7 @@ function useAddProduct(){
         try{
             console.log('Trying to add product on cart...');
             setLoading(true);
-            const jsonResponse = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/addProduct/`, {
+            const jsonResponse = await axios.post(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/addProduct    `, {
                 Userid: userId,
                 Product_id: productId,
                 Quantity: quantity

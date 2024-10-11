@@ -80,7 +80,7 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
   const onRecentKeywordNode = async (keywordName: string) => {
     console.log('Button event occured');
     navigation.navigate('SearchResult', { resultKeyword: keywordName });
-      
+
     const result = await postSearchKeyword(keywordName).catch((error) => {
       console.error('Error posting search keyword:', error);
       return null;
@@ -130,13 +130,17 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
             ) : (
               <View style={[SearchStyles.content, { flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-start' }]}>
                 {keywordArray.map((keyword, index) => (
-                  <TouchableOpacity
+                  <View
                     key={index}
-                    activeOpacity={0.8}
                     style={SearchStyles.keywordNode}
-                    onPress={() => onRecentKeywordNode(keyword.Keyword_name)}
                   >
-                    <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Keyword_name}</Text>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => onRecentKeywordNode(keyword.Keyword_name)}
+                    >
+                      <Text style={[GlobalStyles.mediumText, { fontSize: 16, lineHeight: 24, marginRight: 8 }]}>{keyword.Keyword_name}</Text>
+                    </TouchableOpacity>
+                    {/* delete */}
                     <TouchableOpacity
                       activeOpacity={0.8}
                       onPress={(e) => {
@@ -145,15 +149,12 @@ function SearchScreen({ navigation }: { navigation: NavigationProp<ParamListBase
                       }}>
                       <CancelIcon width={20} height={20} />
                     </TouchableOpacity>
-                  </TouchableOpacity>
+                  </View>
                 ))}
               </View>
             )}
-
-
           </ScrollView>
         </LinearGradient>
-
       ) : (
         <View style={{ flex: 1 }}>
           <Text>Login again</Text>

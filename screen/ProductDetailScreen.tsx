@@ -125,7 +125,13 @@ function ProductDetailScreen({ route, navigation }: { route: RouteProp<ParamList
             toggleLocationModal={toggleLocationModal} />
             {/* addCartModal */}
             {product &&
-                <CartModal modalVisible={addCartModalVisible} toggleAddCartModal={toggleAddCartModal} price={product.Price} navigation={navigation} discount={product?.Discount} />
+                <CartModal 
+                modalVisible={addCartModalVisible} 
+                toggleAddCartModal={toggleAddCartModal} 
+                productId={product.Product_id}
+                price={product.Price} 
+                navigation={navigation} 
+                discount={product?.Discount} />
             }
 
         </View>

@@ -74,7 +74,7 @@ function App() {
           }} />
           <Stack.Screen name="Join" component={JoinScreen} options={{ headerShown: false, animation: 'fade' }} />
           <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false, animation: 'none' }} />
-          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false, animation: 'none' }} />
+          <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false, animation: 'fade' }} />
           <Stack.Screen name="SearchResult" component={SearchResultScreen} options={{ headerShown: false, animation: 'none' }} />
           <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, animation: 'none' }} />
           <Stack.Screen name="MyPage" component={MyPageScreen} options={{ headerShown: false, animation: 'fade' }} />

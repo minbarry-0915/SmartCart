@@ -238,6 +238,7 @@ app.delete('/api/cart', async (req, res) => {
     }
 });
 
+// 카트 모달에서 아이템 추가 API --- 연결 완
 app.post('/api/cart/addProduct', async (req, res) => {
     const { Userid, Product_id, Quantity } = req.body;
 
