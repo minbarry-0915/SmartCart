@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { exec } = require('child_process');
 
 dotenv.config();
 
@@ -746,7 +747,7 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 
 
 
-
+/*
 // 추천 제품 목록 반환 API -- 진행 중
 app.get('/api/recommend-products', async (req, res) => {
     try {
@@ -779,6 +780,28 @@ app.get('/api/recommend-products', async (req, res) => {
         console.error('Failed to fetch recommended products:', error);
         res.status(500).json({ message: 'Failed to fetch recommended products' });
     }
+});
+*/
+
+// 추천 제품 목록 반환 API
+app.post('/recommend', (req, res) => {
+    console.log('Recommendation request received.');
+
+    // Python 스크립트 실행
+    exec('python ../ai/list.py', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing Python script: ${error.message}`);
+            return res.status(500).json({ error: 'Failed to run recommendation model' });
+        }
+        if (stderr) {
+            console.error(`Python error: ${stderr}`);
+        }
+
+        // Python 스크립트 결과를 응답으로 반환
+        console.log(`Python Output: ${stdout}`);
+        const recommendationResult = JSON.parse(stdout); 
+        res.json(recommendationResult);
+    });
 });
 
 
