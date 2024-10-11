@@ -5,42 +5,58 @@ import pymysql
 from sklearn.preprocessing import LabelEncoder
 import os
 from dotenv import load_dotenv
+import sys
+import io
+from sqlalchemy import create_engine  # SQLAlchemy에서 create_engine을 임포트
 
 # .env 파일의 환경 변수 로드
 load_dotenv()
 
 # 환경 변수 사용
-DB_HOST = os.getenv('DB_HOST')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_PORT = os.getenv('DB_PORT')
-DB_NAME = os.getenv('DB_NAME')
+MYSQL_HOST = os.getenv('MYSQL_HOST')
+MYSQL_USERNAME = os.getenv('MYSQL_USERNAME')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
+MYSQL_PORT = os.getenv('MYSQL_PORT')
+MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 
-# MariaDB 연결 설정
-conn = pymysql.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    password=DB_PASSWORD,
-    port=int(DB_PORT),
-    database=DB_NAME,
-    charset='utf8'
-)
+# SQLAlchemy를 사용하여 MariaDB 연결 설정
+db_url = f"mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+engine = create_engine(db_url)
 
-# 저장된 스태킹 앙상블 모델 로드
-with open('stacking_model_optimized.pkl', 'rb') as f:
+
+# 파이썬 기본 출력 인코딩 설정
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
+
+# .env 파일의 환경 변수 로드
+load_dotenv()
+
+# 환경 변수 사용
+MYSQL_HOST = os.getenv('MYSQL_HOST')
+MYSQL_USERNAME = os.getenv('MYSQL_USERNAME')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
+MYSQL_PORT = os.getenv('MYSQL_PORT')
+MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+
+# SQLAlchemy를 사용하여 MariaDB 연결 설정
+db_url = f"mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+engine = create_engine(db_url)
+
+# ai 폴더 내의 stacking_model_optimized.pkl 파일 로드
+model_path = os.path.join(os.path.dirname(__file__), 'stacking_model_optimized.pkl')
+with open(model_path, 'rb') as f:
     stacking_model = pickle.load(f)
 
 # 저장된 Word2Vec 모델 로드
-with open('w2v_model.pkl', 'rb') as f:
+w2v_model_path = os.path.join(os.path.dirname(__file__), 'w2v_model.pkl')
+with open(w2v_model_path, 'rb') as f:
     w2v_model = pickle.load(f)
 
-# 각 테이블 로드
-users = pd.read_sql("SELECT * FROM User3", conn)
-products = pd.read_sql("SELECT * FROM Product3", conn)
-orders = pd.read_sql("SELECT * FROM Orders", conn)
-order_items = pd.read_sql("SELECT * FROM Order_Item", conn)
-
-conn.close()
+# 각 테이블 로드 (SQLAlchemy 엔진을 사용)
+users = pd.read_sql("SELECT * FROM User3", engine)
+products = pd.read_sql("SELECT * FROM Product3", engine)
+orders = pd.read_sql("SELECT * FROM Orders", engine)
+order_items = pd.read_sql("SELECT * FROM Order_Item", engine)
 
 # 데이터 타입을 문자열로 변환하여 병합 오류 방지
 users['Userid'] = users['Userid'].astype(str)
@@ -57,9 +73,6 @@ users['Gender'] = label_encoder.fit_transform(users['Gender'])  # Female -> 0, M
 purchase_history = pd.merge(order_items, orders, on='Order_id', how='left')
 purchase_history = pd.merge(purchase_history, users, on='Userid', how='left')
 purchase_history = pd.merge(purchase_history, products, on='Product_id', how='left')
-
-# 병합된 데이터 확인
-#print(purchase_history.columns)
 
 # 상품 간의 유사도를 구하기 위해 각 상품의 벡터를 얻음
 def get_product_vector(product_id):
@@ -98,20 +111,9 @@ def recommend_for_user(user_id, top_n=10):
 
     category_info = products[products['Product_id'].isin(products_to_score)][category_columns].values
 
-    # 각 배열의 크기 확인
-    print(f"Product vectors shape: {product_vectors.shape}")
-    print(f"User info shape: {user_info.shape}")
-    print(f"Product info shape: {product_info.shape}")
-    print(f"Category info shape: {category_info.shape}")
-
     # 배열이 비어있지 않을 때만 결합
     if product_vectors.size > 0 and user_info.size > 0 and product_info.size > 0 and category_info.size > 0:
-        X_recommend = np.hstack([
-            product_vectors,
-            np.repeat(user_info, len(products_to_score), axis=0),
-            product_info,
-            category_info
-        ])
+        X_recommend = np.hstack([product_vectors, np.repeat(user_info, len(products_to_score), axis=0), product_info, category_info])
     else:
         print("Error: One or more arrays are empty.")
         return None
@@ -130,4 +132,6 @@ def recommend_for_user(user_id, top_n=10):
 # 예시: 특정 사용자에게 10개의 제품을 추천
 user_id = '123'  # 추천을 요청할 Userid
 recommendations_json = recommend_for_user(user_id)
-print(f"User {user_id}의 추천 상품 (JSON 형식): {recommendations_json}")
+
+# Python 스크립트 실행 결과로 JSON만 출력
+print(recommendations_json)
