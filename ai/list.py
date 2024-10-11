@@ -9,21 +9,6 @@ import sys
 import io
 from sqlalchemy import create_engine  # SQLAlchemy에서 create_engine을 임포트
 
-# .env 파일의 환경 변수 로드
-load_dotenv()
-
-# 환경 변수 사용
-MYSQL_HOST = os.getenv('MYSQL_HOST')
-MYSQL_USERNAME = os.getenv('MYSQL_USERNAME')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
-MYSQL_PORT = os.getenv('MYSQL_PORT')
-MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
-
-# SQLAlchemy를 사용하여 MariaDB 연결 설정
-db_url = f"mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
-engine = create_engine(db_url)
-
-
 # 파이썬 기본 출력 인코딩 설정
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
