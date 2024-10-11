@@ -22,7 +22,7 @@ function usePostSearchKeyword() {
             });
             return true;
         } catch (error) {
-            console.error("Fail to update keywords:", error);
+            console.log("Fail to update keywords:", error);
             return false;
         } finally {
             setLoading(false);

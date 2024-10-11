@@ -28,7 +28,7 @@ const usePatchUserInfo = () => {
             console.log('Patch User Info Successfully');
             return true;
         } catch (err: any) {
-            console.error('Failed to patch userinfo: ',err);
+            console.log('Failed to patch userinfo: ',err);
             return false;
         } finally {
             console.log('Update Done.');

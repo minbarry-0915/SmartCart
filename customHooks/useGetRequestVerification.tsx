@@ -69,11 +69,11 @@ function useGetRequestVerification() {
             return jsonResponse.data; // 응답 데이터를 반환
         } catch (err: any) {
             if(err.response){
-                console.error('Error while sending verification code:', err.response.data?.message);
+                console.log('Error while sending verification code:', err.response.data?.message);
                 setMessage(err.response.data?.message);
             }
             setError(err.response?.data?.message || '메일 전송에 실패하였습니다.');
-            console.error('Error while sending verification code:', err);
+            console.log('Error while sending verification code:', err);
         } finally {
             setLoading(false); // 로딩 상태 종료
         }

@@ -22,7 +22,7 @@ function useGetSearchResult(keyword: string) {
             const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/search/${keyword}/${userId}`);
             setProducts(jsonResponse.data);
         } catch (err: any) {
-            console.error('Fail to fetch search results', err);
+            console.log('Fail to fetch search results', err);
             setError(err);
             setProducts([]);
         } finally {

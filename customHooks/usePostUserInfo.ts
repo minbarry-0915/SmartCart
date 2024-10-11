@@ -34,7 +34,7 @@ function usePostUserInfo() {
 
         } catch (error: any) {
             setError(error);
-            console.error('Error posting user info:', error);
+            console.log('Error posting user info:', error);
             return false;  // 실패 시 false 반환
         } finally{
             setLoading(false);

@@ -42,7 +42,7 @@ function usePostUserVerify() {
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || err.message; // 서버 에러 메시지 활용
             setError(errorMessage);
-            console.error('Login Failed', err);
+            console.log('Login Failed', err);
             return { status: err.response?.status || 500, error: errorMessage }; // 실패 시 상태와 에러 메시지 반환
         } finally {
             setLoading(false);

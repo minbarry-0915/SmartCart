@@ -23,7 +23,7 @@ function useGetRecentKeyword() {
 
             setKeywordArray(jsonResponse.data);
         } catch (err: any) {
-            console.error('Failed to fetch recent keywords', err);
+            console.log('Failed to fetch recent keywords', err);
             setError(err.message || 'Unknown error occurred');
         } finally {
             setLoading(false);

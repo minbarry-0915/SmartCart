@@ -46,7 +46,7 @@ function useGetUserInfo() {
 
             setUserInfo(user);
         } catch (error) {
-            console.error('Error fetching user info:', error);
+            console.log('Error fetching user info:', error);
             setError('Failed to fetch user information.'); // 에러 메시지 설정
             // 로그아웃 처리 추가
             // if (axios.isAxiosError(error) && error.response?.status === 401) {

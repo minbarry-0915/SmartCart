@@ -51,7 +51,7 @@ function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatc
                 });
             } catch (error: any) {
                 setError(error);
-                console.error('Failed to get product info.',error);
+                console.log('Failed to get product info.',error);
             } finally {
                 console.log('Done.');
                 setLoading(false);

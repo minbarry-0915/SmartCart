@@ -90,7 +90,7 @@ function useGetRecommendProductList() {
             };
             setProducts(jsonResponse.data);
         } catch (error: any) {
-            console.error('Failed to Fetch: ', error);
+            console.log('Failed to Fetch: ', error);
             setError(error.message || 'Failed to fetch recommended products');
         } finally {
             console.log('Fetch Done.');

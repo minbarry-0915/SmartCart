@@ -39,6 +39,7 @@ function UserInfoModifyScreen({ navigation }: { navigation: NavigationProp<Param
             } else {
                 setCount(prevCount => prevCount + 1); // 잘못된 접근 시 카운트 증가
                 console.log('잘못된 접근입니다. 다시 시도하세요.');
+                setMessege('비밀번호를 입력해 주세요.');
             }
         }
     };
@@ -86,6 +87,7 @@ function UserInfoModifyScreen({ navigation }: { navigation: NavigationProp<Param
                                         value={password}
                                         onChangeText={setPassword}
                                         style={LoginStyles.textInput}
+                                        onFocus={()=>{setMessege('')}}
                                     />
                                 </View>
                                 {messege && (

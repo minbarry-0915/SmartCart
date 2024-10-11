@@ -17,7 +17,7 @@ function useGetLocation(Location_id: number){
             const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/locations/${Location_id}`);
             setLocationInfo(jsonResponse.data);
         }catch(err: any){
-            console.error('Fail to get Location Info: ', err);
+            console.log('Fail to get Location Info: ', err);
             setError(err);
         }finally{
             setLoading(false);

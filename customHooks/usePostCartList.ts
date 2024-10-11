@@ -37,7 +37,7 @@ function usePostCartList(responses: CartItem[], setResponses: React.Dispatch<Rea
 
             // console.log(jsonResponse.data);
         } catch (error) {
-            console.error("Fail to update cart list:", error);
+            console.log("Fail to update cart list:", error);
         } finally {
             setLoading(false);
             console.log("Posting cart list done.");

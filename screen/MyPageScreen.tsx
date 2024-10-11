@@ -208,7 +208,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                             style={[MyPageStyles.button, isLogoutPressed && { backgroundColor: '#FFE68C' }]}
                         >
                             <LogOutIcon width={24} height={24} />
-                            <Text style={[GlobalStyles.semiBoldText, { color: '#ED7272' }]}> 로그아웃</Text>
+                            <Text style={[GlobalStyles.semiBoldText, { color: '#E33434' }]}> 로그아웃</Text>
                         </TouchableOpacity>
                         
                     </ScrollView>

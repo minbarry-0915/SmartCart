@@ -1,6 +1,6 @@
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, useFocusEffect } from "@react-navigation/native";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { BackHandler, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./StyleSheet";
 import { useDispatch, useSelector } from "react-redux";
@@ -73,6 +73,22 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
             setMessege('비밀번호가 일치합니다.')
         }
     }, [newPassword, confirmNewPassword]); // 상태가 바뀔 때마다 color 업데이트
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                toggleWarningModal()
+                return true; // 이벤트가 소비되었음을 나타냄
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            };
+        }, [])
+    );
+
 
     const onCancelButton = () => {
         if (!changed) {

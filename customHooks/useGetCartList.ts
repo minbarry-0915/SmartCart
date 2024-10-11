@@ -48,7 +48,7 @@ function useGetCartList() {
             }
         } catch (error: any) {
             setError(error.message);
-            console.error(`Error fetching cart data: ${error}`);
+            console.log(`Error fetching cart data: ${error}`);
         } finally {
             setLoading(false);
         }
