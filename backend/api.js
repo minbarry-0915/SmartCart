@@ -8,6 +8,8 @@ const cors = require('cors');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 dotenv.config();
 
@@ -773,9 +775,7 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 
 
 // 추천 제품목록 반환 API
-const fs = require('fs');
-const path = require('path');
-const { exec } = require('child_process');
+
 
 app.post('/recommend', async (req, res) => {
     console.log('Recommendation request received.');
@@ -863,7 +863,7 @@ app.post('/recommend', async (req, res) => {
         console.log(`Python Output: ${pythonOutput}`);
         const recommendationResult = JSON.parse(pythonOutput);
         res.json(recommendationResult);
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to process recommendation request' });
