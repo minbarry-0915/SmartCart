@@ -116,7 +116,7 @@ app.post('/api/register', async (req, res) => {
 // });
 
 //카트 아이템 조회 API --- 연결 완
-app.get('/api/cart/:Userid', verifyApiKey, async (req, res) => {
+app.get('/api/cart/:Userid', async (req, res) => {
     const { Userid } = req.params;
 
     try {
