@@ -755,7 +755,7 @@ app.post('/recommend', (req, res) => {
     console.log('Recommendation request received.');
 
     // Python 스크립트 실행
-    exec('python ../ai/list.py', (error, stdout, stderr) => {
+    exec('python3 ../ai/list.py', (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing Python script: ${error.message}`);
             return res.status(500).json({ error: 'Failed to run recommendation model' });
