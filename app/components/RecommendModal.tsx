@@ -7,6 +7,8 @@ import useGetRecommendProductList from "../customHooks/useGetRecommendProductLis
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import MyPageStyles from "../styles/MypageScreenstyles";
 import formatNumber from "../customHooks/fomatNumber";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 interface Prop {
     modalVisible: boolean,
@@ -23,7 +25,7 @@ function RecommendModal({
  }: Prop) {
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [visible, setVisible] = useState<boolean>(false);
-    const { products } = useGetRecommendProductList(); //추천 상품리스트 가져오기
+    const { isLoggedIn, userId , recommendations: products } = useSelector((state: RootState) => state.auth);
 
     // 애니메이션 실행 함수
     const animateModal = (anim: Animated.Value, toValue: number, callback?: () => void) => {

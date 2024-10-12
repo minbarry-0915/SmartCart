@@ -22,6 +22,7 @@ interface Prop {
 }
 
 function CartModal({ modalVisible, toggleAddCartModal, price, productId, discount, navigation }: Prop) {
+    
     const [visible, setVisible] = useState(modalVisible);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [count, setCount] = useState<number>(1);

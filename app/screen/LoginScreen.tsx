@@ -9,6 +9,7 @@ import LoginStyles from "../styles/LoginScreenStyles";
 import usePostUserVerify from "../customHooks/usePostUserVerify";
 import Loading from "../components/animations/loading";
 import AnimationStyles from "../styles/AnimationStyles";
+import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
 //
 function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) { //navigation의 타입을 정의를 해주어야함 
   //redux
@@ -20,6 +21,7 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
   const [password, setPW] = useState('');
   const { loading, error, postUserVerify } = usePostUserVerify();
   const [errorMessege, setErrorMessege] = useState('');
+  const { loading: recommendLoading, error: fetchError } = useGetRecommendProductList();
 
   const onLoginButton = async () => {
     const { status, error } = await postUserVerify({ userId: id, password });
@@ -27,6 +29,15 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
     // 로그인 성공 여부 확인
     if (status === 200) {
       dispatch(login(id));
+      // 추천 제품 가져오기
+
+
+      // 추천 제품 로딩 또는 오류 처리
+      if (!recommendLoading && fetchError) {
+        console.error('추천 제품 가져오기 실패:', fetchError);
+        setErrorMessege('추천 제품을 가져오는 데 실패했습니다.');
+      }
+
       navigation.navigate('Cart');
     } else if (status == 401) {
       console.error('Login Failed:', error); // 에러 메시지 출력
@@ -61,7 +72,7 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거합니다.
     return unsubscribe;
-}, [navigation]);
+  }, [navigation]);
 
   const RenderLoading = () => {
     return (
@@ -109,7 +120,7 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
           </View>
           {errorMessege && (
             <View style={LoginStyles.content}>
-              <Text style={[GlobalStyles.mediumText,{color: '#E33434'}]}>{errorMessege}</Text>
+              <Text style={[GlobalStyles.mediumText, { color: '#E33434' }]}>{errorMessege}</Text>
             </View>
           )}
           <View style={LoginStyles.content}>

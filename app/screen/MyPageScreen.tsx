@@ -25,7 +25,7 @@ interface User {
 
 
 function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
-    const { isLoggedIn, userId } = useSelector((state: RootState) => state.auth);
+    const { isLoggedIn, userId , recommendations: products } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -43,8 +43,6 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
             setUser(jsonResponse);
         }
     }
-
-    const {loading, error, products} = useGetRecommendProductList();
 
     //버튼 핸들러
     const onProductInfo = (id: string) => {
