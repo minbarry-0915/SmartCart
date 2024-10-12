@@ -1,0 +1,10 @@
+pandas
+numpy
+pymysql
+python-dotenv
+sqlalchemy
+gensim
+scikit-learn
+matplotlib
+seaborn
+xgboost

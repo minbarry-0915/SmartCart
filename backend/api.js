@@ -750,25 +750,124 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 });
 
 
+// // 추천 제품목록 반환 API
+// app.post('/recommend', (req, res) => {
+//     console.log('Recommendation request received.');
+
+//     // Python 스크립트 실행
+//     exec('python3 ../ai/list.py', (error, stdout, stderr) => {
+//         if (error) {
+//             console.error(`Error executing Python script: ${error.message}`);
+//             return res.status(500).json({ error: 'Failed to run recommendation model' });
+//         }
+//         if (stderr) {
+//             console.error(`Python error: ${stderr}`);
+//         }
+
+//         // Python 스크립트 결과를 응답으로 반환
+//         console.log(`Python Output: ${stdout}`);
+//         const recommendationResult = JSON.parse(stdout);
+//         res.json(recommendationResult);
+//     });
+// });
+
+
 // 추천 제품목록 반환 API
-app.post('/recommend', (req, res) => {
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+
+app.post('/recommend', async (req, res) => {
     console.log('Recommendation request received.');
 
-    // Python 스크립트 실행
-    exec('python3 ../ai/list.py', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing Python script: ${error.message}`);
-            return res.status(500).json({ error: 'Failed to run recommendation model' });
-        }
-        if (stderr) {
-            console.error(`Python error: ${stderr}`);
+    // requirements.txt 경로 설정
+    const requirementsPath = path.join(__dirname, '../ai/requirements.txt');
+
+    // requirements.txt 파일에서 패키지 목록 읽기
+    const readRequirements = () => {
+        return new Promise((resolve, reject) => {
+            fs.readFile(requirementsPath, 'utf8', (error, data) => {
+                if (error) {
+                    return reject(`Error reading requirements file: ${error.message}`);
+                }
+                // 각 줄을 패키지 이름으로 변환하고, 빈 줄 및 주석 제거
+                const packages = data
+                    .split('\n')
+                    .map(pkg => pkg.trim())
+                    .filter(pkg => pkg && !pkg.startsWith('#'));
+                resolve(packages);
+            });
+        });
+    };
+
+    // 패키지가 설치되어 있는지 확인
+    const isPackageInstalled = async (packageName) => {
+        return new Promise((resolve, reject) => {
+            exec('pip3 freeze', (error, stdout) => {
+                if (error) {
+                    return reject(`Error checking installed packages: ${error.message}`);
+                }
+                resolve(stdout.includes(packageName));
+            });
+        });
+    };
+
+    // 패키지 설치 함수
+    const installPackages = async (packages) => {
+        return new Promise((resolve, reject) => {
+            exec(`pip3 install ${packages.join(' ')}`, (error) => {
+                if (error) {
+                    return reject(`Error installing Python packages: ${error.message}`);
+                }
+                resolve('Packages installed successfully.');
+            });
+        });
+    };
+
+    // Python 스크립트 실행 함수
+    const runPythonScript = async () => {
+        return new Promise((resolve, reject) => {
+            exec('python3 ../ai/list.py', (error, stdout) => {
+                if (error) {
+                    return reject(`Error executing Python script: ${error.message}`);
+                }
+                resolve(stdout);
+            });
+        });
+    };
+
+    try {
+        // requirements.txt에서 패키지 목록 읽기
+        const packages = await readRequirements();
+
+        // 설치되지 않은 패키지 확인
+        const packagesToInstall = [];
+        for (const pkg of packages) {
+            const isInstalled = await isPackageInstalled(pkg);
+            if (!isInstalled) {
+                packagesToInstall.push(pkg);
+            }
         }
 
-        // Python 스크립트 결과를 응답으로 반환
-        console.log(`Python Output: ${stdout}`);
-        const recommendationResult = JSON.parse(stdout);
+        // 필요한 패키지 설치
+        if (packagesToInstall.length > 0) {
+            console.log('Installing Python packages:', packagesToInstall);
+            const installMessage = await installPackages(packagesToInstall);
+            console.log(installMessage);
+        } else {
+            console.log('All packages are already installed.');
+        }
+
+        // Python 스크립트 실행
+        const pythonOutput = await runPythonScript();
+        console.log(`Python Output: ${pythonOutput}`);
+        const recommendationResult = JSON.parse(pythonOutput);
         res.json(recommendationResult);
-    });
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to process recommendation request' });
+    }
 });
 
 
