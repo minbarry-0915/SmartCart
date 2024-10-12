@@ -781,7 +781,7 @@ app.post('/recommend', async (req, res) => {
     console.log('Recommendation request received.');
 
     // requirements.txt 경로 설정
-    const requirementsPath = path.join(__dirname, './requirements.txt');
+    const requirementsPath = path.join(__dirname, './requirement.txt');
 
     // requirements.txt 파일에서 패키지 목록 읽기
     const readRequirements = () => {
