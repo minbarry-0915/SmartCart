@@ -1,0 +1,26 @@
+{
+  "name": "smartcart-backend",
+  "version": "1.0.0",
+  "description": "Backend for SmartCart application.",
+  "main": "api.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.3",
+    "nodemailer": "^6.9.15",
+    "uuid-apikey": "^1.5.3"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "chikchok",
+  "license": "ISC"
+}

@@ -75,7 +75,5 @@ yarn-error.log
 
 # env
 backend/.env
-.env
-
-# ai
+app/.env
 ai/.env
