@@ -750,43 +750,7 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 });
 
 
-/*
-// 추천 제품 목록 반환 API -- 진행 중
-app.get('/api/recommend-products', async (req, res) => {
-    try {
-        // 더미 데이터 대신 데이터베이스에서 추천 제품을 조회할 수 있습니다.
-        const recommendedProducts = [
-            {
-                Product_id: 1234,
-                Product_name: '코카콜라',
-                Price: 1320,
-                Category: '음료',
-                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                Discount: undefined,
-                Description: 'Refreshing beverage',
-            },
-            {
-                Product_id: 21321,
-                Product_name: '마이프로틴',
-                Price: 18000,
-                Category: '단백질',
-                Main_image: 'https://static.thcdn.com/images/small/webp/widgets/83-kr/16/mp-core-10530943-437x437-124817-120616.jpg',
-                Discount: undefined,
-                Description: 'High-quality protein powder',
-            },
-            // 추가 데이터...
-        ];
-
-        // 응답으로 추천 제품 목록을 전송
-        res.json({ data: recommendedProducts });
-    } catch (error) {
-        console.error('Failed to fetch recommended products:', error);
-        res.status(500).json({ message: 'Failed to fetch recommended products' });
-    }
-});
-*/
-
-// 추천 제품 목록 반환 API
+// 추천 제품목록 반환 API
 app.post('/recommend', (req, res) => {
     console.log('Recommendation request received.');
 
