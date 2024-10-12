@@ -25,7 +25,7 @@ function useGetCartList() {
             console.log('Fetching Cart list...');
             // 실제 API 요청 부분 (예시 데이터 사용)
             console.log(REACT_NATIVE_BACKEND_IP);
-            console.log(PERSONAL_API_KEY);
+            // console.log(PERSONAL_API_KEY);
             const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/${userId}`)
 
             if (jsonResponse.status === 200) {
