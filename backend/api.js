@@ -116,8 +116,8 @@ app.post('/api/register', async (req, res) => {
 // });
 
 //카트 아이템 조회 API --- 연결 완
-app.get('/api/cart/:apikey/:Userid', verifyApiKey, async (req, res) => {
-    const { apikey, Userid } = req.params;
+app.get('/api/cart/:Userid', verifyApiKey, async (req, res) => {
+    const { Userid } = req.params;
 
     try {
         // Cart2와 Cart_Item, Product3을 조인하여 유저의 카트에 담긴 상품 정보 조회

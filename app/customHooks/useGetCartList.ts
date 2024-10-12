@@ -26,7 +26,7 @@ function useGetCartList() {
             // 실제 API 요청 부분 (예시 데이터 사용)
             console.log(REACT_NATIVE_BACKEND_IP);
             console.log(PERSONAL_API_KEY);
-            const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/${PERSONAL_API_KEY}/${userId}`)
+            const jsonResponse = await axios.get(`http://${REACT_NATIVE_BACKEND_IP}/api/cart/${userId}`)
 
             if (jsonResponse.status === 200) {
                 const cartItems: CartItem[] = jsonResponse.data.map((item: { Product_id: string; Product_name: string; Price: string; Discount: string; Description: string; Category: string; Quantity: string; }) => ({
