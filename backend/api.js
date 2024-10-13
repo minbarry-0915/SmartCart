@@ -777,7 +777,7 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 // 추천 제품목록 반환 API
 
 
-app.post('/recommend:{Userid}', async (req, res) => {
+app.post('/recommend/:{Userid}', async (req, res) => {
     console.log('Recommendation request received.');
     const {Userid} = req.params;
 
@@ -786,7 +786,7 @@ app.post('/recommend:{Userid}', async (req, res) => {
         return new Promise((resolve, reject) => {
             // Python 스크립트 경로
             const scriptPath = path.join(__dirname, '../ai/list.py');
-            
+
             exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
