@@ -786,7 +786,7 @@ app.post('/recommend/:userid', async (req, res) => {
         return new Promise((resolve, reject) => {
             // Python 스크립트 경로
 
-            exec(`docker-compose exec ai python3 /app/ai/list.py`, (error, stdout, stderr) => {
+            exec(`docker-compose exec ai python3 /app/list.py`, (error, stdout, stderr) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
                 }
