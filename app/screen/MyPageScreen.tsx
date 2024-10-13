@@ -17,6 +17,7 @@ import formatNumber from "../customHooks/fomatNumber";
 import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
 import { Product } from "../types";
 import discountCalculate from "../customHooks/discountCalculate";
+import Loading from "../components/animations/loading";
 
 interface User {
     id: string,
@@ -25,7 +26,7 @@ interface User {
 
 
 function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
-    const { isLoggedIn, userId , recommendations: products } = useSelector((state: RootState) => state.auth);
+    const { isLoggedIn, userId, recommendations: products, isLoadingRecommendations } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
 
     const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -90,7 +91,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
         setIsLogOutPressed(false);
     }, []);
 
-    const renderPriceText = (product: Product) => {  
+    const renderPriceText = (product: Product) => {
         return (
             <>
                 {!product.Discount && product.Price ? (
@@ -98,7 +99,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                         {formatNumber(product.Price)} 원
                     </Text>
                 ) : (
-                    <View style={{flexDirection: 'column'}}>
+                    <View style={{ flexDirection: 'column' }}>
                         <Text
                             numberOfLines={1}
                             style={[
@@ -108,7 +109,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                         >{formatNumber(product.Price)} 원</Text>
                         <Text
                             style={[GlobalStyles.semiBoldText, { fontSize: 14, color: '#D10000' }]}>
-                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount, quantity: 1}))}원
+                            {formatNumber(discountCalculate({ price: product.Price, discount: product.Discount, quantity: 1 }))}원
                         </Text>
                     </View>
 
@@ -119,7 +120,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
     }
 
     return (
-        <View style={{flex: 1,}}>
+        <View style={{ flex: 1, }}>
             {isLoggedIn ? (
                 <LinearGradient
                     colors={['#FFFFFF', '#D9D9D9', '#000000']}
@@ -148,28 +149,32 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={MyPageStyles.recommendListContainer}>
-                                {products.map((item, index) => (
-                                    <View key={index} style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity
-                                            onPress={() => { onProductInfo(item.Product_id) }}
-                                            style={MyPageStyles.recommendProductContainer}
-                                            activeOpacity={0.8}
-                                        >
-                                            <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
-                                            <Text
-                                                numberOfLines={1}
-                                                style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
-                                            
-                                            {/* <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text> */}
+                                {isLoadingRecommendations ? (
+                                    <Loading style={{ width: 150, height: 150 }} />
+                                ) : (
+                                    products.map((item, index) => (
+                                        <View key={index} style={{ flexDirection: 'row' }}>
+                                            <TouchableOpacity
+                                                onPress={() => { onProductInfo(item.Product_id) }}
+                                                style={MyPageStyles.recommendProductContainer}
+                                                activeOpacity={0.8}
+                                            >
+                                                <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
+                                                <Text
+                                                    numberOfLines={1}
+                                                    style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
 
-                                            {renderPriceText(item)}
-                                        </TouchableOpacity>
-                                        {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
-                                        {index !== products.length - 1 && (
-                                            <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
-                                        )}
-                                    </View>
-                                ))}
+                                                {/* <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text> */}
+
+                                                {renderPriceText(item)}
+                                            </TouchableOpacity>
+                                            {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
+                                            {index !== products.length - 1 && (
+                                                <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
+                                            )}
+                                        </View>
+                                    ))
+                                )}
                             </ScrollView>
                         </View>
 
@@ -208,7 +213,7 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
                             <LogOutIcon width={24} height={24} />
                             <Text style={[GlobalStyles.semiBoldText, { color: '#E33434' }]}> 로그아웃</Text>
                         </TouchableOpacity>
-                        
+
                     </ScrollView>
                 </LinearGradient>
             ) : (

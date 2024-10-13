@@ -2,17 +2,18 @@ import { useState, useCallback, useEffect } from "react";
 import { Product } from "../types";
 import axios from "axios";
 import { REACT_NATIVE_BACKEND_IP } from "@env";
-import { useDispatch } from "react-redux";
-import { setRecommendations } from "../redux/authSlice"; // 액션 임포트
+import { useDispatch, useSelector } from "react-redux";
+import { setRecommendations , startLoadingRecommendations } from "../redux/authSlice"; // 액션 임포트
 
 function useGetRecommendProductList() {
-    const [loading, setLoading] = useState<boolean>(false);
+    const isLoadingRecommendations = useSelector((state: any) => state.auth.isLoadingRecommendations); // Redux에서 로딩 상태 가져오기
+
     const [error, setError] = useState<string | null>(null);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [products, setProducts] = useState<Product[]>([]); //old
     const dispatch = useDispatch();
 
     const getRecommendProductList = useCallback(async () => {
-        setLoading(true);
+        dispatch(startLoadingRecommendations()); // 로딩 시작
         setError(null);
 
         try {
@@ -25,7 +26,6 @@ function useGetRecommendProductList() {
             setError(error.message || 'Failed to fetch recommended products');
         } finally {
             console.log('Fetch Done.');
-            setLoading(false);
         }
     }, []);
 
@@ -34,7 +34,6 @@ function useGetRecommendProductList() {
     }, [getRecommendProductList]);
     
     return {
-        loading,
         error,
         //products
     };
