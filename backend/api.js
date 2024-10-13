@@ -777,7 +777,9 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 // 추천 제품목록 반환 API
 
 
-app.post('/recommend', async (req, res) => {
+app.post('/recommend/:Userid', async (req, res) => {
+    const {Userid} = req.params;
+
     console.log('Recommendation request received.');
 
     // requirements.txt 경로 설정
@@ -827,7 +829,7 @@ app.post('/recommend', async (req, res) => {
     // Python 스크립트 실행 함수
     const runPythonScript = async () => {
         return new Promise((resolve, reject) => {
-            exec('python3 ../ai/list.py 123', (error, stdout) => {
+            exec(`python3 ../ai/list.py ${Userid}`, (error, stdout) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
                 }
