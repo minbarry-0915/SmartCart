@@ -779,14 +779,14 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 
 app.post('/recommend/:userid', async (req, res) => {
     console.log('Recommendation request received.');
-    const {userid} = req.params;
+    const { userid } = req.params;
 
     // Python 스크립트 실행 함수
     const runPythonScript = async () => {
         return new Promise((resolve, reject) => {
             // Python 스크립트 경로
 
-            exec(`docker-compose exec ai python3 /app/list.py`, (error, stdout, stderr) => {
+            exec(`python3 /app/ai/list.py ${userid}`, { cwd: '/app/ai' }, (error, stdout, stderr) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
                 }
