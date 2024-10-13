@@ -3,7 +3,7 @@ version: '3.8'
 services:
   node:
     build: 
-      context: ./node
+      context: ./backend
     ports: 
       - "3001:3001"
 
