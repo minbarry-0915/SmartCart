@@ -10,7 +10,6 @@ const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const axios = require('axios');
 
 dotenv.config();
 
@@ -778,16 +777,91 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 // 추천 제품목록 반환 API
 
 
-app.post('/recommend/:userid', async (req, res) => {
+app.post('/recommend', async (req, res) => {
     console.log('Recommendation request received.');
-    const { userid } = req.params;
+
+    // requirements.txt 경로 설정
+    const requirementsPath = path.join(__dirname, './requirement.txt');
+
+    // requirements.txt 파일에서 패키지 목록 읽기
+    const readRequirements = () => {
+        return new Promise((resolve, reject) => {
+            fs.readFile(requirementsPath, 'utf8', (error, data) => {
+                if (error) {
+                    return reject(`Error reading requirements file: ${error.message}`);
+                }
+                // 각 줄을 패키지 이름으로 변환하고, 빈 줄 및 주석 제거
+                const packages = data
+                    .split('\n')
+                    .map(pkg => pkg.trim())
+                    .filter(pkg => pkg && !pkg.startsWith('#'));
+                resolve(packages);
+            });
+        });
+    };
+
+    // 패키지가 설치되어 있는지 확인
+    const isPackageInstalled = async (packageName) => {
+        return new Promise((resolve, reject) => {
+            exec('pip3 freeze', (error, stdout) => {
+                if (error) {
+                    return reject(`Error checking installed packages: ${error.message}`);
+                }
+                resolve(stdout.includes(packageName));
+            });
+        });
+    };
+
+    // 패키지 설치 함수
+    const installPackages = async (packages) => {
+        return new Promise((resolve, reject) => {
+            exec(`pip3 install ${packages.join(' ')}`, (error) => {
+                if (error) {
+                    return reject(`Error installing Python packages: ${error.message}`);
+                }
+                resolve('Packages installed successfully.');
+            });
+        });
+    };
+
+    // Python 스크립트 실행 함수
+    const runPythonScript = async () => {
+        return new Promise((resolve, reject) => {
+            exec('python3 ../ai/list.py', (error, stdout) => {
+                if (error) {
+                    return reject(`Error executing Python script: ${error.message}`);
+                }
+                resolve(stdout);
+            });
+        });
+    };
 
     try {
-        // Flask API 호출
-        const response = await axios.get(`http://ai:5000/recommend/${userid}`);
-        const recommendationResult = response.data;
+        // requirements.txt에서 패키지 목록 읽기
+        const packages = await readRequirements();
 
-        console.log(`Python Output: ${JSON.stringify(recommendationResult)}`);
+        // 설치되지 않은 패키지 확인
+        const packagesToInstall = [];
+        for (const pkg of packages) {
+            const isInstalled = await isPackageInstalled(pkg);
+            if (!isInstalled) {
+                packagesToInstall.push(pkg);
+            }
+        }
+
+        // 필요한 패키지 설치
+        if (packagesToInstall.length > 0) {
+            console.log('Installing Python packages:', packagesToInstall);
+            const installMessage = await installPackages(packagesToInstall);
+            console.log(installMessage);
+        } else {
+            console.log('All packages are already installed.');
+        }
+
+        // Python 스크립트 실행
+        const pythonOutput = await runPythonScript();
+        console.log(`Python Output: ${pythonOutput}`);
+        const recommendationResult = JSON.parse(pythonOutput);
         res.json(recommendationResult);
 
     } catch (error) {
@@ -795,7 +869,6 @@ app.post('/recommend/:userid', async (req, res) => {
         res.status(500).json({ error: 'Failed to process recommendation request' });
     }
 });
-
 
 
 /*
