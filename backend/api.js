@@ -781,28 +781,12 @@ app.post('/recommend/:userid', async (req, res) => {
     console.log('Recommendation request received.');
     const { userid } = req.params;
 
-    // Python 스크립트 실행 함수
-    const runPythonScript = async () => {
-        return new Promise((resolve, reject) => {
-            // Python 스크립트 경로
-
-            exec(`docker exec -i smartcart_ai_1 python3 /app/list.py`, (error, stdout, stderr) => {
-                if (error) {
-                    return reject(`Error executing Python script: ${error.message}`);
-                }
-                if (stderr) {
-                    return reject(`Python script error: ${stderr}`);
-                }
-                resolve(stdout);
-            });
-        });
-    };
-
     try {
-        // Python 스크립트 실행
-        const pythonOutput = await runPythonScript();
-        console.log(`Python Output: ${pythonOutput}`);
-        const recommendationResult = JSON.parse(pythonOutput);
+        // Flask API 호출
+        const response = await axios.get(`http://ai:5000/recommend/${userid}`);
+        const recommendationResult = response.data;
+
+        console.log(`Python Output: ${JSON.stringify(recommendationResult)}`);
         res.json(recommendationResult);
 
     } catch (error) {
@@ -810,6 +794,7 @@ app.post('/recommend/:userid', async (req, res) => {
         res.status(500).json({ error: 'Failed to process recommendation request' });
     }
 });
+
 
 
 /*
