@@ -6,6 +6,8 @@ services:
       context: ./backend
     ports: 
       - "3001:3001"
+    networks:
+      - smartcart_network
     depends_on:
       - ai
 
@@ -14,3 +16,9 @@ services:
       context: ./ai
     ports:
       - "5000:5000"
+    networks:
+      - smartcart_network
+      
+networks:
+  smartcart_network:
+    driver: bridge
