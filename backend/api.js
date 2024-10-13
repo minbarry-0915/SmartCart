@@ -785,9 +785,8 @@ app.post('/recommend/:userid', async (req, res) => {
     const runPythonScript = async () => {
         return new Promise((resolve, reject) => {
             // Python 스크립트 경로
-            const scriptPath = path.join(__dirname, '../ai/list.py');
 
-            exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
+            exec(`docker-compose exec ai python3 /app/ai/list.py`, (error, stdout, stderr) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
                 }
