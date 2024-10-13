@@ -777,9 +777,9 @@ app.get('/api/search/:keyword/:userid', async (req, res) => {
 // 추천 제품목록 반환 API
 
 
-app.post('/recommend/:{Userid}', async (req, res) => {
+app.post('/recommend/:userid', async (req, res) => {
     console.log('Recommendation request received.');
-    const {Userid} = req.params;
+    const {userid} = req.params;
 
     // Python 스크립트 실행 함수
     const runPythonScript = async () => {
