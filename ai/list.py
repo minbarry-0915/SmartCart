@@ -115,8 +115,13 @@ def recommend_for_user(user_id, top_n=10):
     recommended_products = products[products['Product_id'].isin(top_products)]
     return recommended_products.to_json(orient='records', force_ascii=False)
 
-# stdin에서 사용자 입력 받기
-user_id = input("Enter the user ID for recommendation: ").strip()
+# sys에서 사용자 입력 받기
+if len(sys.argv) > 1:
+    user_id = sys.argv[1].strip()
+else:
+    print("Error: No user ID provided.")
+    sys.exit(1)
+
 
 # 추천 결과 생성
 recommendations_json = recommend_for_user(user_id)

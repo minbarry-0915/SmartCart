@@ -827,7 +827,7 @@ app.post('/recommend', async (req, res) => {
     // Python 스크립트 실행 함수
     const runPythonScript = async () => {
         return new Promise((resolve, reject) => {
-            exec('python3 ../ai/list.py', (error, stdout) => {
+            exec('python3 ../ai/list.py 123', (error, stdout) => {
                 if (error) {
                     return reject(`Error executing Python script: ${error.message}`);
                 }
