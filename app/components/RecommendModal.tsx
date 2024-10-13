@@ -40,7 +40,7 @@ function RecommendModal({
     };
 
     // 제품 정보 화면으로 이동
-    const onProductInfo = (id: number) => {
+    const onProductInfo = (id: string) => {
         animateModal(slideAnim, 500, () => {
             setVisible(false);
             closeCartModal();

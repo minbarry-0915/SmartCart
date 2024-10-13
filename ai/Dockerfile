@@ -7,3 +7,5 @@ COPY requirement.txt ./requirement.txt
 RUN pip install -r requirement.txt
 
 COPY . .
+
+CMD [ "python3", "list.py" ]
