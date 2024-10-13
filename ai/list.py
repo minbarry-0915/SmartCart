@@ -1,3 +1,4 @@
+from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
 import pickle
@@ -8,7 +9,7 @@ from dotenv import load_dotenv
 import sys
 import io
 from sqlalchemy import create_engine  # SQLAlchemy에서 create_engine을 임포트
-from flask import Flask, request, jsonify
+
 
 # 파이썬 기본 출력 인코딩 설정
 # sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
@@ -118,11 +119,11 @@ def recommend_for_user(user_id, top_n=10):
 
 # 예시: 특정 사용자에게 10개의 제품을 추천
 user_id = '123'  # 추천을 요청할 Userid
-@app.route('/recommend/<userid>', methods=['GET'])
 
+@app.route('/recommend/<userid>', methods=['GET'])
 def recommend(userid):
     # 추천 로직 실행
-    recommendations = recommend_for_user(userid)
+    recommendations = recommend_for_user('123')
     return jsonify(recommendations)
 
 if __name__ == '__main__':
