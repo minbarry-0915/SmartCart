@@ -16,6 +16,7 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 # .env 파일의 환경 변수 로드
 load_dotenv()
 
+
 # 환경 변수 사용
 MYSQL_HOST = os.getenv('MYSQL_HOST')
 MYSQL_USERNAME = os.getenv('MYSQL_USERNAME')
