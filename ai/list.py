@@ -115,8 +115,10 @@ def recommend_for_user(user_id, top_n=10):
     recommended_products = products[products['Product_id'].isin(top_products)]
     return recommended_products.to_json(orient='records', force_ascii=False)
 
-# 예시: 특정 사용자에게 10개의 제품을 추천
-user_id = '123'  # 추천을 요청할 Userid
+# stdin에서 사용자 입력 받기
+user_id = input("Enter the user ID for recommendation: ").strip()
+
+# 추천 결과 생성
 recommendations_json = recommend_for_user(user_id)
 
 # Python 스크립트 실행 결과로 JSON만 출력
