@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  node:
+    build: 
+      context: ./node
+    ports: 
+      - "3001:3001"
+
+  ai:
+    build: 
+      context: ./ai
+    ports:
+      - "5000:5000"
