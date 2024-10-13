@@ -121,106 +121,105 @@ function MyPageScreen({ route }: { route: RouteProp<ParamListBase> }) {
 
     return (
         <View style={{ flex: 1, }}>
-            {isLoggedIn ? (
-                <LinearGradient
-                    colors={['#FFFFFF', '#D9D9D9', '#000000']}
-                >
-                    <TopNavigator
-                        title="마이페이지"
-                        navigation={navigation}
-                    />
+            <LinearGradient
+                colors={['#FFFFFF', '#D9D9D9', '#000000']}
+            >
+                <TopNavigator
+                    title="마이페이지"
+                    navigation={navigation}
+                />
 
-                    {/* body */}
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={GlobalStyles.scrollContainer}>
-                        <View style={[MyPageStyles.content, { flexDirection: 'row', elevation: 0 }]}>
-                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#6E91EB' }]}>{user?.name}</Text>
-                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}> 님 환영합니다</Text>
+                {/* body */}
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={GlobalStyles.scrollContainer}>
+                    <View style={[MyPageStyles.content, { flexDirection: 'row', elevation: 0 }]}>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 24, color: '#6E91EB' }]}>{user?.name}</Text>
+                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}> 님 환영합니다</Text>
+                    </View>
+
+                    {/* 최근 구매 연관상품 */}
+                    <View style={[MyPageStyles.content, { backgroundColor: 'white', alignItems: 'flex-start' }]}>
+                        <View style={{ marginBottom: 36 }}>
+                            <Text style={GlobalStyles.semiBoldText}>최근 구매 연관 상품</Text>
                         </View>
 
-                        {/* 최근 구매 연관상품 */}
-                        <View style={[MyPageStyles.content, { backgroundColor: 'white', alignItems: 'flex-start' }]}>
-                            <View style={{ marginBottom: 36 }}>
-                                <Text style={GlobalStyles.semiBoldText}>최근 구매 연관 상품</Text>
-                            </View>
 
+                        {isLoadingRecommendations ? (
+                            <View style={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                <Loading style={{ width: 150, height: 150 }} />
+                            </View>
+                        ) : (
                             <ScrollView
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={MyPageStyles.recommendListContainer}>
-                                {isLoadingRecommendations ? (
-                                    <Loading style={{ width: 150, height: 150 }} />
-                                ) : (
-                                    products.map((item, index) => (
-                                        <View key={index} style={{ flexDirection: 'row' }}>
-                                            <TouchableOpacity
-                                                onPress={() => { onProductInfo(item.Product_id) }}
-                                                style={MyPageStyles.recommendProductContainer}
-                                                activeOpacity={0.8}
-                                            >
-                                                <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
-                                                <Text
-                                                    numberOfLines={1}
-                                                    style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
+                                {products.map((item, index) => (
+                                    <View key={index} style={{ flexDirection: 'row' }}>
+                                        <TouchableOpacity
+                                            onPress={() => { onProductInfo(item.Product_id) }}
+                                            style={MyPageStyles.recommendProductContainer}
+                                            activeOpacity={0.8}
+                                        >
+                                            <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
+                                            <Text
+                                                numberOfLines={1}
+                                                style={[GlobalStyles.regularText, { fontSize: 12 }]}>{item.Product_name}</Text>
 
-                                                {/* <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text> */}
+                                            {/* <Text style={[GlobalStyles.semiBoldText, { fontSize: 14 }]}>{formatNumber(item.Price)} 원</Text> */}
 
-                                                {renderPriceText(item)}
-                                            </TouchableOpacity>
-                                            {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
-                                            {index !== products.length - 1 && (
-                                                <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
-                                            )}
-                                        </View>
-                                    ))
-                                )}
+                                            {renderPriceText(item)}
+                                        </TouchableOpacity>
+                                        {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
+                                        {index !== products.length - 1 && (
+                                            <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
+                                        )}
+                                    </View>
+                                ))}
                             </ScrollView>
-                        </View>
+                        )}
 
-                        {/* 주문목록조회 */}
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            style={[MyPageStyles.button, isOrderListPressed && { backgroundColor: '#FFE68C' }]}
-                            onPress={() => { onOrderListButton(user?.id) }}
-                            onPressIn={handleOrderListButtonPressIn}
-                            onPressOut={handleOrderListButtonPressOut}
-                        >
-                            <ShoppingBagIcon width={24} height={24} />
-                            <Text style={[GlobalStyles.semiBoldText]}> 주문목록조회</Text>
-                        </TouchableOpacity>
+                    </View>
 
-                        {/* 개인정보수정 */}
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            style={[MyPageStyles.button, isModifyInfoPressed && { backgroundColor: '#FFE68C' }]}
-                            onPressIn={handleModifyInfoButtonPressedIn}
-                            onPressOut={handleModifyInfoButtonPressedOut}
-                            onPress={onModifyInfoButton}
-                        >
-                            <PersonIcon width={24} height={24} />
-                            <Text style={[GlobalStyles.semiBoldText]}> 개인정보수정</Text>
-                        </TouchableOpacity>
+                    {/* 주문목록조회 */}
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={[MyPageStyles.button, isOrderListPressed && { backgroundColor: '#FFE68C' }]}
+                        onPress={() => { onOrderListButton(user?.id) }}
+                        onPressIn={handleOrderListButtonPressIn}
+                        onPressOut={handleOrderListButtonPressOut}
+                    >
+                        <ShoppingBagIcon width={24} height={24} />
+                        <Text style={[GlobalStyles.semiBoldText]}> 주문목록조회</Text>
+                    </TouchableOpacity>
 
-                        {/* 로그아웃 */}
-                        <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPressIn={handleLogoutButtonPressedIn}
-                            onPressOut={handleLogoutButtonPressedOut}
-                            onPress={onLogoutButton}
-                            style={[MyPageStyles.button, isLogoutPressed && { backgroundColor: '#FFE68C' }]}
-                        >
-                            <LogOutIcon width={24} height={24} />
-                            <Text style={[GlobalStyles.semiBoldText, { color: '#E33434' }]}> 로그아웃</Text>
-                        </TouchableOpacity>
+                    {/* 개인정보수정 */}
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={[MyPageStyles.button, isModifyInfoPressed && { backgroundColor: '#FFE68C' }]}
+                        onPressIn={handleModifyInfoButtonPressedIn}
+                        onPressOut={handleModifyInfoButtonPressedOut}
+                        onPress={onModifyInfoButton}
+                    >
+                        <PersonIcon width={24} height={24} />
+                        <Text style={[GlobalStyles.semiBoldText]}> 개인정보수정</Text>
+                    </TouchableOpacity>
 
-                    </ScrollView>
-                </LinearGradient>
-            ) : (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={GlobalStyles.semiBoldText}>Login Again</Text>
-                </View>
-            )}
+                    {/* 로그아웃 */}
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPressIn={handleLogoutButtonPressedIn}
+                        onPressOut={handleLogoutButtonPressedOut}
+                        onPress={onLogoutButton}
+                        style={[MyPageStyles.button, isLogoutPressed && { backgroundColor: '#FFE68C' }]}
+                    >
+                        <LogOutIcon width={24} height={24} />
+                        <Text style={[GlobalStyles.semiBoldText, { color: '#E33434' }]}> 로그아웃</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
+            </LinearGradient>
+
         </View>
     )
 }

@@ -862,7 +862,7 @@ app.post('/recommend/:Userid', async (req, res) => {
 
         // Python 스크립트 실행
         const pythonOutput = await runPythonScript();
-        console.log(`Python Output: ${pythonOutput}`);
+        // console.log(`Python Output: ${pythonOutput}`);
         const recommendationResult = JSON.parse(pythonOutput);
         res.json(recommendationResult);
 

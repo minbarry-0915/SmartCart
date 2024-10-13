@@ -14,24 +14,24 @@ import useGetRecommendProductList from "../customHooks/useGetRecommendProductLis
 function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase> }) { //navigation의 타입을 정의를 해주어야함 
   //redux
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
-  const { isLoadingRecommendations } = useSelector((state: any) => state.auth.isLoadingRecommendations); // Redux에서 로딩 상태 가져오기
   const dispatch = useDispatch<AppDispatch>();
 
   //state
   const [id, setId] = useState('');
   const [password, setPW] = useState('');
-  const { loading, error, postUserVerify } = usePostUserVerify();
   const [errorMessege, setErrorMessege] = useState('');
+
+  const { loading, error, postUserVerify } = usePostUserVerify();
   const { error: fetchError, getRecommendProductList } = useGetRecommendProductList();
 
   const onLoginButton = async () => {
-    const { status, error , } = await postUserVerify({ userId: id, password });
+    const { status, error, } = await postUserVerify({ userId: id, password });
 
     // 로그인 성공 여부 확인
     if (status === 200) {
       dispatch(login(id));
       // 추천 제품 가져오기
-      await getRecommendProductList(id);
+      getRecommendProductList(id);
       // 추천 제품 로딩 또는 오류 처리
       if (fetchError) {
         console.error('추천 제품 가져오기 실패:', fetchError);
@@ -57,12 +57,6 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
     navigation.navigate('FindPassword')
   };
 
-  // useEffect(() => {
-  //   console.log('loginStatus:', isLoggedIn);
-  // }, [isLoggedIn])
-  useEffect(() => {
-    console.log('loading:', loading);
-  }, [loading]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setId('');
@@ -90,7 +84,7 @@ function LoginScreen({ navigation }: { navigation: NavigationProp<ParamListBase>
         <Text style={[GlobalStyles.ExtraBoldText, { color: '#FFC700' }]}>S</Text>
         <Text style={[GlobalStyles.ExtraBoldText]}>MARTCART</Text>
       </View>
-      {loading || isLoadingRecommendations? (
+      {loading ? (
         <RenderLoading />
       ) : (
         <>

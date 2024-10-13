@@ -1,6 +1,6 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -129,13 +129,26 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
   // 화면 돌아올때 마다 가져올 수 있게
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const focusListener  = navigation.addListener('focus', () => {
       getCartList();
     })
+
     return () => {
-      unsubscribe();
+      focusListener();
     }
   }, [navigation]);
+
+  useEffect(()=> {
+    const backaction = () => {
+      console.log('Cannot use Back button');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress', backaction
+    );
+
+    return () => backHandler.remove();
+  },[])
 
   return (
     <ScrollView

@@ -3,29 +3,30 @@ import { Animated, Easing, Image, ScrollView, Text, TouchableOpacity, View } fro
 import { UpwardIcon } from "../assets/icons";
 import LocationModalStyles from "../styles/LocationModalStyles";
 import GlobalStyles from "../styles/GlobalStyles";
-import useGetRecommendProductList from "../customHooks/useGetRecommendProductList";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import MyPageStyles from "../styles/MypageScreenstyles";
 import formatNumber from "../customHooks/fomatNumber";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import Loading from "./animations/loading";
 
 interface Prop {
     modalVisible: boolean,
     toggleRecommendationModal: () => void,
     navigation: NavigationProp<ParamListBase>,
-    closeCartModal: () => void,   
+    closeCartModal: () => void,
 }
 
-function RecommendModal({ 
-    modalVisible, 
-    toggleRecommendationModal, 
+function RecommendModal({
+    modalVisible,
+    toggleRecommendationModal,
     navigation,
-    closeCartModal 
- }: Prop) {
+    closeCartModal
+}: Prop) {
     const slideAnim = useRef(new Animated.Value(500)).current;
     const [visible, setVisible] = useState<boolean>(false);
-    const { isLoggedIn, userId , recommendations: products } = useSelector((state: RootState) => state.auth);
+    const { isLoggedIn, userId, recommendations: products, isLoadingRecommendations } = useSelector((state: RootState) => state.auth);
+
 
     // 애니메이션 실행 함수
     const animateModal = (anim: Animated.Value, toValue: number, callback?: () => void) => {
@@ -50,30 +51,31 @@ function RecommendModal({
 
     // 장바구니로 이동
     const onCartButton = () => {
-        animateModal(slideAnim,500, ()=> {
+        animateModal(slideAnim, 500, () => {
             toggleRecommendationModal();
             closeCartModal();
         });
-        
-        navigation.navigate('Cart')};
+
+        navigation.navigate('Cart')
+    };
 
     useEffect(() => {
         if (modalVisible) {
             setVisible(true);
             animateModal(slideAnim, 0);
         } else {
-            animateModal(slideAnim, 500, ()=>{
+            animateModal(slideAnim, 500, () => {
                 setVisible(false);
             })
         }
     }, [modalVisible]);
 
     const closeRequestHandler = () => {
-        animateModal(slideAnim,500, ()=> {
+        animateModal(slideAnim, 500, () => {
             toggleRecommendationModal(); //추천모달닫음
             closeCartModal();//전체 모달 종료
         });
-        
+
     }
 
     return (
@@ -117,25 +119,29 @@ function RecommendModal({
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={MyPageStyles.recommendListContainer}
                         >
-                            {products.map((item, index) => (
-                                <View key={index} style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity
-                                        onPress={() => { onProductInfo(item.Product_id) }}
-                                        style={MyPageStyles.recommendProductContainer}
-                                        activeOpacity={0.8}
-                                    >
-                                        <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
-                                        <Text
-                                            numberOfLines={1}
-                                            style={[GlobalStyles.regularText, { fontSize: 16 }]}>{item.Product_name}</Text>
-                                        <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{formatNumber(item.Price)} 원</Text>
-                                    </TouchableOpacity>
-                                    {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
-                                    {index !== products.length - 1 && (
-                                        <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
-                                    )}
-                                </View>
-                            ))}
+                            {isLoadingRecommendations ? (
+                                <Loading style={{ width: 150, height: 150 }} />
+                            ) : (
+                                products.map((item, index) => (
+                                    <View key={index} style={{ flexDirection: 'row' }}>
+                                        <TouchableOpacity
+                                            onPress={() => { onProductInfo(item.Product_id) }}
+                                            style={MyPageStyles.recommendProductContainer}
+                                            activeOpacity={0.8}
+                                        >
+                                            <Image source={{ uri: item.Main_image }} style={[MyPageStyles.productImageContainer, { marginBottom: 12, }]} />
+                                            <Text
+                                                numberOfLines={1}
+                                                style={[GlobalStyles.regularText, { fontSize: 16 }]}>{item.Product_name}</Text>
+                                            <Text style={[GlobalStyles.semiBoldText, { fontSize: 18 }]}>{formatNumber(item.Price)} 원</Text>
+                                        </TouchableOpacity>
+                                        {/* 오른쪽 경계선이 마지막 요소에는 표시되지 않도록 조건 추가 */}
+                                        {index !== products.length - 1 && (
+                                            <View style={{ width: 1, height: '100%', backgroundColor: '#D9D9D9', marginRight: 8 }} />
+                                        )}
+                                    </View>
+                                ))
+                            )}
                         </ScrollView>
                     </View>
                 </Animated.View>

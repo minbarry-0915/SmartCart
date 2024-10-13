@@ -56,12 +56,12 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         }
     }, [userInfo]);
 
-    useEffect(()=>{
-        if (userInfo !== userData){
+    useEffect(() => {
+        if (userInfo !== userData) {
             setChanged(true);
             console.log('Data changed:', changed);
         }
-    },[userData]);
+    }, [userData]);
 
 
     useEffect(() => {
@@ -109,11 +109,14 @@ function UserInfoModifyDetailScreen({ navigation }: { navigation: NavigationProp
         }
 
         // 비밀번호가 일치하면 userData를 업데이트
+        const updatedUserData = { ...userData }; // 기존 userData를 복사
+
         if (newPassword) {
-            setUserData({ ...userData, Password: newPassword });
+            updatedUserData.Password = newPassword; // 비밀번호 업데이트
         }
+         
         if (userId) {
-            const isSuccess = await patchUserInfo(userData);
+            const isSuccess = await patchUserInfo(updatedUserData);
             if (isSuccess) {
                 dispatch(logout());
                 navigation.navigate('Login');

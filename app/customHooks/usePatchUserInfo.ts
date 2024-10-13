@@ -16,6 +16,7 @@ const usePatchUserInfo = () => {
             setLoading(true);
             setError(null);
             console.log('Patching User Info...');
+            console.log(userData);
             const jsonResponse = await axios.patch(`http://${REACT_NATIVE_BACKEND_IP}/api/user/${userId}`, {
                 Name: userData.Name,
                 Birthdate: userData.Birthdate?.toISOString().split('T')[0],
