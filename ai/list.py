@@ -122,7 +122,6 @@ else:
     print("Error: No user ID provided.")
     sys.exit(1)
 
-
 # 추천 결과 생성
 recommendations_json = recommend_for_user(user_id)
 
