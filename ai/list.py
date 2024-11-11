@@ -29,12 +29,12 @@ db_url = f"mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL
 engine = create_engine(db_url)
 
 # ai 폴더 내의 stacking_model_optimized.pkl 파일 로드
-model_path = os.path.join(os.path.dirname(__file__), 'stacking_model_optimized.pkl')
+model_path = os.path.join(os.path.dirname(__file__), 'stacking_model_optimized2.pkl')
 with open(model_path, 'rb') as f:
     stacking_model = pickle.load(f)
 
 # 저장된 Word2Vec 모델 로드
-w2v_model_path = os.path.join(os.path.dirname(__file__), 'w2v_model.pkl')
+w2v_model_path = os.path.join(os.path.dirname(__file__), 'w2v_model2.pkl')
 with open(w2v_model_path, 'rb') as f:
     w2v_model = pickle.load(f)
 
