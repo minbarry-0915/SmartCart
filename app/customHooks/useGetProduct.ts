@@ -61,6 +61,7 @@ function useGetProduct(initialResponses: CartItem[], setResponses: React.Dispatc
     
 
     return {
+        error,
         handleBarcodeScan
     };
 }

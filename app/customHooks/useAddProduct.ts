@@ -6,6 +6,8 @@ import axios from "axios";
 
 function useAddProduct(){
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
     const { userId } = useSelector((state: RootState) => state.auth);
 
     const addProduct = async(productId: string, quantity: number) => {
@@ -22,6 +24,7 @@ function useAddProduct(){
             return true;
         } catch(err: any){
             console.error('Failed to add product on cart', err);
+            setError(err);
             return false;
         } finally{
             setLoading(false);
@@ -31,6 +34,7 @@ function useAddProduct(){
 
     return {
         loading,
+        error,
         addProduct
     }
 }

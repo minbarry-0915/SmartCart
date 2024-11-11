@@ -1,5 +1,5 @@
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BackHandler, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -19,11 +19,13 @@ import formatNumber from "../customHooks/fomatNumber";
 import { CartItem } from "../types";
 import usePostCartList from "../customHooks/usePostCartList";
 import useDeleteCartItem from "../customHooks/useDeleteCartItem";
+import BarcodeScanErrorModal from "../components/BarcodeScanErrorModal";
 
 function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, navigation: NavigationProp<ParamListBase> }) {
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const scrollViewRef = useRef<ScrollView>(null);
+  const [errorModalVisible, setErrorModalVisible] = useState<boolean>(false);
 
   const {
     responses,
@@ -38,6 +40,8 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
   const { deleteCartItem } = useDeleteCartItem();
   
+  const toggleErrorModal = () => setErrorModalVisible(!errorModalVisible);
+
   const deleteNodeButton = (index: number, productId: string) => {
     // 배열 복사 및 UI 업데이트
     const newResponses = [...responses];
@@ -116,7 +120,7 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
     setResponses(updatedResponses);
   };
 
-  const { handleBarcodeScan } = useGetProduct(responses, setResponses);
+  const { handleBarcodeScan, error: cannotFindProduct } = useGetProduct(responses, setResponses);
 
   usePostCartList(responses, setResponses);
 
@@ -149,6 +153,11 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
 
     return () => backHandler.remove();
   },[])
+
+  useEffect(()=>{
+    if (cannotFindProduct != null)
+      toggleErrorModal()
+  },[cannotFindProduct])
 
   return (
     <ScrollView
@@ -247,6 +256,13 @@ function CartScreen({ route, navigation }: { route: RouteProp<ParamListBase>, na
             </View>
 
           </View>
+
+          <BarcodeScanErrorModal
+          modalVisible = {errorModalVisible}
+          toggleErrorModal={toggleErrorModal}
+          navigation={navigation}
+          />
+
         </View>
       ) : (
         <Text>Please Login</Text>
